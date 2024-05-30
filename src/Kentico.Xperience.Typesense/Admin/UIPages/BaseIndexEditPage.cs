@@ -18,7 +18,7 @@ internal abstract class BaseCollectionEditPage : ModelEditPage<TypesenseConfigur
 
     protected CollectionModificationResult ValidateAndProcess(TypesenseConfigurationModel configuration)
     {
-        configuration.collectionName = RemoveWhitespacesUsingStringBuilder(configuration.collectionName ?? "");
+        configuration.CollectionName = RemoveWhitespacesUsingStringBuilder(configuration.CollectionName ?? "");
 
         if (StorageService.GetCollectionIds().Exists(x => x == configuration.Id))
         {
@@ -35,7 +35,7 @@ internal abstract class BaseCollectionEditPage : ModelEditPage<TypesenseConfigur
         }
         else
         {
-            bool created = !string.IsNullOrWhiteSpace(configuration.collectionName) && StorageService.TryCreateCollection(configuration);
+            bool created = !string.IsNullOrWhiteSpace(configuration.CollectionName) && StorageService.TryCreateCollection(configuration);
 
             if (created)
             {

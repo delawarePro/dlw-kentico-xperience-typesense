@@ -14,7 +14,7 @@ public class TypesenseConfigurationModel
        Order = 1)]
     [Required]
     [MinLength(1)]
-    public string collectionName { get; set; } = "";
+    public string CollectionName { get; set; } = "";
 
     [GeneralSelectorComponent(dataProviderType: typeof(LanguageOptionsProvider), Label = "Collectioned Languages", Order = 2)]
     public IEnumerable<string> LanguageNames { get; set; } = Enumerable.Empty<string>();
@@ -41,7 +41,7 @@ public class TypesenseConfigurationModel
     )
     {
         Id = index.TypesenseCollectionItemId;
-        collectionName = index.TypesenseCollectionItemcollectionName;
+        CollectionName = index.TypesenseCollectionItemcollectionName;
         ChannelName = index.TypesenseCollectionItemChannelName;
         RebuildHook = index.TypesenseCollectionItemRebuildHook;
         StrategyName = index.TypesenseCollectionItemStrategyName;

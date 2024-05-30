@@ -62,7 +62,7 @@ public class Tests : UnitTests
         {
             ChannelName = "channel",
             Id = 2,
-            collectionName = "index2",
+            CollectionName = "index2",
             LanguageNames = [DEFAULT_LANGUAGE_NAME],
             Paths = paths,
             RebuildHook = "/rebuild",
@@ -88,7 +88,7 @@ public class Tests : UnitTests
         {
             ChannelName = "channel",
             Id = 1,
-            collectionName = "index1",
+            CollectionName = "index1",
             LanguageNames = [DEFAULT_LANGUAGE_NAME],
             Paths = exactPaths,
             RebuildHook = "/rebuild",
@@ -101,7 +101,7 @@ public class Tests : UnitTests
         {
             ChannelName = "channel",
             Id = 2,
-            collectionName = "index2",
+            CollectionName = "index2",
             LanguageNames = [DEFAULT_LANGUAGE_NAME],
             Paths = wildcardPaths,
             RebuildHook = "/rebuild",
@@ -129,7 +129,7 @@ public class Tests : UnitTests
         {
             ChannelName = "channel",
             Id = 1,
-            collectionName = "index1",
+            CollectionName = "index1",
             LanguageNames = [DEFAULT_LANGUAGE_NAME],
             Paths = exactPaths,
             RebuildHook = "/rebuild",
@@ -143,7 +143,7 @@ public class Tests : UnitTests
         {
             ChannelName = "channel",
             Id = 2,
-            collectionName = "index2",
+            CollectionName = "index2",
             LanguageNames = [DEFAULT_LANGUAGE_NAME],
             Paths = wildcardPaths,
             RebuildHook = "/rebuild",

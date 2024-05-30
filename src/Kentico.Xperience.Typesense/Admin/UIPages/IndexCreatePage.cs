@@ -44,7 +44,7 @@ internal class CollectionCreatePage : BaseCollectionEditPage
 
         if (result == CollectionModificationResult.Success)
         {
-            var index = TypesenseCollectionStore.Instance.GetRequiredCollection(model.collectionName);
+            var index = TypesenseCollectionStore.Instance.GetRequiredCollection(model.CollectionName);
 
             var successResponse = NavigateTo(pageUrlGenerator.GenerateUrl<CollectionEditPage>(index.Identifier.ToString()))
                 .AddSuccessMessage("Collection created.");

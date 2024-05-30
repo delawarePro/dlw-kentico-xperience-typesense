@@ -37,7 +37,7 @@ public sealed class TypesenseCollection
     internal TypesenseCollection(TypesenseConfigurationModel indexConfiguration, Dictionary<string, Type> strategies)
     {
         Identifier = indexConfiguration.Id;
-        collectionName = indexConfiguration.collectionName;
+        collectionName = indexConfiguration.CollectionName;
         WebSiteChannelName = indexConfiguration.ChannelName;
         LanguageNames = indexConfiguration.LanguageNames.ToList();
         IncludedPaths = indexConfiguration.Paths;

@@ -69,15 +69,23 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
     /// <inheritdoc/>
     public async Task<ICollection<TypesenseCollectionStatisticsViewModel>> GetStatistics(CancellationToken cancellationToken)
     {
-        var stats = await searchClient.RetrieveCollections(cancellationToken);
-
-        return stats.Select(i => new TypesenseCollectionStatisticsViewModel
+        try
         {
-            Name = i.Name,
-            NumberOfDocuments = i.NumberOfDocuments,
-            UpdatedAt = DateTime.Now // TODO : Change it to the actual value and add extra stats
-        })
-        .ToList();
+            var stats = await searchClient.RetrieveCollections(cancellationToken);
+
+            return stats.Select(i => new TypesenseCollectionStatisticsViewModel
+            {
+                Name = i.Name,
+                NumberOfDocuments = i.NumberOfDocuments,
+                UpdatedAt = DateTime.Now // TODO : Change it to the actual value and add extra stats
+            })
+            .ToList();
+        }
+        catch (Exception ex)
+        {
+            eventLogService.LogException($"{nameof(DefaultTypesenseClient)} - {nameof(GetStatistics)}", "Cannot get the statistics from typesense", ex);
+            throw;
+        }
     }
 
     /// <inheritdoc />

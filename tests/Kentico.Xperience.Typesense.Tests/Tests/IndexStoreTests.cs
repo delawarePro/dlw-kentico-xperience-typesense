@@ -47,15 +47,15 @@ internal class CollectionStoreTests : UnitTests
     [Test]
     public void SetIndicies()
     {
-        var defaultCollection = new TypesenseConfigurationModel { collectionName = "DefaultCollection", Id = 0 };
-        var simpleCollection = new TypesenseConfigurationModel { collectionName = "SimpleCollection", Id = 1 };
+        var defaultCollection = new TypesenseConfigurationModel { CollectionName = "DefaultCollection", Id = 0 };
+        var simpleCollection = new TypesenseConfigurationModel { CollectionName = "SimpleCollection", Id = 1 };
 
         TypesenseCollectionStore.Instance.SetIndicies(new List<TypesenseConfigurationModel>() { defaultCollection, simpleCollection });
 
         Assert.Multiple(() =>
         {
-            Assert.That(TypesenseCollectionStore.Instance.GetCollection(defaultCollection.collectionName) is not null);
-            Assert.That(TypesenseCollectionStore.Instance.GetCollection(simpleCollection.collectionName) is not null);
+            Assert.That(TypesenseCollectionStore.Instance.GetCollection(defaultCollection.CollectionName) is not null);
+            Assert.That(TypesenseCollectionStore.Instance.GetCollection(simpleCollection.CollectionName) is not null);
         });
     }
 

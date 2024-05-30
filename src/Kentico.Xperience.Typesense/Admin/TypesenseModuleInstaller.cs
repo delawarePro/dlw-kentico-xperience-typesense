@@ -114,7 +114,14 @@ internal class TypesenseModuleInstaller
 
         if (info.HasChanged)
         {
-            DataClassInfoProvider.SetDataClassInfo(info);
+            try
+            {
+                DataClassInfoProvider.SetDataClassInfo(info);
+            }
+            catch (Exception ex)
+            {
+                //TODO : Investigate the issue here
+            }
         }
     }
 
@@ -170,7 +177,14 @@ internal class TypesenseModuleInstaller
 
         if (info.HasChanged)
         {
-            DataClassInfoProvider.SetDataClassInfo(info);
+            try
+            {
+                DataClassInfoProvider.SetDataClassInfo(info);
+            }
+            catch (Exception ex)
+            {
+                //TODO : Investigate the issue here
+            }
         }
     }
 
@@ -227,7 +241,14 @@ internal class TypesenseModuleInstaller
 
         if (info.HasChanged)
         {
-            DataClassInfoProvider.SetDataClassInfo(info);
+            try
+            {
+                DataClassInfoProvider.SetDataClassInfo(info);
+            }
+            catch (Exception ex)
+            {
+                //TODO : Investigate the issue here
+            }
         }
     }
 
@@ -298,7 +319,14 @@ internal class TypesenseModuleInstaller
 
         if (info.HasChanged)
         {
-            DataClassInfoProvider.SetDataClassInfo(info);
+            try
+            {
+                DataClassInfoProvider.SetDataClassInfo(info);
+            }
+            catch (Exception ex)
+            {
+                //TODO : Investigate the issue here
+            }
         }
     }
 

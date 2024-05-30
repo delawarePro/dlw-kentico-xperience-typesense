@@ -39,7 +39,7 @@ internal class DefaultTypesenseConfigurationStorageService : ITypesenseConfigura
     public bool TryCreateCollection(TypesenseConfigurationModel configuration)
     {
         var existingCollection = indexProvider.Get()
-            .WhereEquals(nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemcollectionName), configuration.collectionName)
+            .WhereEquals(nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemcollectionName), configuration.CollectionName)
             .TopN(1)
             .FirstOrDefault();
 
@@ -50,7 +50,7 @@ internal class DefaultTypesenseConfigurationStorageService : ITypesenseConfigura
 
         var newInfo = new TypesenseCollectionItemInfo()
         {
-            TypesenseCollectionItemcollectionName = configuration.collectionName ?? "",
+            TypesenseCollectionItemcollectionName = configuration.CollectionName ?? "",
             TypesenseCollectionItemChannelName = configuration.ChannelName ?? "",
             TypesenseCollectionItemStrategyName = configuration.StrategyName ?? "",
             TypesenseCollectionItemRebuildHook = configuration.RebuildHook ?? ""
@@ -165,7 +165,7 @@ internal class DefaultTypesenseConfigurationStorageService : ITypesenseConfigura
     }
     public bool TryEditCollection(TypesenseConfigurationModel configuration)
     {
-        configuration.collectionName = RemoveWhitespacesUsingStringBuilder(configuration.collectionName ?? "");
+        configuration.CollectionName = RemoveWhitespacesUsingStringBuilder(configuration.CollectionName ?? "");
 
         var indexInfo = indexProvider.Get()
             .WhereEquals(nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemId), configuration.Id)
@@ -184,7 +184,7 @@ internal class DefaultTypesenseConfigurationStorageService : ITypesenseConfigura
         indexInfo.TypesenseCollectionItemRebuildHook = configuration.RebuildHook ?? "";
         indexInfo.TypesenseCollectionItemStrategyName = configuration.StrategyName ?? "";
         indexInfo.TypesenseCollectionItemChannelName = configuration.ChannelName ?? "";
-        indexInfo.TypesenseCollectionItemcollectionName = configuration.collectionName ?? "";
+        indexInfo.TypesenseCollectionItemcollectionName = configuration.CollectionName ?? "";
 
         indexProvider.Set(indexInfo);
 

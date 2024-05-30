@@ -27,7 +27,7 @@ internal static class MockDataProvider
     public static TypesenseCollection Collection => new(
         new TypesenseConfigurationModel()
         {
-            collectionName = DefaultCollection,
+            CollectionName = DefaultCollection,
             ChannelName = DefaultChannel,
             LanguageNames = new List<string>() { EnglishLanguageName, CzechLanguageName },
             Paths = new List<TypesenseCollectionIncludedPath>() { Path },
@@ -47,7 +47,7 @@ internal static class MockDataProvider
         new TypesenseConfigurationModel()
         {
             Id = id,
-            collectionName = collectionName,
+            CollectionName = collectionName,
             ChannelName = DefaultChannel,
             LanguageNames = new List<string>() { EnglishLanguageName, CzechLanguageName },
             Paths = new List<TypesenseCollectionIncludedPath>() { Path }
