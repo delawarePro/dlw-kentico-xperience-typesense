@@ -73,7 +73,7 @@ public class Tests : UnitTests
         var sut = GetDefaultCollectionEventWebPageItemModel();
         sut.ContentTypeName = paths.First().ContentTypes[0] + "-abc";
 
-        sut.IsCollectionedByCollection(log, index.collectionName, "event").Should().BeFalse();
+        sut.IsCollectionedByCollection(log, index.CollectionName, "event").Should().BeFalse();
     }
 
     [Test]
@@ -113,8 +113,8 @@ public class Tests : UnitTests
         sut.ContentTypeName = contentTypes[0];
         sut.WebPageItemTreePath = exactPaths.First().AliasPath + "/abc";
 
-        sut.IsCollectionedByCollection(log, index1.collectionName, "event").Should().BeFalse();
-        sut.IsCollectionedByCollection(log, index2.collectionName, "event").Should().BeFalse();
+        sut.IsCollectionedByCollection(log, index1.CollectionName, "event").Should().BeFalse();
+        sut.IsCollectionedByCollection(log, index2.CollectionName, "event").Should().BeFalse();
     }
 
     [Test]
@@ -155,8 +155,8 @@ public class Tests : UnitTests
         sut.ContentTypeName = contentTypes[0].ContentTypeName;
         sut.WebPageItemTreePath = exactPaths.First().AliasPath;
 
-        sut.IsCollectionedByCollection(log, index1.collectionName, "event").Should().BeTrue();
-        sut.IsCollectionedByCollection(log, index2.collectionName, "event").Should().BeTrue();
+        sut.IsCollectionedByCollection(log, index1.CollectionName, "event").Should().BeTrue();
+        sut.IsCollectionedByCollection(log, index2.CollectionName, "event").Should().BeTrue();
     }
 
     [TearDown]

@@ -97,7 +97,7 @@ internal class CollectionListingPage : ListingPage
             {
                 TypesenseCollectionStore.SetIndicies(configurationStorageService);
 
-                await xperienceTypesenseClient.DeleteCollection(index.collectionName, cancellationToken);
+                await xperienceTypesenseClient.DeleteCollection(index.CollectionName, cancellationToken);
             }
             else
             {
@@ -111,7 +111,7 @@ internal class CollectionListingPage : ListingPage
         {
             EventLogService.LogException(nameof(CollectionListingPage), nameof(Delete), ex);
             return response
-               .AddErrorMessage(string.Format("Errors occurred while deleting the '{0}' index. Please check the Event Log for more details.", index.collectionName));
+               .AddErrorMessage(string.Format("Errors occurred while deleting the '{0}' index. Please check the Event Log for more details.", index.CollectionName));
         }
     }
 
@@ -134,7 +134,7 @@ internal class CollectionListingPage : ListingPage
 
         try
         {
-            await xperienceTypesenseClient.Rebuild(index.collectionName, cancellationToken);
+            await xperienceTypesenseClient.Rebuild(index.CollectionName, cancellationToken);
             return ResponseFrom(result)
                  .AddSuccessMessage("Collectioning in progress. Visit your Typesense dashboard for details about the indexing process.");
         }
@@ -142,7 +142,7 @@ internal class CollectionListingPage : ListingPage
         {
             EventLogService.LogException(nameof(CollectionListingPage), nameof(Rebuild), ex);
             return ResponseFrom(result)
-               .AddErrorMessage(string.Format("Errors occurred while rebuilding the '{0}' index. Please check the Event Log for more details.", index.collectionName));
+               .AddErrorMessage(string.Format("Errors occurred while rebuilding the '{0}' index. Please check the Event Log for more details.", index.CollectionName));
         }
     }
 
@@ -150,7 +150,7 @@ internal class CollectionListingPage : ListingPage
     {
         int indexID = conversionService.GetInteger(row.Identifier, 0);
         string collectionName = TypesenseCollectionStore.Instance.GetCollection(indexID) is TypesenseCollection index
-            ? index.collectionName
+            ? index.CollectionName
             : "";
 
         return statistics.FirstOrDefault(s => string.Equals(s.Name, collectionName, StringComparison.OrdinalIgnoreCase));
@@ -203,7 +203,7 @@ internal class CollectionListingPage : ListingPage
 
     private static void AddMissingStatistics(ref ICollection<TypesenseCollectionStatisticsViewModel> statistics)
     {
-        foreach (string collectionName in TypesenseCollectionStore.Instance.GetAllIndices().Select(i => i.collectionName))
+        foreach (string collectionName in TypesenseCollectionStore.Instance.GetAllIndices().Select(i => i.CollectionName))
         {
             if (!statistics.Any(stat => stat.Name?.Equals(collectionName, StringComparison.OrdinalIgnoreCase) ?? false))
             {

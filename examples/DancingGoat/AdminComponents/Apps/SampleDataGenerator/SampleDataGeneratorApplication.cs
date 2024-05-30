@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using CMS.Base;
-using CMS.ContactManagement;
+using CMS.ContactManagement; 
 using CMS.Core;
 using CMS.DataEngine;
 using CMS.DataProtection;

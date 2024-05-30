@@ -85,7 +85,42 @@ internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
 
         var typesenseStrategy = serviceProvider.GetRequiredStrategy(typesenseCollection);
         var data = await typesenseStrategy.MapToTypesenseObjectsOrNull(queueItem.ItemToCollection);
+        if (data is not null)
+        {
+            foreach (var item in data)
+            {
+                await AddBaseProperties(queueItem.ItemToCollection, item);
+            }
+        }
+
         return data;
+    }
+
+    private async Task AddBaseProperties(ICollectionEventItemModel baseItem, TypesenseSearchResultModel item)
+    {
+        if (item is not null && baseItem is not null)
+        {
+            item.ItemGuid = baseItem.ItemGuid;
+            item.ContentTypeName = baseItem.ContentTypeName;
+            item.ObjectID = baseItem.ItemGuid.ToString();
+            item.LanguageName = baseItem.LanguageName;
+
+            if (baseItem is CollectionEventWebPageItemModel webpageItem && string.IsNullOrEmpty(item.Url))
+            {
+                try
+                {
+                    item.Url = (await urlRetriever.Retrieve(webpageItem.WebPageItemTreePath, webpageItem.WebsiteChannelName, webpageItem.LanguageName)).RelativePath;
+                }
+                catch (Exception)
+                {
+                    // Retrieve can throw an exception when processing a page update TypesenseQueueItem
+                    // and the page was deleted before the update task has processed. In this case, upsert an
+                    // empty URL
+                    item.Url = string.Empty;
+                }
+            }
+        }
+
     }
 
     private static IEnumerable<string?> GetIdsToDelete(IEnumerable<TypesenseQueueItem> deleteTasks) => deleteTasks.Select(queueItem => queueItem.ItemToCollection.ItemGuid.ToString());

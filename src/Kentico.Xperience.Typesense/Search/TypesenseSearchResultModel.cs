@@ -1,27 +1,21 @@
-﻿using CMS.ContentEngine;
+﻿using System.Text.Json.Serialization;
 
 namespace Kentico.Xperience.Typesense.Search;
 
 public class TypesenseSearchResultModel
 {
+    [JsonPropertyName("ItemGuid")]
     public Guid ItemGuid { get; set; }
+    [JsonPropertyName("ContentTypeName")]
     public string ContentTypeName { get; set; } = "";
+    [JsonPropertyName("LanguageName")]
     public string LanguageName { get; set; } = "";
+    [JsonPropertyName("objectID")]
     public string ObjectID { get; set; } = "";
+    [JsonPropertyName("Url")]
     public string Url { get; set; } = "";
 
     public TypesenseSearchResultModel()
     {
-    }
-
-    public TypesenseSearchResultModel(IContentItemFieldsSource contentItemFieldsSource)
-    {
-        ItemGuid = contentItemFieldsSource.SystemFields.ContentItemGUID;
-        ObjectID = contentItemFieldsSource.SystemFields.ContentItemID.ToString();
-
-        //TODO : ContentTypename
-        //TODO : LanguageName
-        //TODO : Url
-
     }
 }

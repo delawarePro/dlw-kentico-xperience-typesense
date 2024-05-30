@@ -28,7 +28,7 @@ internal class DefaultTypesenseTaskLogger : ITypesenseTaskLogger
 
         foreach (var typesenseCollection in TypesenseCollectionStore.Instance.GetAllIndices())
         {
-            if (!webpageItem.IsCollectionedByCollection(eventLogService, typesenseCollection.collectionName, eventName))
+            if (!webpageItem.IsCollectionedByCollection(eventLogService, typesenseCollection.CollectionName, eventName))
             {
                 continue;
             }
@@ -47,11 +47,11 @@ internal class DefaultTypesenseTaskLogger : ITypesenseTaskLogger
                         {
                             if (taskType == TypesenseTaskType.DELETE)
                             {
-                                LogCollectionTask(new TypesenseQueueItem(item, TypesenseTaskType.DELETE, typesenseCollection.collectionName));
+                                LogCollectionTask(new TypesenseQueueItem(item, TypesenseTaskType.DELETE, typesenseCollection.CollectionName));
                             }
                             else
                             {
-                                LogCollectionTask(new TypesenseQueueItem(item, TypesenseTaskType.UPDATE, typesenseCollection.collectionName));
+                                LogCollectionTask(new TypesenseQueueItem(item, TypesenseTaskType.UPDATE, typesenseCollection.CollectionName));
                             }
                         }
                     }
@@ -64,7 +64,7 @@ internal class DefaultTypesenseTaskLogger : ITypesenseTaskLogger
     {
         foreach (var typesenseCollection in TypesenseCollectionStore.Instance.GetAllIndices())
         {
-            if (!reusableItem.IsCollectionedByCollection(eventLogService, typesenseCollection.collectionName, eventName))
+            if (!reusableItem.IsCollectionedByCollection(eventLogService, typesenseCollection.CollectionName, eventName))
             {
                 continue;
             }
@@ -76,7 +76,7 @@ internal class DefaultTypesenseTaskLogger : ITypesenseTaskLogger
             {
                 foreach (var item in toReindex)
                 {
-                    LogCollectionTask(new TypesenseQueueItem(item, TypesenseTaskType.UPDATE, typesenseCollection.collectionName));
+                    LogCollectionTask(new TypesenseQueueItem(item, TypesenseTaskType.UPDATE, typesenseCollection.CollectionName));
                 }
             }
         }

@@ -34,7 +34,7 @@ public sealed class TypesenseCollectionStore
             return null;
         }
 
-        return registeredCollectiones.SingleOrDefault(i => i.collectionName.Equals(collectionName, StringComparison.OrdinalIgnoreCase));
+        return registeredCollectiones.SingleOrDefault(i => i.CollectionName.Equals(collectionName, StringComparison.OrdinalIgnoreCase));
     }
 
     /// <summary>
@@ -59,7 +59,7 @@ public sealed class TypesenseCollectionStore
             throw new ArgumentException("Value must not be null or empty");
         }
 
-        return registeredCollectiones.SingleOrDefault(i => i.collectionName.Equals(collectionName, StringComparison.OrdinalIgnoreCase))
+        return registeredCollectiones.SingleOrDefault(i => i.CollectionName.Equals(collectionName, StringComparison.OrdinalIgnoreCase))
             ?? throw new InvalidOperationException($"The index '{collectionName}' is not registered.");
     }
 
@@ -76,9 +76,9 @@ public sealed class TypesenseCollectionStore
             throw new ArgumentNullException(nameof(index));
         }
 
-        if (registeredCollectiones.Exists(i => i.collectionName.Equals(index.collectionName, StringComparison.OrdinalIgnoreCase) || index.Identifier == i.Identifier))
+        if (registeredCollectiones.Exists(i => i.CollectionName.Equals(index.CollectionName, StringComparison.OrdinalIgnoreCase) || index.Identifier == i.Identifier))
         {
-            throw new InvalidOperationException($"Attempted to register Typesense index with identifer [{index.Identifier}] and name [{index.collectionName}] but it is already registered.");
+            throw new InvalidOperationException($"Attempted to register Typesense index with identifer [{index.Identifier}] and name [{index.CollectionName}] but it is already registered.");
         }
 
         registeredCollectiones.Add(index);

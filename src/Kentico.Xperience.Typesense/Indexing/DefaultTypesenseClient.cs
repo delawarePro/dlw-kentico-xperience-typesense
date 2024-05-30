@@ -135,7 +135,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         Parallel.ForEach(objectIds.Chunk(20), async page =>
         {
             string idsToDelete = string.Join(",", page);
-            var batchCollectioningResponse = await searchClient.DeleteDocuments(collectionName, $"filter_by={BaseObjectProperties.OBJECT_ID}:[{idsToDelete}]");
+            var batchCollectioningResponse = await searchClient.DeleteDocuments(collectionName, $"{BaseObjectProperties.OBJECT_ID}:[{idsToDelete}]");
             Interlocked.Add(ref deletedCount, batchCollectioningResponse.NumberOfDeleted);
         });
 
@@ -169,9 +169,9 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
                 }
             }
         }
-        await searchClient.DeleteDocuments(typesenseCollection.collectionName, $"filter_by={BaseObjectProperties.OBJECT_ID}: &gt;= 0");
+        await searchClient.DeleteDocuments(typesenseCollection.CollectionName, $"{BaseObjectProperties.OBJECT_ID}: &gt;= 0");
 
-        indexedItems.ForEach(node => TypesenseQueueWorker.EnqueueTypesenseQueueItem(new TypesenseQueueItem(node, TypesenseTaskType.PUBLISH_INDEX, typesenseCollection.collectionName)));
+        indexedItems.ForEach(node => TypesenseQueueWorker.EnqueueTypesenseQueueItem(new TypesenseQueueItem(node, TypesenseTaskType.PUBLISH_INDEX, typesenseCollection.CollectionName)));
     }
 
     private async Task<CollectionEventWebPageItemModel> MapToEventItem(IWebPageContentQueryDataContainer content)
@@ -195,7 +195,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
             content.ContentItemCommonDataContentLanguageID,
             channelName,
             content.WebPageItemTreePath,
-            content.WebPageItemParentID,
+            content.WebPageItemTreePath.Skip(1).Contains('/') ? content.WebPageItemParentID : 0, //the Skip contains avoid excepion on root node
             content.WebPageItemOrder,
             string.Empty // TODO : Add URL
             );
@@ -206,7 +206,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
     private async Task<int> UpsertRecordsInternal(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, CancellationToken cancellationToken)
     {
         int upsertedCount = 0;
-        await typesenseCollectionService.InitializeCollection(collectionName, cancellationToken);
+        //await typesenseCollectionService.InitializeCollection(collectionName, cancellationToken);
 
         foreach (var item in dataObjects) //TODO : Test in parralele mode but be carrefull about the counter
         {

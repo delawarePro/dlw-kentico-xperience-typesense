@@ -15,7 +15,7 @@ public sealed class TypesenseCollection
     /// <summary>
     /// The code name of the Typesense index.
     /// </summary>
-    public string collectionName { get; }
+    public string CollectionName { get; }
 
     /// <summary>
     /// The Name of the WebSiteChannel.
@@ -37,7 +37,7 @@ public sealed class TypesenseCollection
     internal TypesenseCollection(TypesenseConfigurationModel indexConfiguration, Dictionary<string, Type> strategies)
     {
         Identifier = indexConfiguration.Id;
-        collectionName = indexConfiguration.CollectionName;
+        CollectionName = indexConfiguration.CollectionName;
         WebSiteChannelName = indexConfiguration.ChannelName;
         LanguageNames = indexConfiguration.LanguageNames.ToList();
         IncludedPaths = indexConfiguration.Paths;

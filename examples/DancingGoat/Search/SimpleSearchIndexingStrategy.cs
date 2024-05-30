@@ -12,10 +12,6 @@ public class SimpleSearchIndexingStrategy : DefaultTypesenseCollectionStrategy
     public class SimpleSearchResultModel : TypesenseSearchResultModel
     {
         public string Title { get; set; }
-
-        public SimpleSearchResultModel(IContentItemFieldsSource contentItemFieldsSource) : base(contentItemFieldsSource)
-        {
-        }
     }
 
     private readonly IWebPageQueryResultMapper webPageMapper;
@@ -56,12 +52,30 @@ public class SimpleSearchIndexingStrategy : DefaultTypesenseCollectionStrategy
                     return null;
                 }
 
-                result.Add(new SimpleSearchResultModel(page)
+                result.Add(new SimpleSearchResultModel()
                 {
                     Title = page!.HomePageBanner.First().BannerHeaderText
                 });
 
 
+            }
+            else if (string.Equals(typesensePageItem.ContentTypeName, ArticlePage.CONTENT_TYPE_NAME, StringComparison.OrdinalIgnoreCase))
+            {
+                var page = await GetPage<ArticlePage>(
+                    indexedPage.ItemGuid,
+                    indexedPage.WebsiteChannelName,
+                    indexedPage.LanguageName,
+                    ArticlePage.CONTENT_TYPE_NAME);
+
+                if (page is null)
+                {
+                    return null;
+                }
+
+                result.Add(new SimpleSearchResultModel()
+                {
+                    Title = page!.ArticleTitle
+                });
             }
             else
             {
