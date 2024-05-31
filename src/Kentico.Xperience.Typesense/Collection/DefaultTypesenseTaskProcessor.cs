@@ -5,7 +5,7 @@ using Kentico.Xperience.Typesense.Search;
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Kentico.Xperience.Typesense.Collectioning;
+namespace Kentico.Xperience.Typesense.Collection;
 
 internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
 {

@@ -1,6 +1,6 @@
 ﻿using Kentico.Xperience.Typesense.Admin;
 
-namespace Kentico.Xperience.Typesense.Collectioning;
+namespace Kentico.Xperience.Typesense.Collection;
 
 /// <summary>
 /// Represents a store of Typesense indexes and crawlers.

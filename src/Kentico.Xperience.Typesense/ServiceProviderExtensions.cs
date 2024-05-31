@@ -1,4 +1,4 @@
-using Kentico.Xperience.Typesense.Collectioning;
+using Kentico.Xperience.Typesense.Collection;
 
 namespace Microsoft.Extensions.DependencyInjection;
 

@@ -2,10 +2,10 @@
 using CMS.Tests;
 
 using DancingGoat.Models;
-
 using Kentico.Xperience.Typesense.Admin;
-using Kentico.Xperience.Typesense.Collectioning;
 using Kentico.Xperience.Typesense.Tests.Base;
+using Kentico.Xperience.Typesense.Collection;
+
 namespace Kentico.Xperience.Typesense.Tests.Tests;
 
 internal class CollectionedItemModelExtensionsTests : UnitTests

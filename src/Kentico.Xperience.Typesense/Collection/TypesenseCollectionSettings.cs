@@ -1,6 +1,6 @@
 ﻿using Typesense;
 
-namespace Kentico.Xperience.Typesense.Indexing;
+namespace Kentico.Xperience.Typesense.Collection;
 
 public class TypesenseCollectionSettings : ITypesenseCollectionSettings
 {
@@ -24,9 +24,18 @@ public class TypesenseCollectionSettings : ITypesenseCollectionSettings
                                {
                                    Facet = f.Facet,
                                    Index = f.Index,
-                                   Infix = f.Infix
-                               }).ToList().AsReadOnly();
-        //TODO : Handle the drop fields
+                                   Infix = f.Infix,
+                                   Embed = f.Embed,
+                                   Name = f.Name,
+                                   Locale = f.Locale,
+                                   NumberOfDimensions = f.NumberOfDimensions,
+                                   Optional = f.Optional,
+                                   Reference = f.Reference,
+                                   Sort = f.Sort,
+                                   Type = f.Type
+                               })
+                               .ToList()
+                               .AsReadOnly();
 
         return new UpdateSchema(readoOnlyFields);
     }

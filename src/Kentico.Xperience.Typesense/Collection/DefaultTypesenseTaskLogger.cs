@@ -2,7 +2,7 @@
 using CMS.Websites;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Kentico.Xperience.Typesense.Collectioning;
+namespace Kentico.Xperience.Typesense.Collection;
 
 /// <summary>
 /// Default implementation of <see cref="ITypesenseTaskLogger"/>.

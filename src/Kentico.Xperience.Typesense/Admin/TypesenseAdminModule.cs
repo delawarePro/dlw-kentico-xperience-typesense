@@ -4,7 +4,7 @@ using CMS.Core;
 
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Typesense.Admin;
-using Kentico.Xperience.Typesense.Collectioning;
+using Kentico.Xperience.Typesense.Collection;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;

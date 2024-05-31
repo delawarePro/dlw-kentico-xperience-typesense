@@ -1,7 +1,7 @@
 ﻿using CMS.ContentEngine.Internal;
 using CMS.Core;
 
-namespace Kentico.Xperience.Typesense.Collectioning;
+namespace Kentico.Xperience.Typesense.Collection;
 
 /// <summary>
 /// Typesense extension methods for the <see cref="CollectionEventWebPageItemModel"/> class.

@@ -1,4 +1,4 @@
-namespace Kentico.Xperience.Typesense.Collectioning;
+namespace Kentico.Xperience.Typesense.Collection;
 
 /// <summary>
 /// Initializes <see cref="ISearchCollection" /> instances.

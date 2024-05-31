@@ -9,7 +9,7 @@ using Kentico.Xperience.Typesense.Search;
 
 using Typesense;
 
-namespace Kentico.Xperience.Typesense.Collectioning;
+namespace Kentico.Xperience.Typesense.Collection;
 
 /// <summary>
 /// Default implementation of <see cref="IXperienceTypesenseClient"/>.

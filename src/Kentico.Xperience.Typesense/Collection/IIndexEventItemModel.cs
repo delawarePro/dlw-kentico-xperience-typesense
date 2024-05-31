@@ -1,7 +1,7 @@
 ﻿using CMS.ContentEngine;
 using CMS.Websites;
 
-namespace Kentico.Xperience.Typesense.Collectioning;
+namespace Kentico.Xperience.Typesense.Collection;
 
 /// <summary>
 /// Abstraction of different types of events generated from content modifications

@@ -2,7 +2,7 @@ using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Search;
 
 
-namespace Kentico.Xperience.Typesense.Collectioning;
+namespace Kentico.Xperience.Typesense.Collection;
 
 /// <summary>
 /// Contains methods to interface with the Typesense API.

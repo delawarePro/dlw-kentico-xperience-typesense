@@ -1,4 +1,4 @@
-﻿namespace Kentico.Xperience.Typesense.Collectioning;
+﻿namespace Kentico.Xperience.Typesense.Collection;
 
 /// <summary>
 /// Represents the type of an <see cref="TypesenseQueueItem"/>.

@@ -1,4 +1,4 @@
-﻿namespace Kentico.Xperience.Typesense.Collectioning;
+﻿namespace Kentico.Xperience.Typesense.Collection;
 
 /// <summary>
 /// A queued item to be processed by <see cref="TypesenseQueueWorker"/> which

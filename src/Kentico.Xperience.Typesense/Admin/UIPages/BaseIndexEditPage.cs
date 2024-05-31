@@ -2,7 +2,7 @@
 
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.Forms;
-using Kentico.Xperience.Typesense.Collectioning;
+using Kentico.Xperience.Typesense.Collection;
 
 using IFormItemCollectionProvider = Kentico.Xperience.Admin.Base.Forms.Internal.IFormItemCollectionProvider;
 

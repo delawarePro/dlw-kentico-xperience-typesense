@@ -1,6 +1,5 @@
-﻿using Kentico.Xperience.Typesense.Indexing;
-using Kentico.Xperience.Typesense.Search;
-namespace Kentico.Xperience.Typesense.Collectioning;
+﻿using Kentico.Xperience.Typesense.Search;
+namespace Kentico.Xperience.Typesense.Collection;
 
 public interface ITypesenseCollectionStrategy
 {
@@ -9,7 +8,7 @@ public interface ITypesenseCollectionStrategy
     /// </summary>
     /// <param name="typesensePageItem">The <see cref="ICollectionEventItemModel"/> currently being indexed.</param>
     /// <returns>Modified Typesense document.</returns>
-    Task<IEnumerable<TypesenseSearchResultModel>?> MapToTypesenseObjectsOrNull(ICollectionEventItemModel typesensePageItem);
+    Collection.Task<IEnumerable<TypesenseSearchResultModel>?> MapToTypesenseObjectsOrNull(ICollectionEventItemModel typesensePageItem);
 
     ITypesenseCollectionSettings GetTypesenseCollectionSettings();
 

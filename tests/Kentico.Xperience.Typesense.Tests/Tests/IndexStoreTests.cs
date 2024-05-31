@@ -1,7 +1,7 @@
 ﻿using CMS.Tests;
 
 using Kentico.Xperience.Typesense.Admin;
-using Kentico.Xperience.Typesense.Collectioning;
+using Kentico.Xperience.Typesense.Collection;
 using Kentico.Xperience.Typesense.Tests.Base;
 
 namespace Kentico.Xperience.Typesense.Tests.Tests;

@@ -1,6 +1,6 @@
 # Scraping web page content
 
-Below is an example of how you can create a web page scraper to index the content of a web page item that might be rendered
+Below is an example of how you can create a web page scraper to collection the content of a web page item that might be rendered
 using the Page Builder or related content.
 
 > Your `HttpClient.BaseAddress` needs to match the web page item's website channel baseUrl. In this example, the crawler only supports 1 website channel with a base URL stored in `appsettings.json`. You can extend this to pull this value dynamically from the channel settings of the solution. See `DefaultAlgoliaClient.GetAllWebsiteChannels` for an example query.
@@ -148,12 +148,12 @@ services.AddSingleton<WebScraperHtmlSanitizer>();
 services.AddHttpClient<WebCrawlerService>();
 ```
 
-## Customize the indexing strategy
+## Customize the collectioning strategy
 
-Now, use the services in your custom strategy to add the scraped content to the index:
+Now, use the services in your custom strategy to add the scraped content to the collection:
 
 ```csharp
-// ExampleSearchIndexingStrategy.cs
+// ExampleSearchcollectioningStrategy.cs
 
 private const string CRAWLER_CONTENT_FIELD_NAME = "Content";
 
@@ -162,7 +162,7 @@ private readonly IContentQueryExecutor queryExecutor;
 private readonly WebScraperHtmlSanitizer htmlSanitizer;
 private readonly WebCrawlerService webCrawler;
 
-public ExampleSearchIndexingStrategy(
+public ExampleSearchcollectioningStrategy(
     IWebPageQueryResultMapper webPageMapper,
     IContentQueryExecutor queryExecutor,
     WebScraperHtmlSanitizer htmlSanitizer,
@@ -175,14 +175,14 @@ public ExampleSearchIndexingStrategy(
     this.webCrawler = webCrawler;
 }
 
-public override async Task<IEnumerable<JObject>> MapToAlgoliaJObjectsOrNull(IIndexEventItemModel algoliaPageItem)
+public override async Task<IEnumerable<JObject>> MapToAlgoliaJObjectsOrNull(IcollectionEventItemModel algoliaPageItem)
 {
     // ...
 
     string content = "";
 
-    if (item is IndexEventWebPageItemModel webpageItem &&
-        string.Equals(indexedModel.ContentTypeName, ArticlePage.CONTENT_TYPE_NAME, StringComparison.OrdinalIgnorecase))
+    if (item is collectionEventWebPageItemModel webpageItem &&
+        string.Equals(collectionedModel.ContentTypeName, ArticlePage.CONTENT_TYPE_NAME, StringComparison.OrdinalIgnorecase))
     {
         // ...
 

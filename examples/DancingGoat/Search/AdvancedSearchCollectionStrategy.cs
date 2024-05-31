@@ -6,13 +6,13 @@ using DancingGoat.Models;
 using Microsoft.IdentityModel.Tokens;
 
 using DancingGoat.Search.Services;
+using Kentico.Xperience.Typesense.Collection;
 using DancingGoat.Search.Models;
-using Kentico.Xperience.Typesense.Collectioning;
 using Kentico.Xperience.Typesense.Search;
 
 namespace DancingGoat.Search;
 
-public class AdvancedSearchIndexingStrategy : DefaultTypesenseCollectionStrategy
+public class AdvancedSearchCollectionStrategy : DefaultTypesenseCollectionStrategy
 {
     private readonly IWebPageQueryResultMapper webPageMapper;
     private readonly IContentQueryExecutor queryExecutor;
@@ -21,7 +21,7 @@ public class AdvancedSearchIndexingStrategy : DefaultTypesenseCollectionStrategy
 
     public const string INDEXED_WEBSITECHANNEL_NAME = "DancingGoatPages";
 
-    public AdvancedSearchIndexingStrategy(
+    public AdvancedSearchCollectionStrategy(
         IWebPageQueryResultMapper webPageMapper,
         IContentQueryExecutor queryExecutor,
         WebScraperHtmlSanitizer htmlSanitizer,
@@ -34,7 +34,7 @@ public class AdvancedSearchIndexingStrategy : DefaultTypesenseCollectionStrategy
         this.webCrawler = webCrawler;
     }
 
-    public AdvancedSearchIndexingStrategy()
+    public AdvancedSearchCollectionStrategy()
     {
     }
 
@@ -42,7 +42,7 @@ public class AdvancedSearchIndexingStrategy : DefaultTypesenseCollectionStrategy
     {
         var resultProperties = new DancingGoatSearchResultModel();
 
-        // IIndexEventItemModel could be a reusable content item or a web page item, so we use
+        // ICollectionEventItemModel could be a reusable content item or a web page item, so we use
         // pattern matching to get access to the web page item specific type and fields
         if (typesensePageItem is CollectionEventWebPageItemModel indexedPage)
         {
@@ -128,7 +128,7 @@ public class AdvancedSearchIndexingStrategy : DefaultTypesenseCollectionStrategy
 
             foreach (var articlePage in result)
             {
-                // This will be a IIndexEventItemModel passed to our MapToAlgoliaDocumentOrNull method above
+                // This will be a ICollectionEventItemModel passed to our MapToAlgoliaDocumentOrNull method above
                 reindexedItems.Add(new CollectionEventWebPageItemModel(
                     articlePage.SystemFields.WebPageItemID,
                     articlePage.SystemFields.WebPageItemGUID,

@@ -1,5 +1,5 @@
 ﻿using Kentico.Xperience.Admin.Base.FormAnnotations;
-using Kentico.Xperience.Typesense.Collectioning;
+using Kentico.Xperience.Typesense.Collection;
 
 namespace Kentico.Xperience.Typesense.Admin;
 

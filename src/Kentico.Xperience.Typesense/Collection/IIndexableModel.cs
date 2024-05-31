@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kentico.Xperience.TypeSense.Indexing;
-public interface IIndexableModel
+namespace Kentico.Xperience.Typesense.Collection;
+public interface ICollectionableModel
 {
     public Guid ItemGuid { get; set; }
     public string ContentTypeName { get; set; }

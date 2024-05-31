@@ -1,5 +1,5 @@
 ﻿using Kentico.Xperience.Typesense.Admin;
-using Kentico.Xperience.Typesense.Collectioning;
+using Kentico.Xperience.Typesense.Collection;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,9 +26,9 @@ public static class TypesenseStartupExtensions
 
         bool isConfigured = false;
 
-        var nodeOptions = typesenseOptions.Single(x => x.Key == nameof(TypesenseOptions.Node));
+        var nodeOptions = typesenseOptions.Single(x => x.Key == nameof(Collection.TypesenseOptions.Node));
 
-        if (typesenseOptions.Single(x => x.Key == nameof(TypesenseOptions.ApiKey)).Value != ""
+        if (typesenseOptions.Single(x => x.Key == nameof(Collection.TypesenseOptions.ApiKey)).Value != ""
             && nodeOptions != null
             && nodeOptions.GetChildren().Single(x => x.Key == nameof(NodeOptions.Host)).Value != ""
             && nodeOptions.GetChildren().Single(x => x.Key == nameof(NodeOptions.Protocol)).Value != ""
@@ -138,7 +138,7 @@ public interface ITypesenseBuilder
     ///     Thrown if an strategy has already been registered with the given <paramref name="strategyName"/>
     /// </exception>
     /// <returns></returns>
-    ITypesenseBuilder RegisterStrategy<TStrategy>(string strategyName) where TStrategy : class, ITypesenseCollectionStrategy;
+    Collection.ITypesenseBuilder RegisterStrategy<TStrategy>(string strategyName) where TStrategy : class, ITypesenseCollectionStrategy;
 }
 
 internal class TypesenseBuilder : ITypesenseBuilder

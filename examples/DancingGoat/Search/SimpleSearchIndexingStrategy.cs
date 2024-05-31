@@ -1,13 +1,13 @@
 ﻿using CMS.ContentEngine;
 using CMS.Websites;
 using DancingGoat.Models;
+using Kentico.Xperience.Typesense.Collection;
 using Microsoft.IdentityModel.Tokens;
-using Kentico.Xperience.Typesense.Collectioning;
 using Kentico.Xperience.Typesense.Search;
 
 namespace DancingGoat.Search;
 
-public class SimpleSearchIndexingStrategy : DefaultTypesenseCollectionStrategy
+public class SimpleSearchCollectionStrategy : DefaultTypesenseCollectionStrategy
 {
     public class SimpleSearchResultModel : TypesenseSearchResultModel
     {
@@ -17,7 +17,7 @@ public class SimpleSearchIndexingStrategy : DefaultTypesenseCollectionStrategy
     private readonly IWebPageQueryResultMapper webPageMapper;
     private readonly IContentQueryExecutor queryExecutor;
 
-    public SimpleSearchIndexingStrategy(
+    public SimpleSearchCollectionStrategy(
         IWebPageQueryResultMapper webPageMapper,
         IContentQueryExecutor queryExecutor
     )
@@ -30,7 +30,7 @@ public class SimpleSearchIndexingStrategy : DefaultTypesenseCollectionStrategy
     {
         var result = new List<SimpleSearchResultModel>();
 
-        // IIndexEventItemModel could be a reusable content item or a web page item, so we use
+        // ICollectionEventItemModel could be a reusable content item or a web page item, so we use
         // pattern matching to get access to the web page item specific type and fields
         if (typesensePageItem is CollectionEventWebPageItemModel indexedPage)
         {

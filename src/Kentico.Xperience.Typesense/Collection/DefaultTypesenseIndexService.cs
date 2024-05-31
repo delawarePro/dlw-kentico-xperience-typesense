@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Typesense;
 
-namespace Kentico.Xperience.Typesense.Collectioning;
+namespace Kentico.Xperience.Typesense.Collection;
 
 /// <summary>
 /// Default implementation of <see cref="ITypesenseCollectionService"/>.

@@ -1,7 +1,7 @@
 ﻿using CMS.Base;
 using CMS.Core;
 
-using Kentico.Xperience.Typesense.Collectioning;
+using Kentico.Xperience.Typesense.Collection;
 
 namespace Kentico.Xperience.Typesense;
 

@@ -1,6 +1,6 @@
 ﻿using Typesense;
 
-namespace Kentico.Xperience.Typesense.Indexing;
+namespace Kentico.Xperience.Typesense.Collection;
 public interface ITypesenseCollectionSettings
 {
     public List<Field> Fields { get; init; }

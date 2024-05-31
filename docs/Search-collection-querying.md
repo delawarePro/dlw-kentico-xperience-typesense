@@ -1,10 +1,10 @@
-# Search index querying
+# Search collection querying
 
-## Rebuild the Search Index
+## Rebuild the Search collection
 
-Each index will initially be empty after creation until you create or modify some content.
+Each collection will initially be empty after creation until you create or modify some content.
 
-To index all existing content, rebuild the index in Xperience's Administration within the Search application added by this library.
+To collection all existing content, rebuild the collection in Xperience's Administration within the Search application added by this library.
 
 ## Create a search result model
 
@@ -19,23 +19,23 @@ public class DancingGoatSearchResultModel : AlgoliaSearchResultModel
 
 ## Create a search service
 
-Execute a search with a customized Algolia `Query` using the IAlgoliaSearchService. Specify Facets or other special properties which you have defined in `GetAlgoliaIndexSettings` method in the custom AlgoliaIndexingStrategy
+Execute a search with a customized Algolia `Query` using the IAlgoliaSearchService. Specify Facets or other special properties which you have defined in `GetAlgoliacollectionSettings` method in the custom AlgoliacollectioningStrategy
 
 ```csharp
 public class SearchService
 {
-     private readonly IAlgoliaIndexService algoliaSearchService;
+     private readonly IAlgoliacollectionService algoliaSearchService;
 
-  public SearchService(IAlgoliaIndexService algoliaSearchService) => this.algoliaSearchService = algoliaSearchService;
+  public SearchService(IAlgoliacollectionService algoliaSearchService) => this.algoliaSearchService = algoliaSearchService;
 
   public async Task<SearchResponse<DancingGoatSearchResultModel>> GlobalSearch(
-      string indexName,
+      string collectionName,
       string searchText,
       int page = 1,
       int pageSize = 10,
       string facet = null)
   {
-      var index = await algoliaSearchService.InitializeIndex(indexName, default);
+      var collection = await algoliaSearchService.Initializecollection(collectionName, default);
 
       page = Math.Max(page, 1);
 
@@ -49,7 +49,7 @@ public class SearchService
           query.Facets = new List<string> { nameof(DancingGoatSearchResultModel.ContentTypeName) };
       }
 
-      var results = await index.SearchAsync<DancingGoatSearchResultModel>(query);
+      var results = await collection.SearchAsync<DancingGoatSearchResultModel>(query);
 
       return results;
   }
@@ -66,19 +66,19 @@ Create a Controller which uses `SearchService` to display view with search bar.
 public class SearchController : Controller
 {
     private readonly SearchService searchService;
-    
-    private const string NAME_OF_DEFAULT_INDEX = "Default";
+
+    private const string NAME_OF_DEFAULT_collection = "Default";
 
     public SearchController(SearchService searchService)
     {
         this.searchService = searchService;
     }
 
-    public async Task<IActionResult> Index(string query, int pageSize = 10, int page = 1, string facet = null, string indexName = null)
+    public async Task<IActionResult> collection(string query, int pageSize = 10, int page = 1, string facet = null, string collectionName = null)
     {
         try
         {
-            var results = await advancedSearchService.GlobalSearch(indexName ?? NAME_OF_DEFAULT_INDEX, query, page, pageSize, facet);
+            var results = await advancedSearchService.GlobalSearch(collectionName ?? NAME_OF_DEFAULT_collection, query, page, pageSize, facet);
             return View(results);
         }
         catch
@@ -89,7 +89,7 @@ public class SearchController : Controller
 }
 ```
 
-The controller retrieves `Index.cshtml` stored in `Views/Search/` solution folder. You can use `GetRouteData` method to assemble the parameters of the url of the endpoint defined in `SearchController`.
+The controller retrieves `collection.cshtml` stored in `Views/Search/` solution folder. You can use `GetRouteData` method to assemble the parameters of the url of the endpoint defined in `SearchController`.
 
 ```cshtml
 @model SearchResponse<DancingGoatSearchResultModel>
@@ -109,7 +109,7 @@ The controller retrieves `Index.cshtml` stored in `Views/Search/` solution folde
 
 <div class="row" style="padding: 1rem;">
     <div class="col-12">
-        <form asp-action="Index" method="get">
+        <form asp-action="collection" method="get">
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-field">
@@ -185,3 +185,4 @@ The controller retrieves `Index.cshtml` stored in `Views/Search/` solution folde
         }
     </ul>
 </div>
+```

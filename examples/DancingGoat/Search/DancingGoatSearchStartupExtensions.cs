@@ -10,8 +10,8 @@ public static class DancingGoatSearchStartupExtensions
     {
         services.AddKenticoTypesense(builder =>
         {
-            builder.RegisterStrategy<AdvancedSearchIndexingStrategy>("DancingGoatAdvancedExampleStrategy");
-            builder.RegisterStrategy<SimpleSearchIndexingStrategy>("DancingGoatMinimalExampleStrategy");
+            builder.RegisterStrategy<AdvancedSearchCollectionStrategy>("DancingGoatAdvancedExampleStrategy");
+            builder.RegisterStrategy<SimpleSearchCollectionStrategy>("DancingGoatMinimalExampleStrategy");
         }, configuration);
 
         services.AddHttpClient<WebCrawlerService>();

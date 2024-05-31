@@ -1,10 +1,9 @@
-﻿using Kentico.Xperience.Typesense.Indexing;
-using Kentico.Xperience.Typesense.Search;
+﻿using Kentico.Xperience.Typesense.Search;
 
 using Typesense;
 
 
-namespace Kentico.Xperience.Typesense.Collectioning;
+namespace Kentico.Xperience.Typesense.Collection;
 
 /// <summary>
 /// Default indexing startegy just implements the methods but does not change the data.
