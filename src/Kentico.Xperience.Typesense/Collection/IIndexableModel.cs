@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Kentico.Xperience.Typesense.Collection;
+﻿namespace Kentico.Xperience.Typesense.Collection;
 public interface ICollectionableModel
 {
     public Guid ItemGuid { get; set; }

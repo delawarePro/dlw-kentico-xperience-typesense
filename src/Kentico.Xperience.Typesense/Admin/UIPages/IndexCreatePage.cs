@@ -21,7 +21,6 @@ namespace Kentico.Xperience.Typesense.Admin;
 internal class CollectionCreatePage : BaseCollectionEditPage
 {
     private readonly IPageUrlGenerator pageUrlGenerator;
-    private readonly ITypesenseCollectionService typesenseCollectionService;
     private TypesenseConfigurationModel? model = null;
 
     public CollectionCreatePage(
@@ -29,12 +28,10 @@ internal class CollectionCreatePage : BaseCollectionEditPage
         IFormDataBinder formDataBinder,
         ITypesenseConfigurationKenticoStorageService storageService,
         IPageUrlGenerator pageUrlGenerator,
-        ITypesenseCollectionService typesenseCollectionService,
         ITypesenseConfigurationTypesenseStorageService typesenseConfigurationTypesenseStorage)
         : base(formItemCollectionProvider, formDataBinder, storageService, typesenseConfigurationTypesenseStorage)
     {
         this.pageUrlGenerator = pageUrlGenerator;
-        this.typesenseCollectionService = typesenseCollectionService;
     }
 
     protected override TypesenseConfigurationModel Model

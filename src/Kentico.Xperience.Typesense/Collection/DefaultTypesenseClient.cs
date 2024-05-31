@@ -16,7 +16,6 @@ namespace Kentico.Xperience.Typesense.Collection;
 /// </summary>
 internal class DefaultTypesenseClient : IXperienceTypesenseClient
 {
-    private readonly ITypesenseCollectionService typesenseCollectionService;
     private readonly IInfoProvider<ContentLanguageInfo> languageProvider;
     private readonly IInfoProvider<ChannelInfo> channelProvider;
     private readonly IConversionService conversionService;
@@ -30,7 +29,6 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
     /// Initializes a new instance of the <see cref="DefaultTypesenseClient"/> class.
     /// </summary>
     public DefaultTypesenseClient(
-        ITypesenseCollectionService typesenseCollectionService,
         IInfoProvider<ContentLanguageInfo> languageProvider,
         IInfoProvider<ChannelInfo> channelProvider,
         IConversionService conversionService,
@@ -40,7 +38,6 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         ITypesenseClient typesenseClient,
         IEventLogService eventLogService)
     {
-        this.typesenseCollectionService = typesenseCollectionService;
         this.cache = cache;
         this.searchClient = searchClient;
         this.executor = executor;

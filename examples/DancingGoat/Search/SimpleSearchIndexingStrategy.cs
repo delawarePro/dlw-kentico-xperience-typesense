@@ -4,6 +4,7 @@ using DancingGoat.Models;
 using Kentico.Xperience.Typesense.Collection;
 using Microsoft.IdentityModel.Tokens;
 using Kentico.Xperience.Typesense.Search;
+using Typesense;
 
 namespace DancingGoat.Search;
 
@@ -16,6 +17,13 @@ public class SimpleSearchCollectionStrategy : DefaultTypesenseCollectionStrategy
 
     private readonly IWebPageQueryResultMapper webPageMapper;
     private readonly IContentQueryExecutor queryExecutor;
+
+    public override ITypesenseCollectionSettings GetTypesenseCollectionSettings()
+    {
+        var baseSettings = base.GetTypesenseCollectionSettings();
+        baseSettings.Fields.Add(new Field(nameof(SimpleSearchResultModel.Title), FieldType.String, false));
+        return baseSettings;
+    }
 
     public SimpleSearchCollectionStrategy(
         IWebPageQueryResultMapper webPageMapper,

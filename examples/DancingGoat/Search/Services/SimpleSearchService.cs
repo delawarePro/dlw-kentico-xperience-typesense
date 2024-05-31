@@ -23,7 +23,8 @@ public class SimpleSearchService
         var searchParameters = new SearchParameters(searchText)
         {
             Page = page - 1,
-            PerPage = pageSize
+            PerPage = pageSize,
+            QueryBy = "Url",
         };
 
         var results = await typesenseClient.Search<DancingGoatSimpleSearchResultModel>(collectionName, searchParameters);

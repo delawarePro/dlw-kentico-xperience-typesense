@@ -14,5 +14,5 @@ public interface ITypesenseCollectionSettings
     public bool? EnableNestedFields { get; init; }
 
     Schema ToSchema(string name);
-    UpdateSchema ToUpdateSchema(string name);
+    UpdateSchema ToUpdateSchema(string name, IReadOnlyCollection<Field> fields);
 }

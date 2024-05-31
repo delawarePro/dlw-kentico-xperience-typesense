@@ -3,12 +3,13 @@ using CMS.Websites;
 
 using DancingGoat.Models;
 
-using Microsoft.IdentityModel.Tokens;
-
 using DancingGoat.Search.Services;
-using Kentico.Xperience.Typesense.Collection;
 using DancingGoat.Search.Models;
+
+using Kentico.Xperience.Typesense.Collection;
 using Kentico.Xperience.Typesense.Search;
+
+using Microsoft.IdentityModel.Tokens;
 
 namespace DancingGoat.Search;
 

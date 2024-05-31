@@ -12,7 +12,7 @@ public interface ITypesenseTaskLogger
     /// </summary>
     /// <param name="webpageItem">The <see cref="CollectionEventWebPageItemModel"/> that triggered the event.</param>
     /// <param name="eventName">The name of the Xperience event that was triggered.</param>
-    Collection.Kentico.Xperience.Typesense.Collection.Task HandleEvent(CollectionEventWebPageItemModel webpageItem, string eventName);
+    Task HandleEvent(CollectionEventWebPageItemModel webpageItem, string eventName);
 
     Task HandleReusableItemEvent(CollectionEventReusableItemModel reusableItem, string eventName);
 }

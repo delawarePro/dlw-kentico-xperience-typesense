@@ -8,7 +8,7 @@ public interface ITypesenseCollectionStrategy
     /// </summary>
     /// <param name="typesensePageItem">The <see cref="ICollectionEventItemModel"/> currently being indexed.</param>
     /// <returns>Modified Typesense document.</returns>
-    Collection.Task<IEnumerable<TypesenseSearchResultModel>?> MapToTypesenseObjectsOrNull(ICollectionEventItemModel typesensePageItem);
+    Task<IEnumerable<TypesenseSearchResultModel>?> MapToTypesenseObjectsOrNull(ICollectionEventItemModel typesensePageItem);
 
     ITypesenseCollectionSettings GetTypesenseCollectionSettings();
 

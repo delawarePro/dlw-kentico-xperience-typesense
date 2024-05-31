@@ -54,6 +54,8 @@ public class DefaultTypesenseConfigurationTypesenseStorageService : ITypesenseCo
         var typesenseStrategy = serviceProvider.GetRequiredStrategy(typesenseCollection);
         var indexSettings = typesenseStrategy.GetTypesenseCollectionSettings();
 
-        return await searchClient.UpdateCollection(configuration.CollectionName, indexSettings.ToUpdateSchema(configuration.CollectionName)) != null;
+        var currentCollection = await searchClient.RetrieveCollection(configuration.CollectionName);
+
+        return await searchClient.UpdateCollection(configuration.CollectionName, indexSettings.ToUpdateSchema(configuration.CollectionName, currentCollection.Fields)) != null;
     }
 }
