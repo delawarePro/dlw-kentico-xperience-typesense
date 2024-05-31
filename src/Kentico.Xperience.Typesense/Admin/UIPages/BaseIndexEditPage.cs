@@ -1,47 +1,66 @@
 ﻿using System.Text;
+
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.Forms;
 using Kentico.Xperience.Typesense.Collectioning;
+
 using IFormItemCollectionProvider = Kentico.Xperience.Admin.Base.Forms.Internal.IFormItemCollectionProvider;
 
 namespace Kentico.Xperience.Typesense.Admin;
 
 internal abstract class BaseCollectionEditPage : ModelEditPage<TypesenseConfigurationModel>
 {
-    protected readonly ITypesenseConfigurationStorageService StorageService;
+    protected readonly ITypesenseConfigurationKenticoStorageService StorageInKenticoService;
+    protected readonly ITypesenseConfigurationTypesenseStorageService StorageInTypesenseService;
 
     protected BaseCollectionEditPage(
         IFormItemCollectionProvider formItemCollectionProvider,
         IFormDataBinder formDataBinder,
-        ITypesenseConfigurationStorageService storageService)
-        : base(formItemCollectionProvider, formDataBinder) => StorageService = storageService;
+        ITypesenseConfigurationKenticoStorageService storageInKenticoService,
+        ITypesenseConfigurationTypesenseStorageService storageInTypesenseService)
+        : base(formItemCollectionProvider, formDataBinder)
+    {
+        StorageInKenticoService = storageInKenticoService;
+        StorageInTypesenseService = storageInTypesenseService;
+    }
 
-    protected CollectionModificationResult ValidateAndProcess(TypesenseConfigurationModel configuration)
+    protected async Task<CollectionModificationResult> ValidateAndProcess(TypesenseConfigurationModel configuration)
     {
         configuration.CollectionName = RemoveWhitespacesUsingStringBuilder(configuration.CollectionName ?? "");
 
-        if (StorageService.GetCollectionIds().Exists(x => x == configuration.Id))
+        if (StorageInKenticoService.GetCollectionIds().Exists(x => x == configuration.Id))
         {
-            bool edited = StorageService.TryEditCollection(configuration);
+            bool edited = await StorageInKenticoService.TryEditCollection(configuration);
 
             if (edited)
             {
-                TypesenseSearchModule.AddRegisteredIndices();
+                TypesenseSearchModule.AddRegisteredCollections();
 
-                return CollectionModificationResult.Success;
+                bool sucessInTypesense = await StorageInTypesenseService.TryEditCollection(configuration);
+
+                if (sucessInTypesense)
+                {
+                    return CollectionModificationResult.Success;
+                }
             }
 
             return CollectionModificationResult.Failure;
         }
         else
         {
-            bool created = !string.IsNullOrWhiteSpace(configuration.CollectionName) && StorageService.TryCreateCollection(configuration);
+            bool created = !string.IsNullOrWhiteSpace(configuration.CollectionName);
+            created &= await StorageInKenticoService.TryCreateCollection(configuration);
 
             if (created)
             {
                 TypesenseCollectionStore.Instance.AddCollection(new TypesenseCollection(configuration, StrategyStorage.Strategies));
 
-                return CollectionModificationResult.Success;
+                bool sucessInTypesense = await StorageInTypesenseService.TryCreateCollection(configuration);
+
+                if (sucessInTypesense)
+                {
+                    return CollectionModificationResult.Success;
+                }
             }
 
             return CollectionModificationResult.Failure;

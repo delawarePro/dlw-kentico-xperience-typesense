@@ -1,5 +1,3 @@
-using Typesense;
-
 namespace Kentico.Xperience.Typesense.Collectioning;
 
 /// <summary>
@@ -13,5 +11,5 @@ public interface ITypesenseCollectionService
     /// <param name="collectionName">The code name of the index.</param>
     /// <param name="cancellationToken">The cancellation token for the task.</param>
     /// <exception cref="InvalidOperationException" />
-    Task<CollectionResponse> InitializeCollection(string collectionName, CancellationToken cancellationToken);
+    Task InitializeCollection(string collectionName, CancellationToken cancellationToken);
 }

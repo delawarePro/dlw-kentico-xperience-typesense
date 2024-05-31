@@ -1,4 +1,5 @@
 ﻿using CMS.Membership;
+
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.Forms;
 using Kentico.Xperience.Typesense.Admin;
@@ -23,22 +24,23 @@ internal class CollectionEditPage : BaseCollectionEditPage
 
     public CollectionEditPage(Xperience.Admin.Base.Forms.Internal.IFormItemCollectionProvider formItemCollectionProvider,
                  IFormDataBinder formDataBinder,
-                 ITypesenseConfigurationStorageService storageService)
-        : base(formItemCollectionProvider, formDataBinder, storageService) { }
+                 ITypesenseConfigurationKenticoStorageService storageService,
+                 ITypesenseConfigurationTypesenseStorageService typesenseConfigurationTypesenseStorageService)
+        : base(formItemCollectionProvider, formDataBinder, storageService, typesenseConfigurationTypesenseStorageService) { }
 
     protected override TypesenseConfigurationModel Model
     {
         get
         {
-            model ??= StorageService.GetCollectionDataOrNull(CollectionIdentifier) ?? new();
+            model ??= StorageInKenticoService.GetCollectionDataOrNull(CollectionIdentifier) ?? new();
 
             return model;
         }
     }
 
-    protected override Task<ICommandResponse> ProcessFormData(TypesenseConfigurationModel model, ICollection<IFormItem> formItems)
+    protected override async Task<ICommandResponse> ProcessFormData(TypesenseConfigurationModel model, ICollection<IFormItem> formItems)
     {
-        var result = ValidateAndProcess(model);
+        var result = await ValidateAndProcess(model);
 
         var response = ResponseFrom(new FormSubmissionResult(
             result == CollectionModificationResult.Success
@@ -49,6 +51,6 @@ internal class CollectionEditPage : BaseCollectionEditPage
             ? response.AddSuccessMessage("Collection edited")
             : response.AddErrorMessage("Could not update index");
 
-        return Task.FromResult<ICommandResponse>(response);
+        return await Task.FromResult<ICommandResponse>(response);
     }
 }

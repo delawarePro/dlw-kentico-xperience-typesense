@@ -24,13 +24,21 @@ internal class DefaultTypesenseCollectionService : ITypesenseCollectionService
     }
 
     /// <inheritdoc />
-    public async Task<CollectionResponse> InitializeCollection(string collectionName, CancellationToken cancellationToken)
+    public async Task InitializeCollection(string collectionName, CancellationToken cancellationToken)
     {
         var typesenseCollection = TypesenseCollectionStore.Instance.GetCollection(collectionName) ?? throw new InvalidOperationException($"Registered index with name '{collectionName}' doesn't exist.");
 
         var typesenseStrategy = serviceProvider.GetRequiredStrategy(typesenseCollection);
         var indexSettings = typesenseStrategy.GetTypesenseCollectionSettings();
 
-        return await searchClient.CreateCollection(indexSettings.ToSchema(collectionName));
+        var existingCollection = await searchClient.RetrieveCollection(collectionName);
+        if (existingCollection is null)
+        {
+            await searchClient.CreateCollection(indexSettings.ToSchema(collectionName));
+        }
+        else
+        {
+            await searchClient.UpdateCollection(collectionName, indexSettings.ToUpdateSchema(collectionName));
+        }
     }
 }

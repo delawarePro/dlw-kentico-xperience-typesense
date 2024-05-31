@@ -1,16 +1,17 @@
 ﻿using System.Text;
+
 using CMS.DataEngine;
 
 namespace Kentico.Xperience.Typesense.Admin;
 
-internal class DefaultTypesenseConfigurationStorageService : ITypesenseConfigurationStorageService
+internal class DefaultTypesenseConfigurationKenticoStorageService : ITypesenseConfigurationKenticoStorageService
 {
     private readonly ITypesenseCollectionItemInfoProvider indexProvider;
     private readonly ITypesenseIncludedPathItemInfoProvider pathProvider;
     private readonly ITypesenseContentTypeItemInfoProvider contentTypeProvider;
     private readonly ITypesenseCollectionLanguageItemInfoProvider languageProvider;
 
-    public DefaultTypesenseConfigurationStorageService(
+    public DefaultTypesenseConfigurationKenticoStorageService(
         ITypesenseCollectionItemInfoProvider indexProvider,
         ITypesenseIncludedPathItemInfoProvider pathProvider,
         ITypesenseContentTypeItemInfoProvider contentTypeProvider,
@@ -36,7 +37,7 @@ internal class DefaultTypesenseConfigurationStorageService : ITypesenseConfigura
         }
         return source.Length == builder.Length ? source : builder.ToString();
     }
-    public bool TryCreateCollection(TypesenseConfigurationModel configuration)
+    public async Task<bool> TryCreateCollection(TypesenseConfigurationModel configuration)
     {
         var existingCollection = indexProvider.Get()
             .WhereEquals(nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemcollectionName), configuration.CollectionName)
@@ -48,6 +49,7 @@ internal class DefaultTypesenseConfigurationStorageService : ITypesenseConfigura
             return false;
         }
 
+        //Create in Kentico
         var newInfo = new TypesenseCollectionItemInfo()
         {
             TypesenseCollectionItemcollectionName = configuration.CollectionName ?? "",
@@ -163,7 +165,7 @@ internal class DefaultTypesenseConfigurationStorageService : ITypesenseConfigura
 
         return indexInfos.Select(index => new TypesenseConfigurationModel(index, languages, paths, contentTypes));
     }
-    public bool TryEditCollection(TypesenseConfigurationModel configuration)
+    public async Task<bool> TryEditCollection(TypesenseConfigurationModel configuration)
     {
         configuration.CollectionName = RemoveWhitespacesUsingStringBuilder(configuration.CollectionName ?? "");
 
@@ -232,17 +234,17 @@ internal class DefaultTypesenseConfigurationStorageService : ITypesenseConfigura
         return true;
     }
 
-    public bool TryDeleteCollection(int id)
+    public async Task<bool> TryDeleteCollection(int collectionId)
     {
-        indexProvider.BulkDelete(new WhereCondition($"{nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemId)} = {id}"));
-        pathProvider.BulkDelete(new WhereCondition($"{nameof(TypesenseIncludedPathItemInfo.TypesenseIncludedPathItemCollectionItemId)} = {id}"));
-        languageProvider.BulkDelete(new WhereCondition($"{nameof(TypesenseCollectionLanguageItemInfo.TypesenseCollectionLanguageItemCollectionItemId)} = {id}"));
-        contentTypeProvider.BulkDelete(new WhereCondition($"{nameof(TypesenseContentTypeItemInfo.TypesenseContentTypeItemCollectionItemId)} = {id}"));
-
-        return true;
+        var collectionData = GetCollectionDataOrNull(collectionId);
+        if (collectionData is null)
+        {
+            return false;
+        }
+        return await TryDeleteCollection(collectionData);
     }
 
-    public bool TryDeleteCollection(TypesenseConfigurationModel configuration)
+    public async Task<bool> TryDeleteCollection(TypesenseConfigurationModel configuration)
     {
         indexProvider.BulkDelete(new WhereCondition($"{nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemId)} = {configuration.Id}"));
         pathProvider.BulkDelete(new WhereCondition($"{nameof(TypesenseIncludedPathItemInfo.TypesenseIncludedPathItemCollectionItemId)} = {configuration.Id}"));

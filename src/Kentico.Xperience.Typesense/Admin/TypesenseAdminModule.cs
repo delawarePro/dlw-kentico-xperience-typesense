@@ -1,9 +1,11 @@
 ﻿using CMS;
 using CMS.Base;
 using CMS.Core;
+
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Collectioning;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -16,7 +18,7 @@ namespace Kentico.Xperience.Typesense.Admin;
 /// </summary>
 internal class TypesenseAdminModule : AdminModule
 {
-    private ITypesenseConfigurationStorageService storageService = null!;
+    private ITypesenseConfigurationKenticoStorageService storageService = null!;
     private TypesenseModuleInstaller installer = null!;
 
     public TypesenseAdminModule() : base(nameof(TypesenseAdminModule)) { }
@@ -37,7 +39,7 @@ internal class TypesenseAdminModule : AdminModule
         RegisterClientModule("kentico", "xperience-integrations-typesense");
 
         installer = services.GetRequiredService<TypesenseModuleInstaller>();
-        storageService = services.GetRequiredService<ITypesenseConfigurationStorageService>();
+        storageService = services.GetRequiredService<ITypesenseConfigurationKenticoStorageService>();
 
         ApplicationEvents.PostStart.Execute += InitializeModule;
     }

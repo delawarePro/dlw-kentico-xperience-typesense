@@ -1,10 +1,9 @@
 ﻿using CMS.Core;
 using CMS.Membership;
+
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Collectioning;
-
-using Typesense;
 
 [assembly: UIPage(
    parentType: typeof(TypesenseApplicationPage),
@@ -24,7 +23,8 @@ internal class CollectionListingPage : ListingPage
 {
     private readonly IXperienceTypesenseClient xperienceTypesenseClient;
     private readonly IPageUrlGenerator pageUrlGenerator;
-    private readonly ITypesenseConfigurationStorageService configurationStorageService;
+    private readonly ITypesenseConfigurationKenticoStorageService configurationStorageService;
+    private readonly ITypesenseConfigurationTypesenseStorageService typesenseConfigurationTypesenseStorageService;
     private readonly IConversionService conversionService;
 
     protected override string ObjectType => TypesenseCollectionItemInfo.OBJECT_TYPE;
@@ -35,12 +35,14 @@ internal class CollectionListingPage : ListingPage
     public CollectionListingPage(
         IXperienceTypesenseClient xperienceTypesenseClient,
         IPageUrlGenerator pageUrlGenerator,
-        ITypesenseConfigurationStorageService configurationStorageService,
+        ITypesenseConfigurationKenticoStorageService configurationStorageService,
+        ITypesenseConfigurationTypesenseStorageService typesenseConfigurationTypesenseStorageService,
         IConversionService conversionService)
     {
         this.xperienceTypesenseClient = xperienceTypesenseClient;
         this.pageUrlGenerator = pageUrlGenerator;
         this.configurationStorageService = configurationStorageService;
+        this.typesenseConfigurationTypesenseStorageService = typesenseConfigurationTypesenseStorageService;
         this.conversionService = conversionService;
     }
 
@@ -50,8 +52,8 @@ internal class CollectionListingPage : ListingPage
     {
         if (!TypesenseCollectionStore.Instance.GetAllIndices().Any())
         {
-            PageConfiguration.Callouts = new List<CalloutConfiguration>
-            {
+            PageConfiguration.Callouts =
+            [
                 new()
                 {
                     Headline = "No indexes",
@@ -60,7 +62,7 @@ internal class CollectionListingPage : ListingPage
                     Type = CalloutType.FriendlyWarning,
                     Placement = CalloutPlacement.OnDesk
                 }
-            };
+            ];
         }
 
         PageConfiguration.ColumnConfigurations
@@ -91,15 +93,21 @@ internal class CollectionListingPage : ListingPage
         }
         try
         {
-            bool res = configurationStorageService.TryDeleteCollection(id);
+            var collection = configurationStorageService.GetCollectionDataOrNull(id);
+
+            bool res = await configurationStorageService.TryDeleteCollection(id);
 
             if (res)
             {
-                TypesenseCollectionStore.SetIndicies(configurationStorageService);
+                res = await typesenseConfigurationTypesenseStorageService.TryDeleteCollection(collection);
+                if (res)
+                {
+                    TypesenseCollectionStore.SetIndicies(configurationStorageService);
 
-                await xperienceTypesenseClient.DeleteCollection(index.CollectionName, cancellationToken);
+                    await xperienceTypesenseClient.DeleteCollection(index.CollectionName, cancellationToken);
+                }
             }
-            else
+            if(!res)
             {
                 return response
                     .AddErrorMessage(string.Format("Error deleting Typesense index with identifier {0}.", id));

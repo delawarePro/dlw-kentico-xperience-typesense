@@ -24,9 +24,9 @@ internal class TypesenseSearchModule : Module
     private ITypesenseTaskLogger? typesenseTaskLogger;
     private IAppSettingsService? appSettingsService;
     private IConversionService? conversionService;
-    private const string APP_SETTINGS_KEY_INDEXING_DISABLED = "CMSTypesenseSearchDisableCollectioning";
+    private const string APP_SETTINGS_KEY_COLLECTIONS_DISABLED = "CMSTypesenseSearchDisableCollections";
 
-    private bool CollectioningDisabled => conversionService?.GetBoolean(appSettingsService?[APP_SETTINGS_KEY_INDEXING_DISABLED], false) ?? false;
+    private bool CollectioningDisabled => conversionService?.GetBoolean(appSettingsService?[APP_SETTINGS_KEY_COLLECTIONS_DISABLED], false) ?? false;
 
     /// <inheritdoc/>
     public TypesenseSearchModule() : base(nameof(TypesenseSearchModule))
@@ -110,7 +110,7 @@ internal class TypesenseSearchModule : Module
         typesenseTaskLogger?.HandleReusableItemEvent(indexedContentItemModel, e.CurrentHandler.Name).GetAwaiter().GetResult();
     }
 
-    public static void AddRegisteredIndices()
+    public static void AddRegisteredCollections()
     {
         var options = Service.Resolve<IOptions<TypesenseOptions>>();
 
@@ -119,10 +119,10 @@ internal class TypesenseSearchModule : Module
             return;
         }
 
-        var configurationStorageService = Service.Resolve<ITypesenseConfigurationStorageService>();
+        var configurationStorageService = Service.Resolve<ITypesenseConfigurationKenticoStorageService>();
 
-        var indices = configurationStorageService.GetAllCollectionData();
+        var collections = configurationStorageService.GetAllCollectionData();
 
-        TypesenseCollectionStore.Instance.SetIndicies(indices);
+        TypesenseCollectionStore.Instance.SetIndicies(collections);
     }
 }

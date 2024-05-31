@@ -5,10 +5,10 @@ namespace Kentico.Xperience.Typesense.Collectioning;
 /// <summary>
 /// Represents a store of Typesense indexes and crawlers.
 /// </summary>
-public sealed class TypesenseCollectionStore
+public class TypesenseCollectionStore
 {
     private static readonly Lazy<TypesenseCollectionStore> mInstance = new();
-    private readonly List<TypesenseCollection> registeredCollectiones = new();
+    private readonly List<TypesenseCollection> registeredCollectiones = [];
 
     /// <summary>
     /// Gets current instance of the <see cref="TypesenseCollectionStore"/> class.
@@ -101,7 +101,7 @@ public sealed class TypesenseCollectionStore
     /// Sets the current indicies to those provided by <paramref name="configurationService"/>
     /// </summary>
     /// <param name="configurationService"></param>
-    internal static void SetIndicies(ITypesenseConfigurationStorageService configurationService)
+    internal static void SetIndicies(ITypesenseConfigurationKenticoStorageService configurationService)
     {
         var indices = configurationService.GetAllCollectionData();
 

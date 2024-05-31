@@ -1,5 +1,6 @@
 ﻿using CMS.Base;
 using CMS.Core;
+
 using Kentico.Xperience.Typesense.Collectioning;
 
 namespace Kentico.Xperience.Typesense;

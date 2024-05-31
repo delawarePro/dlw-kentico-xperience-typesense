@@ -1,13 +1,13 @@
 ﻿namespace Kentico.Xperience.Typesense.Admin;
 
-public interface ITypesenseConfigurationStorageService
+public interface ITypesenseConfigurationKenticoStorageService
 {
-    bool TryCreateCollection(TypesenseConfigurationModel configuration);
+    Task<bool> TryCreateCollection(TypesenseConfigurationModel configuration);
 
-    bool TryEditCollection(TypesenseConfigurationModel configuration);
-    bool TryDeleteCollection(TypesenseConfigurationModel configuration);
-    bool TryDeleteCollection(int id);
-    TypesenseConfigurationModel? GetCollectionDataOrNull(int indexId);
+    Task<bool> TryEditCollection(TypesenseConfigurationModel configuration);
+    Task<bool> TryDeleteCollection(TypesenseConfigurationModel configuration);
+    Task<bool> TryDeleteCollection(int collectionId);
+    TypesenseConfigurationModel? GetCollectionDataOrNull(int collectionId);
     List<string> GetExistingcollectionNames();
     List<int> GetCollectionIds();
     IEnumerable<TypesenseConfigurationModel> GetAllCollectionData();

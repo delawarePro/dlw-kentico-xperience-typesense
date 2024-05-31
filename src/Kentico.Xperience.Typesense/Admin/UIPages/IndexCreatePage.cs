@@ -1,8 +1,10 @@
 ﻿using CMS.Membership;
+
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.Forms;
 using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Collectioning;
+
 using IFormItemCollectionProvider = Kentico.Xperience.Admin.Base.Forms.Internal.IFormItemCollectionProvider;
 
 [assembly: UIPage(
@@ -19,14 +21,21 @@ namespace Kentico.Xperience.Typesense.Admin;
 internal class CollectionCreatePage : BaseCollectionEditPage
 {
     private readonly IPageUrlGenerator pageUrlGenerator;
+    private readonly ITypesenseCollectionService typesenseCollectionService;
     private TypesenseConfigurationModel? model = null;
 
     public CollectionCreatePage(
         IFormItemCollectionProvider formItemCollectionProvider,
         IFormDataBinder formDataBinder,
-        ITypesenseConfigurationStorageService storageService,
-        IPageUrlGenerator pageUrlGenerator)
-        : base(formItemCollectionProvider, formDataBinder, storageService) => this.pageUrlGenerator = pageUrlGenerator;
+        ITypesenseConfigurationKenticoStorageService storageService,
+        IPageUrlGenerator pageUrlGenerator,
+        ITypesenseCollectionService typesenseCollectionService,
+        ITypesenseConfigurationTypesenseStorageService typesenseConfigurationTypesenseStorage)
+        : base(formItemCollectionProvider, formDataBinder, storageService, typesenseConfigurationTypesenseStorage)
+    {
+        this.pageUrlGenerator = pageUrlGenerator;
+        this.typesenseCollectionService = typesenseCollectionService;
+    }
 
     protected override TypesenseConfigurationModel Model
     {
@@ -38,9 +47,9 @@ internal class CollectionCreatePage : BaseCollectionEditPage
         }
     }
 
-    protected override Task<ICommandResponse> ProcessFormData(TypesenseConfigurationModel model, ICollection<IFormItem> formItems)
+    protected override async Task<ICommandResponse> ProcessFormData(TypesenseConfigurationModel model, ICollection<IFormItem> formItems)
     {
-        var result = ValidateAndProcess(model);
+        var result = await ValidateAndProcess(model);
 
         if (result == CollectionModificationResult.Success)
         {
@@ -49,12 +58,12 @@ internal class CollectionCreatePage : BaseCollectionEditPage
             var successResponse = NavigateTo(pageUrlGenerator.GenerateUrl<CollectionEditPage>(index.Identifier.ToString()))
                 .AddSuccessMessage("Collection created.");
 
-            return Task.FromResult<ICommandResponse>(successResponse);
+            return await Task.FromResult<ICommandResponse>(successResponse);
         }
 
         var errorResponse = ResponseFrom(new FormSubmissionResult(FormSubmissionStatus.ValidationFailure))
-            .AddErrorMessage("Could not create index.");
+            .AddErrorMessage("Could not create the collection.");
 
-        return Task.FromResult<ICommandResponse>(errorResponse);
+        return await Task.FromResult<ICommandResponse>(errorResponse);
     }
 }
