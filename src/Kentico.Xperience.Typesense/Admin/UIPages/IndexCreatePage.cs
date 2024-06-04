@@ -28,8 +28,8 @@ internal class CollectionCreatePage : BaseCollectionEditPage
         IFormDataBinder formDataBinder,
         ITypesenseConfigurationKenticoStorageService storageService,
         IPageUrlGenerator pageUrlGenerator,
-        ITypesenseConfigurationTypesenseStorageService typesenseConfigurationTypesenseStorage)
-        : base(formItemCollectionProvider, formDataBinder, storageService, typesenseConfigurationTypesenseStorage)
+        ITypesenseCollectionService collectionService)
+        : base(formItemCollectionProvider, formDataBinder, storageService, collectionService)
     {
         this.pageUrlGenerator = pageUrlGenerator;
     }

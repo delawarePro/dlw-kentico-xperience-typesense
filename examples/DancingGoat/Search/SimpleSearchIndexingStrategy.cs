@@ -5,16 +5,18 @@ using Kentico.Xperience.Typesense.Collection;
 using Microsoft.IdentityModel.Tokens;
 using Kentico.Xperience.Typesense.Search;
 using Typesense;
+using System.Text.Json.Serialization;
 
 namespace DancingGoat.Search;
 
+public class SimpleSearchResultModel : TypesenseSearchResultModel
+{
+    [JsonPropertyName("Title")]
+    public string Title { get; set; }
+}
+
 public class SimpleSearchCollectionStrategy : DefaultTypesenseCollectionStrategy
 {
-    public class SimpleSearchResultModel : TypesenseSearchResultModel
-    {
-        public string Title { get; set; }
-    }
-
     private readonly IWebPageQueryResultMapper webPageMapper;
     private readonly IContentQueryExecutor queryExecutor;
 
@@ -80,10 +82,17 @@ public class SimpleSearchCollectionStrategy : DefaultTypesenseCollectionStrategy
                     return null;
                 }
 
-                result.Add(new SimpleSearchResultModel()
+                var item = new SimpleSearchResultModel()
                 {
                     Title = page!.ArticleTitle
-                });
+                };
+                result.Add(item);
+
+
+                /*result.Add(new SimpleSearchResultModel()
+                {
+                    Title = page!.ArticleTitle
+                });*/
             }
             else
             {

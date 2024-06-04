@@ -1,3 +1,10 @@
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Net.Mime;
+using System.Text;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+
 using CMS.ContentEngine;
 using CMS.Core;
 using CMS.DataEngine;
@@ -6,6 +13,8 @@ using CMS.Websites;
 
 using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Search;
+
+using Microsoft.Extensions.DependencyInjection;
 
 using Typesense;
 
@@ -24,6 +33,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
     private readonly IEventLogService eventLogService;
     private readonly IProgressiveCache cache;
     private readonly ITypesenseClient searchClient;
+    private readonly IServiceProvider serviceProvider;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DefaultTypesenseClient"/> class.
@@ -36,8 +46,10 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         ITypesenseClient searchClient,
         IContentQueryExecutor executor,
         ITypesenseClient typesenseClient,
-        IEventLogService eventLogService)
+        IEventLogService eventLogService,
+        IServiceProvider serviceProvider)
     {
+        this.serviceProvider = serviceProvider;
         this.cache = cache;
         this.searchClient = searchClient;
         this.executor = executor;
@@ -99,6 +111,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
     }
 
     /// <inheritdoc />
+    // TODO : Use the TryDeleteCollection method
     public async Task DeleteCollection(string collectionName, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(collectionName))
@@ -107,6 +120,19 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         }
 
         await searchClient.DeleteCollection(collectionName);
+    }
+
+    public async Task<bool> TryDeleteCollection(TypesenseConfigurationModel? configuration)
+    {
+        if (configuration is not null)
+        {
+            var primary = await searchClient.DeleteCollection($"{configuration.CollectionName}-primary");
+            var secondary = await searchClient.DeleteCollection($"{configuration.CollectionName}-secondary");
+
+            return primary != null || secondary != null;
+        }
+        return false;
+
     }
 
     /// <inheritdoc />
@@ -168,7 +194,14 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         }
         await searchClient.DeleteDocuments(typesenseCollection.CollectionName, $"{BaseObjectProperties.OBJECT_ID}: &gt;= 0");
 
-        indexedItems.ForEach(node => TypesenseQueueWorker.EnqueueTypesenseQueueItem(new TypesenseQueueItem(node, TypesenseTaskType.PUBLISH_INDEX, typesenseCollection.CollectionName)));
+        var (activeCollectionName, newCollectionName) = await GetCollectionNames(typesenseCollection.CollectionName);
+
+        await EnsureNewCollection(newCollectionName, typesenseCollection);
+
+
+        indexedItems.ForEach(node => TypesenseQueueWorker.EnqueueTypesenseQueueItem(new TypesenseQueueItem(node, TypesenseTaskType.PUBLISH_INDEX, newCollectionName)));
+
+        TypesenseQueueWorker.EnqueueTypesenseQueueItem(new TypesenseQueueItem(new EndOfRebuildItemModel(activeCollectionName, newCollectionName, typesenseCollection.CollectionName), TypesenseTaskType.END_OF_REBUILD, typesenseCollection.CollectionName));
     }
 
     private async Task<CollectionEventWebPageItemModel> MapToEventItem(IWebPageContentQueryDataContainer content)
@@ -187,7 +220,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
             languageName,
             content.ContentTypeName,
             content.WebPageItemName,
-            content.ContentItemIsSecured,
+            content.ContentItemIsSecured, 
             content.ContentItemContentTypeID,
             content.ContentItemCommonDataContentLanguageID,
             channelName,
@@ -200,10 +233,17 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         return item;
     }
 
+    private static readonly MediaTypeHeaderValue JsonMediaTypeHeaderValue = MediaTypeHeaderValue.Parse($"{MediaTypeNames.Application.Json};charset={Encoding.UTF8.WebName}");
+    private static readonly JsonSerializerOptions JsonOptionsCamelCaseIgnoreWritingNull = new()
+    {
+        //PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        //DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        //MaxDepth = 3
+    };
+
     private async Task<int> UpsertRecordsInternal(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, CancellationToken cancellationToken)
     {
         int upsertedCount = 0;
-        //await typesenseCollectionService.InitializeCollection(collectionName, cancellationToken);
 
         foreach (var item in dataObjects) //TODO : Test in parralele mode but be carrefull about the counter
         {
@@ -254,4 +294,156 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
 
             return items.AsEnumerable();
         }, new CacheSettings(5, nameof(DefaultTypesenseClient), nameof(GetAllWebsiteChannels)));
+
+    public async Task<bool> TryCreateCollection(TypesenseConfigurationModel configuration)
+    {
+        if (configuration is null)
+        {
+            return false;
+        }
+
+        //Create the collection in Typesense
+        var typesenseCollection = TypesenseCollectionStore.Instance.GetCollection(configuration.CollectionName) ?? throw new InvalidOperationException($"Registered index with name '{configuration.CollectionName}' doesn't exist.");
+
+        var typesenseStrategy = serviceProvider.GetRequiredStrategy(typesenseCollection);
+        var indexSettings = typesenseStrategy.GetTypesenseCollectionSettings();
+
+        var createdCollection = await searchClient.CreateCollection(indexSettings.ToSchema($"{configuration.CollectionName}-primary"));
+        if (createdCollection == null)
+        {
+            return false;
+        }
+
+        await searchClient.UpsertCollectionAlias(configuration.CollectionName, new CollectionAlias($"{configuration.CollectionName}-primary"));
+        return true;
+    }
+
+
+
+    public async Task<bool> TryEditCollection(TypesenseConfigurationModel configuration, Func<string, Task> rebuildAction)
+    {
+        if (configuration is null)
+        {
+            return false;
+        }
+        //Update the collection in Typesense
+        var typesenseCollection = TypesenseCollectionStore.Instance.GetCollection(configuration.CollectionName) ?? throw new InvalidOperationException($"Registered index with name '{configuration.CollectionName}' doesn't exist.");
+
+        var typesenseStrategy = serviceProvider.GetRequiredStrategy(typesenseCollection);
+        var indexSettings = typesenseStrategy.GetTypesenseCollectionSettings();
+
+        var currentCollection = await searchClient.RetrieveCollection(configuration.CollectionName); //Search by alias the current collection
+
+        if (currentCollection == null)
+        {
+            return false;
+        }
+
+        var (_, collectionToReCreate) = await GetCollectionNames(configuration.CollectionName);
+
+        if (CheckIfFieldsRequiredARebuild(currentCollection.Fields, indexSettings.Fields))
+        {
+            await RebuildInternal(typesenseCollection, default); // Rebuild with a zero down time strategy
+            return true;
+        }
+        else
+        {
+            //TODO : We could change the base properties here
+            return true;
+        }
+    }
+
+    public async Task<bool> EnsureNewCollection(string newCollection, TypesenseCollection typesenseCollection)
+    {
+        var typesenseStrategy = serviceProvider.GetRequiredStrategy(typesenseCollection);
+        var indexSettings = typesenseStrategy.GetTypesenseCollectionSettings();
+
+        var allCollections = await searchClient.RetrieveCollections();
+
+        //First delete the old collection with the new name
+        if (allCollections.Exists(x => x.Name == newCollection))
+        {
+            await searchClient.DeleteCollection(newCollection);
+        }
+
+        //Then create the new collection with the new schema
+        var createdCollection = await searchClient.CreateCollection(indexSettings.ToSchema(newCollection));
+        if (createdCollection == null)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private bool CheckIfFieldsRequiredARebuild(IReadOnlyCollection<Field> oldFields, List<Field> newFields)
+    {
+        //TODO : This can be still improved because some changes deoesn't require a rebuild but we need to play with the uopdate schema then.
+        foreach (var oldField in oldFields)
+        {
+            var newField = newFields.Find(x => x.Name == oldField.Name);
+
+            if (newField == null)
+            {
+                return true;
+            }
+
+            if (oldField.Infix != newField.Infix
+                || oldField.Index != newField.Index
+                || oldField.Type != newField.Type
+                || oldField.Facet != newField.Facet
+                || oldField.Locale != newField.Locale
+                || oldField.NumberOfDimensions != newField.NumberOfDimensions
+                || oldField.Optional != newField.Optional
+                || oldField.Reference != newField.Reference
+                || oldField.Sort != newField.Sort)
+            {
+                return true;
+            }
+        }
+
+        return oldFields.Count == newFields.Count;
+    }
+
+    public async Task<int> SwapAliasWhenRebuildIsDone(IEnumerable<TypesenseQueueItem> endOfQueueItems, string key, CancellationToken cancellationToken)
+    {
+        int processed = 0;
+        foreach (var item in endOfQueueItems)
+        {
+            if (item.ItemToCollection is EndOfRebuildItemModel model)
+            {
+                await SwapAliasWhenRebuildIsDone(model.CollectionAlias, model.RebuildedCollection);
+                processed++;
+            }
+        }
+        return processed;
+    }
+    public async Task SwapAliasWhenRebuildIsDone(string alias, string newCollectionRebuilded)
+    {
+        if (string.IsNullOrEmpty(alias) || string.IsNullOrEmpty(newCollectionRebuilded))
+        {
+            //TODO : log a message
+            return;
+        }
+
+        await searchClient.UpsertCollectionAlias(alias, new CollectionAlias(newCollectionRebuilded));
+    }
+
+    public async Task<(string activeCollectionName, string newCollectionName)> GetCollectionNames(string collectionName)
+    {
+        var currentCollection = await searchClient.RetrieveCollection(collectionName); //Search by alias the current collection
+        if (currentCollection == null)
+        {
+            return (string.Empty, string.Empty);
+        }
+
+        string newCollectionName = $"{collectionName}-primary"; //Default to primary
+        if (currentCollection.Name.EndsWith("-primary"))
+        {
+            newCollectionName = $"{collectionName}-secondary";
+        }
+
+        return (currentCollection.Name, newCollectionName);
+    }
+
 }

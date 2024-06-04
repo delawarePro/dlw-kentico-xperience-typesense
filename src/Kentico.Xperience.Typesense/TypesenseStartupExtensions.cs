@@ -78,7 +78,6 @@ public static class TypesenseStartupExtensions
            .AddSingleton<ITypesenseTaskLogger, DefaultTypesenseTaskLogger>()
            .AddSingleton<ITypesenseTaskProcessor, DefaultTypesenseTaskProcessor>()
            .AddSingleton<ITypesenseConfigurationKenticoStorageService, DefaultTypesenseConfigurationKenticoStorageService>()
-           .AddSingleton<ITypesenseConfigurationTypesenseStorageService, DefaultTypesenseConfigurationTypesenseStorageService>()
            .AddSingleton<ITypesenseCollectionService, DefaultTypesenseCollectionService>();
 #pragma warning restore format
     }

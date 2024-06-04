@@ -67,4 +67,14 @@ public interface IXperienceTypesenseClient
     /// <exception cref="OperationCanceledException" />
     /// <exception cref="ObjectDisposedException" />
     Task DeleteCollection(string collectionName, CancellationToken cancellationToken);
+
+
+    Task SwapAliasWhenRebuildIsDone(string alias, string newCollectionRebuilded);
+    Task<bool> TryCreateCollection(TypesenseConfigurationModel configuration);
+
+    Task<bool> TryEditCollection(TypesenseConfigurationModel configuration, Func<string, Task> rebuildAction);
+    Task<bool> TryDeleteCollection(TypesenseConfigurationModel? configuration);
+
+    Task<(string activeCollectionName, string newCollectionName)> GetCollectionNames(string collectionName);
+    Task<int> SwapAliasWhenRebuildIsDone(IEnumerable<TypesenseQueueItem> endOfQueueItem, string key, CancellationToken cancellationToken);
 }

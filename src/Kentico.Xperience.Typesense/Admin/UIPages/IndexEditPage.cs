@@ -3,6 +3,7 @@
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.Forms;
 using Kentico.Xperience.Typesense.Admin;
+using Kentico.Xperience.Typesense.Collection;
 
 [assembly: UIPage(
    parentType: typeof(CollectionListingPage),
@@ -25,8 +26,8 @@ internal class CollectionEditPage : BaseCollectionEditPage
     public CollectionEditPage(Xperience.Admin.Base.Forms.Internal.IFormItemCollectionProvider formItemCollectionProvider,
                  IFormDataBinder formDataBinder,
                  ITypesenseConfigurationKenticoStorageService storageService,
-                 ITypesenseConfigurationTypesenseStorageService typesenseConfigurationTypesenseStorageService)
-        : base(formItemCollectionProvider, formDataBinder, storageService, typesenseConfigurationTypesenseStorageService) { }
+                 ITypesenseCollectionService collectionService)
+        : base(formItemCollectionProvider, formDataBinder, storageService, collectionService) { }
 
     protected override TypesenseConfigurationModel Model
     {

@@ -121,3 +121,26 @@ public class CollectionEventReusableItemModel : ICollectionEventItemModel
         ContentLanguageID = contentLanguageID;
     }
 }
+
+public class EndOfRebuildItemModel : ICollectionEventItemModel
+{
+    public int ItemID { get; set; }
+    public Guid ItemGuid { get; set; }
+    public string LanguageName { get; set; } = string.Empty;
+    public string ContentTypeName { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public bool IsSecured { get; set; }
+    public int ContentTypeID { get; set; }
+    public int ContentLanguageID { get; set; }
+
+    public string CurrentlyActiveCollection { get; private set; }
+    public string RebuildedCollection { get; private set; }
+    public string CollectionAlias { get; private set; }
+
+    public EndOfRebuildItemModel(string currentlyActiveCollection, string rebuildedCollection, string collectionAlias)
+    {
+        CurrentlyActiveCollection = currentlyActiveCollection;
+        RebuildedCollection = rebuildedCollection;
+        CollectionAlias = collectionAlias;
+    }
+}

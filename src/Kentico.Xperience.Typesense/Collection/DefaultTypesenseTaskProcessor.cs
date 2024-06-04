@@ -1,4 +1,6 @@
-﻿using CMS.Core;
+﻿using AngleSharp.Dom;
+
+using CMS.Core;
 using CMS.Websites;
 
 using Kentico.Xperience.Typesense.Search;
@@ -40,6 +42,8 @@ internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
                 var deleteTasks = group.Where(queueItem => queueItem.TaskType == TypesenseTaskType.DELETE).ToList();
 
                 var updateTasks = group.Where(queueItem => queueItem.TaskType is TypesenseTaskType.PUBLISH_INDEX or TypesenseTaskType.UPDATE);
+
+                var endOfQueueItem = group.Where(queueItem => queueItem.TaskType == TypesenseTaskType.END_OF_REBUILD);
                 var upsertData = new List<TypesenseSearchResultModel>();
                 foreach (var queueItem in updateTasks)
                 {
@@ -63,6 +67,7 @@ internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
 
                 successfulOperations += await typesenseClient.DeleteRecords(deleteIds, group.Key, cancellationToken);
                 successfulOperations += await typesenseClient.UpsertRecords(upsertData, group.Key, cancellationToken);
+                successfulOperations += await typesenseClient.SwapAliasWhenRebuildIsDone(endOfQueueItem, group.Key, cancellationToken);
             }
             catch (Exception ex)
             {

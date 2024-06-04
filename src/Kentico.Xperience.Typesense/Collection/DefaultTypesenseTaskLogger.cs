@@ -27,7 +27,7 @@ internal class DefaultTypesenseTaskLogger : ITypesenseTaskLogger
     {
         var taskType = GetTaskType(eventName);
 
-        foreach (var typesenseCollection in TypesenseCollectionStore.Instance.GetAllIndices())
+        foreach (var typesenseCollection in TypesenseCollectionStore.Instance.GetAllCollections())
         {
             if (!webpageItem.IsCollectionedByCollection(eventLogService, typesenseCollection.CollectionName, eventName))
             {
@@ -63,7 +63,7 @@ internal class DefaultTypesenseTaskLogger : ITypesenseTaskLogger
 
     public async Task HandleReusableItemEvent(CollectionEventReusableItemModel reusableItem, string eventName)
     {
-        foreach (var typesenseCollection in TypesenseCollectionStore.Instance.GetAllIndices())
+        foreach (var typesenseCollection in TypesenseCollectionStore.Instance.GetAllCollections())
         {
             if (!reusableItem.IsCollectionedByCollection(eventLogService, typesenseCollection.CollectionName, eventName))
             {

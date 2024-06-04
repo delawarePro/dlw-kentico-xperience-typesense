@@ -12,7 +12,7 @@ namespace Kentico.Xperience.Typesense;
 internal class TypesenseQueueWorker : ThreadQueueWorker<TypesenseQueueItem, TypesenseQueueWorker>
 {
     private readonly ITypesenseTaskProcessor typesenseTaskProcessor;
-
+    private readonly IXperienceTypesenseClient xperienceTypesenseClient;
 
     /// <inheritdoc />
     protected override int DefaultInterval => 10000;
@@ -23,7 +23,12 @@ internal class TypesenseQueueWorker : ThreadQueueWorker<TypesenseQueueItem, Type
     /// Should not be called directly- the worker should be initialized during startup using
     /// <see cref="ThreadWorker{T}.EnsureRunningThread"/>.
     /// </summary>
-    public TypesenseQueueWorker() => typesenseTaskProcessor = Service.Resolve<ITypesenseTaskProcessor>();
+    public TypesenseQueueWorker()
+    {
+        typesenseTaskProcessor = Service.Resolve<ITypesenseTaskProcessor>();
+        xperienceTypesenseClient = Service.Resolve<IXperienceTypesenseClient>();
+    }
+
 
 
     /// <summary>
@@ -48,7 +53,7 @@ internal class TypesenseQueueWorker : ThreadQueueWorker<TypesenseQueueItem, Type
             throw new InvalidOperationException($"Attempted to log task for Typesense index '{queueItem.CollectionName},' but it is not registered.");
         }
 
-        Current.Enqueue(queueItem, false);
+        Current.Enqueue(queueItem, false); //TODO : Provide an abstraction for the queue to avoid thread queues
     }
 
 
@@ -63,5 +68,14 @@ internal class TypesenseQueueWorker : ThreadQueueWorker<TypesenseQueueItem, Type
 
 
     /// <inheritdoc />
-    protected override int ProcessItems(IEnumerable<TypesenseQueueItem> items) => typesenseTaskProcessor.ProcessTypesenseTasks(items, CancellationToken.None).ConfigureAwait(false).GetAwaiter().GetResult();
+    protected override int ProcessItems(IEnumerable<TypesenseQueueItem> items)
+    {
+        if (items == null || !items.Any())
+        {
+            return 0;
+        }
+
+        int numberOfProcessed = typesenseTaskProcessor.ProcessTypesenseTasks(items, CancellationToken.None).ConfigureAwait(false).GetAwaiter().GetResult();
+        return numberOfProcessed;
+    }
 }

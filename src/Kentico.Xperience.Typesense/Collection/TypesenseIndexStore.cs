@@ -8,7 +8,7 @@ namespace Kentico.Xperience.Typesense.Collection;
 public class TypesenseCollectionStore
 {
     private static readonly Lazy<TypesenseCollectionStore> mInstance = new();
-    private readonly List<TypesenseCollection> registeredCollectiones = [];
+    private readonly List<TypesenseCollection> registeredCollections = [];
 
     /// <summary>
     /// Gets current instance of the <see cref="TypesenseCollectionStore"/> class.
@@ -18,13 +18,14 @@ public class TypesenseCollectionStore
     /// <summary>
     /// Gets all registered indexes.
     /// </summary>
-    public IEnumerable<TypesenseCollection> GetAllIndices() => registeredCollectiones;
+    public IEnumerable<TypesenseCollection> GetAllCollections() => registeredCollections;
 
     /// <summary>
     /// Gets a registered <see cref="TypesenseCollection"/> with the specified <paramref name="collectionName"/>,
     /// or <c>null</c>.
     /// </summary>
     /// <param name="collectionName">The name of the index to retrieve.</param>
+    /// <param name="allowPhysicalNames">if false this will only search by alias</param>
     /// <exception cref="ArgumentNullException" />
     /// <exception cref="InvalidOperationException" />
     public TypesenseCollection? GetCollection(string collectionName)
@@ -34,8 +35,13 @@ public class TypesenseCollectionStore
             return null;
         }
 
-        return registeredCollectiones.SingleOrDefault(i => i.CollectionName.Equals(collectionName, StringComparison.OrdinalIgnoreCase));
+        collectionName = RemovePostfix(collectionName);
+
+        return registeredCollections.SingleOrDefault(i => i.CollectionName.Equals(collectionName, StringComparison.OrdinalIgnoreCase));
     }
+
+    private string RemovePostfix(string collectionName) => collectionName.Replace("-primary", string.Empty)
+                                                                         .Replace("-secondary", string.Empty);
 
     /// <summary>
     /// Gets a registered <see cref="TypesenseCollection"/> with the specified <paramref name="identifier"/>,
@@ -44,7 +50,7 @@ public class TypesenseCollectionStore
     /// <param name="identifier">The identifier of the index to retrieve.</param>
     /// <exception cref="ArgumentNullException" />
     /// <exception cref="InvalidOperationException" />
-    public TypesenseCollection? GetCollection(int identifier) => registeredCollectiones.Find(i => i.Identifier == identifier);
+    public TypesenseCollection? GetCollection(int identifier) => registeredCollections.Find(i => i.Identifier == identifier);
 
     /// <summary>
     /// Gets a registered <see cref="TypesenseCollection"/> with the specified <paramref name="collectionName"/>. If no index is found, a <see cref="InvalidOperationException" /> is thrown.
@@ -59,7 +65,9 @@ public class TypesenseCollectionStore
             throw new ArgumentException("Value must not be null or empty");
         }
 
-        return registeredCollectiones.SingleOrDefault(i => i.CollectionName.Equals(collectionName, StringComparison.OrdinalIgnoreCase))
+        collectionName = RemovePostfix(collectionName);
+
+        return registeredCollections.SingleOrDefault(i => i.CollectionName.Equals(collectionName, StringComparison.OrdinalIgnoreCase))
             ?? throw new InvalidOperationException($"The index '{collectionName}' is not registered.");
     }
 
@@ -76,12 +84,12 @@ public class TypesenseCollectionStore
             throw new ArgumentNullException(nameof(index));
         }
 
-        if (registeredCollectiones.Exists(i => i.CollectionName.Equals(index.CollectionName, StringComparison.OrdinalIgnoreCase) || index.Identifier == i.Identifier))
+        if (registeredCollections.Exists(i => i.CollectionName.Equals(index.CollectionName, StringComparison.OrdinalIgnoreCase) || index.Identifier == i.Identifier))
         {
             throw new InvalidOperationException($"Attempted to register Typesense index with identifer [{index.Identifier}] and name [{index.CollectionName}] but it is already registered.");
         }
 
-        registeredCollectiones.Add(index);
+        registeredCollections.Add(index);
     }
 
     /// <summary>
@@ -90,7 +98,7 @@ public class TypesenseCollectionStore
     /// <param name="models"></param>
     internal void SetIndicies(IEnumerable<TypesenseConfigurationModel> models)
     {
-        registeredCollectiones.Clear();
+        registeredCollections.Clear();
         foreach (var index in models)
         {
             Instance.AddCollection(new TypesenseCollection(index, StrategyStorage.Strategies));

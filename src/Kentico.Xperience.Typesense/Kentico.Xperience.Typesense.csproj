@@ -15,6 +15,7 @@
 
 		<!-- Required to prevent type conflicts with existing types -->
 		<HotChocolateImplicitUsings>disable</HotChocolateImplicitUsings>
+		<TargetFramework>net8.0</TargetFramework>
 	</PropertyGroup>
 
 	<ItemGroup>

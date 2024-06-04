@@ -5,6 +5,7 @@
 		<SeparatedAdmin Condition="'$(SeparatedAdmin)' == ''">false</SeparatedAdmin>
 		<Nullable>annotations</Nullable>
 		<RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+		<TargetFramework>net8.0</TargetFramework>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="App_Data\CMSModules\WebFarm\webfarm.sync" />

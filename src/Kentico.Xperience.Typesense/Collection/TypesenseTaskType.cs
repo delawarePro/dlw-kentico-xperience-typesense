@@ -23,5 +23,10 @@ public enum TypesenseTaskType
     /// <summary>
     /// A task for a page which should be removed from the index.
     /// </summary>
-    DELETE
+    DELETE,
+
+    /// <summary>
+    /// A task inserted at the end of the rebuild to be able to detect it.
+    /// </summary>
+    END_OF_REBUILD
 }

@@ -24,7 +24,6 @@ internal class CollectionListingPage : ListingPage
     private readonly IXperienceTypesenseClient xperienceTypesenseClient;
     private readonly IPageUrlGenerator pageUrlGenerator;
     private readonly ITypesenseConfigurationKenticoStorageService configurationStorageService;
-    private readonly ITypesenseConfigurationTypesenseStorageService typesenseConfigurationTypesenseStorageService;
     private readonly IConversionService conversionService;
 
     protected override string ObjectType => TypesenseCollectionItemInfo.OBJECT_TYPE;
@@ -36,13 +35,11 @@ internal class CollectionListingPage : ListingPage
         IXperienceTypesenseClient xperienceTypesenseClient,
         IPageUrlGenerator pageUrlGenerator,
         ITypesenseConfigurationKenticoStorageService configurationStorageService,
-        ITypesenseConfigurationTypesenseStorageService typesenseConfigurationTypesenseStorageService,
         IConversionService conversionService)
     {
         this.xperienceTypesenseClient = xperienceTypesenseClient;
         this.pageUrlGenerator = pageUrlGenerator;
         this.configurationStorageService = configurationStorageService;
-        this.typesenseConfigurationTypesenseStorageService = typesenseConfigurationTypesenseStorageService;
         this.conversionService = conversionService;
     }
 
@@ -50,7 +47,7 @@ internal class CollectionListingPage : ListingPage
     /// <inheritdoc/>
     public override async Task ConfigurePage()
     {
-        if (!TypesenseCollectionStore.Instance.GetAllIndices().Any())
+        if (!TypesenseCollectionStore.Instance.GetAllCollections().Any())
         {
             PageConfiguration.Callouts =
             [
@@ -99,15 +96,13 @@ internal class CollectionListingPage : ListingPage
 
             if (res)
             {
-                res = await typesenseConfigurationTypesenseStorageService.TryDeleteCollection(collection);
+                res = await xperienceTypesenseClient.TryDeleteCollection(collection);
                 if (res)
                 {
                     TypesenseCollectionStore.SetIndicies(configurationStorageService);
-
-                    await xperienceTypesenseClient.DeleteCollection(index.CollectionName, cancellationToken);
                 }
             }
-            if(!res)
+            else
             {
                 return response
                     .AddErrorMessage(string.Format("Error deleting Typesense index with identifier {0}.", id));
@@ -211,7 +206,7 @@ internal class CollectionListingPage : ListingPage
 
     private static void AddMissingStatistics(ref ICollection<TypesenseCollectionStatisticsViewModel> statistics)
     {
-        foreach (string collectionName in TypesenseCollectionStore.Instance.GetAllIndices().Select(i => i.CollectionName))
+        foreach (string collectionName in TypesenseCollectionStore.Instance.GetAllCollections().Select(i => i.CollectionName))
         {
             if (!statistics.Any(stat => stat.Name?.Equals(collectionName, StringComparison.OrdinalIgnoreCase) ?? false))
             {
