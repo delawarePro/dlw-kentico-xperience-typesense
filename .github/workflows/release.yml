@@ -1,0 +1,45 @@
+name: "CI: Build and Test"
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
+
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+      DOTNET_NOLOGO: 1
+      SIGN_FILE: false
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          global-json-file: global.json
+
+      - name: Install dependencies
+        run: dotnet restore --locked-mode
+
+      - name: Build Solution
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test Solution
+        run: dotnet test --configuration Release --no-build --no-restore
+
+      - name: Pack the project
+        run: dotnet pack --configuration Release --no-build --output ./output
+
+      - name: Publish to NuGet
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: dotnet nuget push ./output/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
