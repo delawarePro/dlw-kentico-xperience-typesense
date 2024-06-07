@@ -12,7 +12,6 @@
     <PackageVersion Include="Kentico.Xperience.Imageprocessing" Version="29.0.0" />
     <PackageVersion Include="Kentico.Xperience.WebApp" Version="29.0.0" />
     <PackageVersion Include="Kentico.Xperience.Core.Tests" Version="29.0.0" />
-    <PackageVersion Include="Algolia.Search" Version="6.16.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="9.6.0.74858" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />

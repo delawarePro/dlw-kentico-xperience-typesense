@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <Company>Kentico Software</Company>
+    <Company>delaware Consulting</Company>
     <Authors>$(Company)</Authors>
     <Copyright>Copyright © $(Company) $([System.DateTime]::Now.Year)</Copyright>
     <Trademark>$(Company)™</Trademark>
@@ -9,8 +9,8 @@
     <VersionSuffix></VersionSuffix>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 
-    <PackageProjectUrl>https://github.com/Kentico/xperience-by-kentico-algolia</PackageProjectUrl>
-    <PackageReleaseNotes>https://github.com/Kentico/xperience-by-kentico-algolia/releases</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/VGBenjamin/Kentico.Xperience.Typesense</PackageProjectUrl>
+    <PackageReleaseNotes>https://github.com/VGBenjamin/Kentico.Xperience.Typesense/releases</PackageReleaseNotes>
     <PackageIcon>logo.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>kentico;xperience;mvc;algolia;search</PackageTags>
@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <WarningsAsErrors>nullable</WarningsAsErrors>
