@@ -24,7 +24,7 @@ public class SimpleSearchService
         {
             Page = page - 1,
             PerPage = pageSize,
-            QueryBy = "Url",
+            QueryBy = "Url,Title",
         };
 
         var results = await typesenseClient.Search<DancingGoatSimpleSearchResultModel>(collectionName, searchParameters);

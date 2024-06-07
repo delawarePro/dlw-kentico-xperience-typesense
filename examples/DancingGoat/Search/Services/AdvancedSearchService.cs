@@ -24,12 +24,13 @@ public class AdvancedSearchService
         var searchParameters = new SearchParameters(searchText)
         {
             Page = page - 1,
-            PerPage = pageSize
+            PerPage = pageSize,
+            QueryBy = "Url,Title"
         };
 
-        if (facet is not null)
+        if (!string.IsNullOrEmpty(facet))
         {
-            searchParameters.FacetBy = nameof(DancingGoatSearchResultModel.ContentTypeName);
+            searchParameters.FacetBy = facet;
         }
 
         var results = await typesenseClient.Search<DancingGoatSearchResultModel>(indexName, searchParameters);
