@@ -239,7 +239,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         //PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         //DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         //MaxDepth = 3
-
+         
     };
 
     private async Task<int> UpsertRecordsInternal(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, CancellationToken cancellationToken)
