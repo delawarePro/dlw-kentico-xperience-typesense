@@ -1234,7 +1234,7 @@
           "System.IO.Hashing": "7.0.0"
         }
       },
-      "kentico.xperience.typesense": {
+      "Delaware.Xperience.Typesense": {
         "type": "Project",
         "dependencies": {
           "Kentico.Xperience.Admin": "[29.0.0, )",

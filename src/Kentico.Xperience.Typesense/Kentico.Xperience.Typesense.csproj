@@ -2,13 +2,13 @@
 	<PropertyGroup>
 		<Product>Xperience by Kentico Typesense Search</Product>
 		<Title>$(Product)</Title>
-		<PackageId>Kentico.Xperience.Typesense</PackageId>
+		<PackageId>Delaware.Xperience.Typesense</PackageId>
 		<Description>Enables the creation of Typesense search indexes and the indexing of Xperience website channel pages and reusable content items.</Description>
 		<RepositoryUrl>https://github.com/kentico/xperience-by-kentico-typesense</RepositoryUrl>
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<AdminOrgName>kentico</AdminOrgName>
+		<AdminOrgName>delaware</AdminOrgName>
 		<RootNamespace>Kentico.Xperience.Typesense</RootNamespace>
 		<NoWarn>$(NoWarn);S1075</NoWarn>
 		<LangVersion>latest</LangVersion>
