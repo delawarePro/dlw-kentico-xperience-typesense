@@ -34,7 +34,7 @@ public class TypesenseCollectionConfigurationComponent : FormComponent<Typesense
 
     internal List<TypesenseCollectionIncludedPath>? Value { get; set; }
 
-    public override string ClientComponentName => "@kentico/xperience-integrations-typesense/TypesenseCollectionConfiguration";
+    public override string ClientComponentName => "@delaware/xperience-integrations-typesense/TypesenseCollectionConfiguration";
 
     public override IEnumerable<TypesenseCollectionIncludedPath> GetValue() => Value ?? [];
     public override void SetValue(IEnumerable<TypesenseCollectionIncludedPath> value) => Value = value.ToList();
