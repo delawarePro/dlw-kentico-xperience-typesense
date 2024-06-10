@@ -4,7 +4,7 @@ const baseWebpackConfig = require('@kentico/xperience-webpack-config');
 module.exports = (opts) => {
   const baseConfig = (webpackConfigEnv, argv) => {
     return baseWebpackConfig({
-      orgName: 'kentico',
+      orgName: 'delaware',
       projectName: 'xperience-integrations-typesense',
       webpackConfigEnv: webpackConfigEnv,
       argv: argv,
