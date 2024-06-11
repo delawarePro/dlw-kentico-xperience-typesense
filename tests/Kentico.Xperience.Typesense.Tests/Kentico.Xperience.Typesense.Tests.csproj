@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Kentico.Xperience.Typesense.Admin\Kentico.Xperience.Typesense.Admin.csproj" />
     <ProjectReference Include="..\..\src\Kentico.Xperience.Typesense\Kentico.Xperience.Typesense.csproj" />
   </ItemGroup>
 

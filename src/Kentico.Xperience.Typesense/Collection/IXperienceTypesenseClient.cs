@@ -1,5 +1,5 @@
-using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Search;
+using Kentico.Xperience.Typesense.Xperience;
 
 
 namespace Kentico.Xperience.Typesense.Collection;
@@ -70,10 +70,10 @@ public interface IXperienceTypesenseClient
 
 
     Task SwapAliasWhenRebuildIsDone(string alias, string newCollectionRebuilded);
-    Task<bool> TryCreateCollection(TypesenseConfigurationModel configuration);
+    Task<bool> TryCreateCollection(ITypesenseConfigurationModel configuration);
 
-    Task<bool> TryEditCollection(TypesenseConfigurationModel configuration, Func<string, Task> rebuildAction);
-    Task<bool> TryDeleteCollection(TypesenseConfigurationModel? configuration);
+    Task<bool> TryEditCollection(ITypesenseConfigurationModel configuration, Func<string, Task> rebuildAction);
+    Task<bool> TryDeleteCollection(ITypesenseConfigurationModel? configuration);
 
     Task<(string activeCollectionName, string newCollectionName)> GetCollectionNames(string collectionName);
     Task<int> SwapAliasWhenRebuildIsDone(IEnumerable<TypesenseQueueItem> endOfQueueItem, string key, CancellationToken cancellationToken);

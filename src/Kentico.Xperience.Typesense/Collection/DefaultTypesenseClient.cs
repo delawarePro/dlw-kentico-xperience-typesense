@@ -1,8 +1,6 @@
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Net.Mime;
 using System.Text;
-using System.Text.Json.Serialization;
 using System.Text.Json;
 
 using CMS.ContentEngine;
@@ -11,12 +9,12 @@ using CMS.DataEngine;
 using CMS.Helpers;
 using CMS.Websites;
 
-using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Search;
 
 using Microsoft.Extensions.DependencyInjection;
 
 using Typesense;
+using Kentico.Xperience.Typesense.Xperience;
 
 namespace Kentico.Xperience.Typesense.Collection;
 
@@ -122,7 +120,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         await searchClient.DeleteCollection(collectionName);
     }
 
-    public async Task<bool> TryDeleteCollection(TypesenseConfigurationModel? configuration)
+    public async Task<bool> TryDeleteCollection(ITypesenseConfigurationModel? configuration)
     {
         if (configuration is not null)
         {
@@ -296,7 +294,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
             return items.AsEnumerable();
         }, new CacheSettings(5, nameof(DefaultTypesenseClient), nameof(GetAllWebsiteChannels)));
 
-    public async Task<bool> TryCreateCollection(TypesenseConfigurationModel configuration)
+    public async Task<bool> TryCreateCollection(ITypesenseConfigurationModel configuration)
     {
         if (configuration is null)
         {
@@ -321,7 +319,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
 
 
 
-    public async Task<bool> TryEditCollection(TypesenseConfigurationModel configuration, Func<string, Task> rebuildAction)
+    public async Task<bool> TryEditCollection(ITypesenseConfigurationModel configuration, Func<string, Task> rebuildAction)
     {
         if (configuration is null)
         {

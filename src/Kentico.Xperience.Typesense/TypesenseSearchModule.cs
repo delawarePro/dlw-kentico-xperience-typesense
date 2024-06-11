@@ -6,8 +6,8 @@ using CMS.DataEngine;
 using CMS.Websites;
 
 using Kentico.Xperience.Typesense;
-using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Collection;
+using Kentico.Xperience.Typesense.Xperience;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -19,7 +19,7 @@ namespace Kentico.Xperience.Typesense;
 /// <summary>
 /// Initializes page event handlers, and ensures the thread queue workers for processing Typesense tasks.
 /// </summary>
-internal class TypesenseSearchModule : Module
+public class TypesenseSearchModule : Module
 {
     private ITypesenseTaskLogger? typesenseTaskLogger;
     private IAppSettingsService? appSettingsService;

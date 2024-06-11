@@ -1,4 +1,4 @@
-﻿using Kentico.Xperience.Typesense.Admin;
+﻿using Kentico.Xperience.Typesense.Xperience;
 
 namespace Kentico.Xperience.Typesense.Collection;
 
@@ -96,7 +96,7 @@ public class TypesenseCollectionStore
     /// Resets all indicies
     /// </summary>
     /// <param name="models"></param>
-    internal void SetIndicies(IEnumerable<TypesenseConfigurationModel> models)
+    public void SetIndicies(IEnumerable<ITypesenseConfigurationModel> models)
     {
         registeredCollections.Clear();
         foreach (var index in models)
@@ -109,7 +109,7 @@ public class TypesenseCollectionStore
     /// Sets the current indicies to those provided by <paramref name="configurationService"/>
     /// </summary>
     /// <param name="configurationService"></param>
-    internal static void SetIndicies(ITypesenseConfigurationKenticoStorageService configurationService)
+    public static void SetIndicies(ITypesenseConfigurationKenticoStorageService configurationService)
     {
         var indices = configurationService.GetAllCollectionData();
 
