@@ -36,7 +36,7 @@ internal class TypesenseAdminModule : AdminModule
             return;
         }
 
-        RegisterClientModule("kentico", "xperience-integrations-typesense");
+        RegisterClientModule("delaware", "xperience-integrations-typesense");
 
         installer = services.GetRequiredService<TypesenseModuleInstaller>();
         storageService = services.GetRequiredService<ITypesenseConfigurationKenticoStorageService>();

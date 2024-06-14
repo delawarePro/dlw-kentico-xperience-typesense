@@ -25,5 +25,5 @@ namespace Kentico.Xperience.Typesense.Admin;
 [UIPermission(TypesenseCollectionPermissions.REBUILD, "Rebuild")]
 internal class TypesenseApplicationPage : ApplicationPage
 {
-    public const string IDENTIFIER = "Kentico.Xperience.Integrations.Typesense";
+    public const string IDENTIFIER = "Delaware.Xperience.Integrations.Typesense";
 }

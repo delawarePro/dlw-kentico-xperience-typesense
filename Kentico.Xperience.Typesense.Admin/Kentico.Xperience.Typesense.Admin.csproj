@@ -1524,6 +1524,46 @@
     <PackageReference Include="Kentico.Xperience.AzureStorage" />
   </ItemGroup>
 
+	<PropertyGroup>
+		<AdminOrgName>delaware</AdminOrgName>
+		<RootNamespace>Kentico.Xperience.Typesense</RootNamespace>
+		<NoWarn>$(NoWarn);S1075</NoWarn>
+		<LangVersion>latest</LangVersion>
+
+		<!-- Required to prevent type conflicts with existing types -->
+		<HotChocolateImplicitUsings>disable</HotChocolateImplicitUsings>
+		<TargetFramework>net8.0</TargetFramework>
+	</PropertyGroup>
+ 
+	<PropertyGroup>
+		<Product>Xperience by Kentico Typesense Search</Product>
+		<Title>$(Product)</Title>
+		<PackageId>Delaware.Xperience.Typesense.Admin</PackageId>
+		<Description>Enables the creation of Typesense search indexes and the indexing of Xperience website channel pages and reusable content items.</Description>
+		<RepositoryUrl>https://github.com/kentico/xperience-by-kentico-typesense</RepositoryUrl>
+	</PropertyGroup>
+	 
+	<ItemGroup>
+		<AssemblyAttribute Include="CMS.AssemblyDiscoverableAttribute">
+		</AssemblyAttribute>
+		<InternalsVisibleTo Include="$(AssemblyName).Tests" />
+
+		<!-- Requires that npm run build or npm run build:dev was executed _before_ the .NET build -->
+	</ItemGroup>
+
+	<Target Name="NpmInstall" BeforeTargets="NpmBuildClient" Condition=" '$(Configuration)|$(Platform)' != 'Debug|AnyCPU' ">
+		<Exec Command="npm ci --no-audit --no-fund" WorkingDirectory="$(MSBuildProjectDirectory)\Admin\Client" />
+	</Target>
+	<Target Name="NpmBuildClient" BeforeTargets="BeforeBuild" Condition=" '$(Configuration)|$(Platform)' != 'Debug|AnyCPU' ">
+		<Exec Command="npm run build" WorkingDirectory="$(MSBuildProjectDirectory)\Admin\Client" />
+
+		<ItemGroup>
+			<AdminClientPath Include="Admin\Client\dist\**">
+				<ProjectName>xperience-integrations-typesense</ProjectName>
+			</AdminClientPath>
+		</ItemGroup>
+	</Target>
+	
   <ItemGroup>
     <ProjectReference Include="..\src\Kentico.Xperience.Typesense\Kentico.Xperience.Typesense.csproj" />
   </ItemGroup>

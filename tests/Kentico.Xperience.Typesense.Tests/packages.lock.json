@@ -1890,7 +1890,7 @@
           "Typesense": "[7.7.0, )"
         }
       },
-      "kentico.xperience.typesense.admin": {
+      "Delaware.Xperience.Typesense.Admin": {
         "type": "Project",
         "dependencies": {
           "Delaware.Xperience.Typesense": "[0.0.5-beta-1, )",
