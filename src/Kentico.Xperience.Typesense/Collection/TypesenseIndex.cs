@@ -1,4 +1,5 @@
-﻿using Kentico.Xperience.Typesense.Admin;
+﻿
+using Kentico.Xperience.Typesense.Xperience;
 
 namespace Kentico.Xperience.Typesense.Collection;
 
@@ -34,7 +35,7 @@ public sealed class TypesenseCollection
 
     internal IEnumerable<TypesenseCollectionIncludedPath> IncludedPaths { get; set; }
 
-    internal TypesenseCollection(TypesenseConfigurationModel indexConfiguration, Dictionary<string, Type> strategies)
+    public TypesenseCollection(ITypesenseConfigurationModel indexConfiguration, Dictionary<string, Type> strategies)
     {
         Identifier = indexConfiguration.Id;
         CollectionName = indexConfiguration.CollectionName;
@@ -47,7 +48,7 @@ public sealed class TypesenseCollection
         if (strategies.ContainsKey(indexConfiguration.StrategyName))
         {
             strategy = strategies[indexConfiguration.StrategyName];
-        }
+        } 
 
         TypesenseCollectioningStrategyType = strategy;
     }

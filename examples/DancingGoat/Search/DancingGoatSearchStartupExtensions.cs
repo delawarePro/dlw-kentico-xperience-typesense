@@ -14,6 +14,10 @@ public static class DancingGoatSearchStartupExtensions
             builder.RegisterStrategy<SimpleSearchCollectionStrategy>("DancingGoatMinimalExampleStrategy");
         }, configuration, false);
 
+        services.AddKenticoAdminTypesense(builder =>
+        {
+        }, configuration);
+
         services.AddHttpClient<WebCrawlerService>();
         services.AddSingleton<WebScraperHtmlSanitizer>();
 

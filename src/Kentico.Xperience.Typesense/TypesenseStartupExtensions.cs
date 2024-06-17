@@ -1,5 +1,4 @@
-﻿using Kentico.Xperience.Typesense.Admin;
-using Kentico.Xperience.Typesense.Collection;
+﻿using Kentico.Xperience.Typesense.Collection;
 using Kentico.Xperience.Typesense.QueueWorker;
 
 using Microsoft.Extensions.Configuration;
@@ -57,7 +56,6 @@ public static class TypesenseStartupExtensions
 
 #pragma warning disable format
         return services
-            .AddSingleton<TypesenseModuleInstaller>()
             .AddTypesenseClient(config =>
             {
 
@@ -77,9 +75,7 @@ public static class TypesenseStartupExtensions
             })*/
            .AddSingleton<IXperienceTypesenseClient, DefaultTypesenseClient>()
            .AddSingleton<ITypesenseTaskLogger, DefaultTypesenseTaskLogger>()
-           .AddSingleton<ITypesenseTaskProcessor, DefaultTypesenseTaskProcessor>()
-           .AddSingleton<ITypesenseConfigurationKenticoStorageService, DefaultTypesenseConfigurationKenticoStorageService>()
-           .AddSingleton<ITypesenseCollectionService, DefaultTypesenseCollectionService>();
+           .AddSingleton<ITypesenseTaskProcessor, DefaultTypesenseTaskProcessor>();
 #pragma warning restore format
     }
     /// <summary>
