@@ -1,8 +1,6 @@
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Net.Mime;
 using System.Text;
-using System.Text.Json.Serialization;
 using System.Text.Json;
 
 using CMS.ContentEngine;
@@ -17,6 +15,7 @@ using Kentico.Xperience.Typesense.Search;
 using Microsoft.Extensions.DependencyInjection;
 
 using Typesense;
+using Kentico.Xperience.Typesense.QueueWorker;
 
 namespace Kentico.Xperience.Typesense.Collection;
 
@@ -34,6 +33,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
     private readonly IProgressiveCache cache;
     private readonly ITypesenseClient searchClient;
     private readonly IServiceProvider serviceProvider;
+    private readonly ITypesenseQueue queue;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DefaultTypesenseClient"/> class.
@@ -47,8 +47,10 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         IContentQueryExecutor executor,
         ITypesenseClient typesenseClient,
         IEventLogService eventLogService,
-        IServiceProvider serviceProvider)
+        IServiceProvider serviceProvider,
+        ITypesenseQueue queue)
     {
+        this.queue = queue;
         this.serviceProvider = serviceProvider;
         this.cache = cache;
         this.searchClient = searchClient;
@@ -199,9 +201,9 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         await EnsureNewCollection(newCollectionName, typesenseCollection);
 
 
-        indexedItems.ForEach(node => TypesenseQueueWorker.EnqueueTypesenseQueueItem(new TypesenseQueueItem(node, TypesenseTaskType.PUBLISH_INDEX, newCollectionName)));
+        indexedItems.ForEach(async node => await queue.EnqueueTypesenseQueueItem(new TypesenseQueueItem(node, TypesenseTaskType.PUBLISH_INDEX, newCollectionName)));
 
-        TypesenseQueueWorker.EnqueueTypesenseQueueItem(new TypesenseQueueItem(new EndOfRebuildItemModel(activeCollectionName, newCollectionName, typesenseCollection.CollectionName), TypesenseTaskType.END_OF_REBUILD, typesenseCollection.CollectionName));
+        queue.EnqueueTypesenseQueueItem(new TypesenseQueueItem(new EndOfRebuildItemModel(activeCollectionName, newCollectionName, typesenseCollection.CollectionName), TypesenseTaskType.END_OF_REBUILD, typesenseCollection.CollectionName));
     }
 
     private async Task<CollectionEventWebPageItemModel> MapToEventItem(IWebPageContentQueryDataContainer content)

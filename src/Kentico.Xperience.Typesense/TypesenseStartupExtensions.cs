@@ -1,5 +1,6 @@
 ﻿using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Collection;
+using Kentico.Xperience.Typesense.QueueWorker;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -88,10 +89,19 @@ public static class TypesenseStartupExtensions
     /// <param name="serviceCollection"></param>
     /// <param name="configure"></param>
     /// <param name="configuration">The application configuration.</param>
+    /// <param name="useInMemoryQueue">If true, the <see cref="InMemoryQueue"/> will be used for indexing tasks. Otherwise, the <see cref="SqlQueue"/> will be used.</param>
     /// <returns></returns>
-    public static IServiceCollection AddKenticoTypesense(this IServiceCollection serviceCollection, Action<ITypesenseBuilder> configure, IConfiguration configuration)
+    public static IServiceCollection AddKenticoTypesense(this IServiceCollection serviceCollection, Action<ITypesenseBuilder> configure, IConfiguration configuration, bool useInMemoryQueue)
     {
         serviceCollection.AddKenticoTypesenseInternal(configuration);
+        if (useInMemoryQueue)
+        {
+            serviceCollection.AddSingleton<ITypesenseQueue, InMemoryQueue>();
+        }
+        else
+        {
+            serviceCollection.AddSingleton<ITypesenseQueue, SqlQueue>();
+        }
 
         var builder = new TypesenseBuilder(serviceCollection);
 

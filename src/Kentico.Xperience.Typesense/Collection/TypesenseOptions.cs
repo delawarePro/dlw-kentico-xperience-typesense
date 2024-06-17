@@ -1,4 +1,6 @@
-﻿namespace Kentico.Xperience.Typesense.Collection;
+﻿using Kentico.Xperience.Typesense.QueueWorker;
+
+namespace Kentico.Xperience.Typesense.Collection;
 
 /// <summary>
 /// Typesense integration options.
@@ -57,7 +59,7 @@ public sealed class TypesenseOptions
 
 
     /// <summary>
-    /// The interval at which <see cref="TypesenseQueueWorker"/> runs, in milliseconds.
+    /// The interval at which <see cref="ITypesenseQueue"/> runs, in milliseconds.
     /// </summary>
     public int CrawlerInterval
     {

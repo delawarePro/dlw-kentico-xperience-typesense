@@ -128,5 +128,6 @@ internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
 
     }
 
-    private static IEnumerable<string?> GetIdsToDelete(IEnumerable<TypesenseQueueItem> deleteTasks) => deleteTasks.Select(queueItem => queueItem.ItemToCollection.ItemGuid.ToString());
+    private static IEnumerable<string?> GetIdsToDelete(IEnumerable<TypesenseQueueItem> deleteTasks)
+        => deleteTasks.Select(queueItem => queueItem?.ItemToCollection?.ItemGuid.ToString() ?? Guid.Empty.ToString());
 }

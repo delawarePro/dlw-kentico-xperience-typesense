@@ -1,7 +1,9 @@
-﻿namespace Kentico.Xperience.Typesense.Collection;
+﻿using Kentico.Xperience.Typesense.QueueWorker;
+
+namespace Kentico.Xperience.Typesense.Collection;
 
 /// <summary>
-/// Processes tasks from <see cref="TypesenseQueueWorker"/>.
+/// Processes tasks from <see cref="ITypesenseQueue"/>.
 /// </summary>
 public interface ITypesenseTaskProcessor
 {

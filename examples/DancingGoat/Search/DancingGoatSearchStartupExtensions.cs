@@ -12,7 +12,7 @@ public static class DancingGoatSearchStartupExtensions
         {
             builder.RegisterStrategy<AdvancedSearchCollectionStrategy>("DancingGoatAdvancedExampleStrategy");
             builder.RegisterStrategy<SimpleSearchCollectionStrategy>("DancingGoatMinimalExampleStrategy");
-        }, configuration);
+        }, configuration, false);
 
         services.AddHttpClient<WebCrawlerService>();
         services.AddSingleton<WebScraperHtmlSanitizer>();

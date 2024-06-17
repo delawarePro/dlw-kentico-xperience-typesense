@@ -3,13 +3,15 @@ using CMS.Core;
 
 using Kentico.Xperience.Typesense.Collection;
 
-namespace Kentico.Xperience.Typesense;
+namespace Kentico.Xperience.Typesense.QueueWorker;
 
 /// <summary>
 /// Thread worker which enqueues recently updated or deleted nodes indexed
 /// by Typesense and processes the tasks in the background thread.
+/// 
+/// This is the default implementation from Kentico's algolia integration but as this isn't persistant the sql version is probably better.
 /// </summary>
-internal class TypesenseQueueWorker : ThreadQueueWorker<TypesenseQueueItem, TypesenseQueueWorker>
+internal class KenticoMemoryTypesenseQueueWorker : ThreadQueueWorker<TypesenseQueueItem, KenticoMemoryTypesenseQueueWorker>
 {
     private readonly ITypesenseTaskProcessor typesenseTaskProcessor;
     private readonly IXperienceTypesenseClient xperienceTypesenseClient;
@@ -19,11 +21,11 @@ internal class TypesenseQueueWorker : ThreadQueueWorker<TypesenseQueueItem, Type
 
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="TypesenseQueueWorker"/> class.
+    /// Initializes a new instance of the <see cref="KenticoMemoryTypesenseQueueWorker"/> class.
     /// Should not be called directly- the worker should be initialized during startup using
     /// <see cref="ThreadWorker{T}.EnsureRunningThread"/>.
     /// </summary>
-    public TypesenseQueueWorker()
+    public KenticoMemoryTypesenseQueueWorker()
     {
         typesenseTaskProcessor = Service.Resolve<ITypesenseTaskProcessor>();
         xperienceTypesenseClient = Service.Resolve<IXperienceTypesenseClient>();
