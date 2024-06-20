@@ -21,7 +21,7 @@ public class InMemoryQueue : ITypesenseQueue
 
     public async Task<TypesenseQueueItem?> DequeueAsync() => await channel.Reader.ReadAsync();
 
-    public async Task<IEnumerable<TypesenseQueueItem?>?> DequeueBatchAsync(int maxItems)
+    public async Task<IEnumerable<TypesenseQueueItem>?> DequeueBatchAsync(int maxItems)
     {
         var items = new List<TypesenseQueueItem>();
         while (items.Count < maxItems && channel.Reader.Count > 0)

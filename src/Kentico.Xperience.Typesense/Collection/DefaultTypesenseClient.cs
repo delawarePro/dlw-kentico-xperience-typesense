@@ -87,8 +87,27 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
             return stats.Select(i => new TypesenseCollectionStatisticsViewModel
             {
                 Name = i.Name,
-                NumberOfDocuments = i.NumberOfDocuments,
-                UpdatedAt = DateTime.Now // TODO : Change it to the actual value and add extra stats
+                NumberOfDocuments = i.NumberOfDocuments
+            })
+            .ToList();
+        }
+        catch (Exception ex)
+        {
+            eventLogService.LogException($"{nameof(DefaultTypesenseClient)} - {nameof(GetStatistics)}", "Cannot get the statistics from typesense", ex);
+            throw;
+        }
+    }
+
+    public async Task<ICollection<TypesenseCollectionAliasViewModel>> GetAliases(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var aliases = await searchClient.ListCollectionAliases(cancellationToken);
+
+            return aliases.CollectionAliases.Select(x => new TypesenseCollectionAliasViewModel
+            {
+                Name = x.Name,
+                CollectionName = x.CollectionName
             })
             .ToList();
         }
@@ -246,22 +265,32 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
 
     private async Task<int> UpsertRecordsInternal(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, CancellationToken cancellationToken)
     {
-        int upsertedCount = 0;
-
-        foreach (var item in dataObjects) //TODO : Test in parralele mode but be carrefull about the counter
+        try
         {
-            try
-            {
-                await typesenseClient.UpsertDocument(collectionName, item);
-                upsertedCount++;
-            }
-            catch (Exception ex)
-            {
-                eventLogService.LogException($"{nameof(DefaultTypesenseClient)} - {nameof(UpsertRecordsInternal)}", $"Error when indexing the item (guid): {item.ItemGuid} in language: {item.LanguageName}", ex);
-            }
+            var response = await typesenseClient.ImportDocuments(collectionName, dataObjects);
+            return response.Count;
+        }
+        catch (Exception ex)
+        {
+            eventLogService.LogException($"{nameof(DefaultTypesenseClient)} - {nameof(UpsertRecordsInternal)}", $"Error when indexing item in bulk", ex);
         }
 
-        return upsertedCount;
+        return 0;
+
+        //foreach (var item in dataObjects) //TODO : Test in parralele mode but be carrefull about the counter
+        //{
+        //    try
+        //    {
+        //        await typesenseClient.UpsertDocument(collectionName, item);
+        //        upsertedCount++;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        eventLogService.LogException($"{nameof(DefaultTypesenseClient)} - {nameof(UpsertRecordsInternal)}", $"Error when indexing the item (guid): {item.ItemGuid} in language: {item.LanguageName}", ex);
+        //    }
+        //}
+
+        //return upsertedCount;
     }
 
     private Task<IEnumerable<ContentLanguageInfo>> GetAllLanguages() =>
@@ -408,7 +437,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         return oldFields.Count == newFields.Count;
     }
 
-    public async Task<int> SwapAliasWhenRebuildIsDone(IEnumerable<TypesenseQueueItem> endOfQueueItems, string key, CancellationToken cancellationToken)
+    public async Task<int> SwapAliasWhenRebuildIsDone(IEnumerable<TypesenseQueueItem> endOfQueueItems, CancellationToken cancellationToken)
     {
         int processed = 0;
         foreach (var item in endOfQueueItems)

@@ -11,18 +11,27 @@ namespace Kentico.Xperience.Typesense.QueueWorker;
 public class SqlQueue : ITypesenseQueue
 {
     private readonly IIndexQueueItemInfoProvider indexQueueItemInfoProvider;
+    private readonly JsonSerializerOptions collectionEventItemModelJsonOptions;
 
-    public SqlQueue(IIndexQueueItemInfoProvider indexQueueItemInfoProvider) 
-        => this.indexQueueItemInfoProvider = indexQueueItemInfoProvider;
+    public SqlQueue(IIndexQueueItemInfoProvider indexQueueItemInfoProvider)
+    {
+        this.indexQueueItemInfoProvider = indexQueueItemInfoProvider;
+
+        collectionEventItemModelJsonOptions = new JsonSerializerOptions
+        {
+            Converters = { new CollectionEventItemModelConverter() }
+        };
+    }
 
     public async Task EnqueueTypesenseQueueItem(TypesenseQueueItem item)
     {
         var itemInfo = new IndexQueueItemInfo
         {
-            CollectionEvent = JsonSerializer.Serialize(item.ItemToCollection),
+            CollectionEvent = JsonSerializer.Serialize(item.ItemToCollection, collectionEventItemModelJsonOptions),
             TaskType = (int)item.TaskType,
             CollectionName = item.CollectionName,
-            EnqueuedAt = DateTime.Now
+            EnqueuedAt = DateTime.Now,
+            IndexQueueItemGuid = Guid.NewGuid()
         };
 
         indexQueueItemInfoProvider.Set(itemInfo);
@@ -34,7 +43,7 @@ public class SqlQueue : ITypesenseQueue
         return result?.FirstOrDefault();
     }
 
-    public async Task<IEnumerable<TypesenseQueueItem?>?> DequeueBatchAsync(int maxItems)
+    public async Task<IEnumerable<TypesenseQueueItem>?> DequeueBatchAsync(int maxItems)
     {
         var query = indexQueueItemInfoProvider.Get()
                     .OrderBy(nameof(IndexQueueItemInfo.EnqueuedAt))
@@ -43,12 +52,27 @@ public class SqlQueue : ITypesenseQueue
         if (query != null)
         {
             var result = await query.GetEnumerableTypedResultAsync();
-            if(result != null)
+            if (result != null && result.Any())
             {
-                return result.Select(x => x == null ? null : new TypesenseQueueItem(
-                    JsonSerializer.Deserialize<ICollectionEventItemModel>(x.CollectionEvent),
-                    (TypesenseTaskType)x.TaskType,
-                    x.CollectionName));
+                var resultAsQueueItem = new List<TypesenseQueueItem>();
+                foreach (var item in result)
+                {
+                    if (item != null)
+                    {
+                        var itemToCollection = JsonSerializer.Deserialize<ICollectionEventItemModel>(item.CollectionEvent, collectionEventItemModelJsonOptions);
+                        resultAsQueueItem.Add(new TypesenseQueueItem(
+                            itemToCollection,
+                            (TypesenseTaskType)item.TaskType,
+                            item.CollectionName));
+                    }
+                }
+
+                //Delete the items from the queue
+                ICollection<int> ids = result.Select(x => x.IndexQueueItemID).ToList();
+                indexQueueItemInfoProvider.BulkDelete(new WhereCondition()
+                    .WhereIn(nameof(IndexQueueItemInfo.IndexQueueItemID), ids));
+
+                return resultAsQueueItem;
             }
         }
 

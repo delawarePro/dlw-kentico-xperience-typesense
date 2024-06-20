@@ -60,8 +60,9 @@ public class TypesenseModuleInstaller
             AllowEmpty = false,
             Visible = true,
             Precision = 0,
-            DataType = "guid",
+            DataType = FieldDataType.Guid,
             Enabled = true,
+
         };
         formInfo.AddFormItem(formItem);
 
@@ -72,7 +73,7 @@ public class TypesenseModuleInstaller
             Visible = true,
             Precision = 0,
             Size = 100,
-            DataType = "text",
+            DataType = FieldDataType.Text,
             Enabled = true
         };
         formInfo.AddFormItem(formItem);
@@ -84,7 +85,7 @@ public class TypesenseModuleInstaller
             Visible = true,
             Precision = 0,
             Size = 100,
-            DataType = "text",
+            DataType = FieldDataType.Text,
             Enabled = true
         };
         formInfo.AddFormItem(formItem);
@@ -96,7 +97,7 @@ public class TypesenseModuleInstaller
             Visible = true,
             Precision = 0,
             Size = 100,
-            DataType = "text",
+            DataType = FieldDataType.Text,
             Enabled = true
         };
         formInfo.AddFormItem(formItem);
@@ -108,7 +109,7 @@ public class TypesenseModuleInstaller
             Visible = true,
             Precision = 0,
             Size = 100,
-            DataType = "text",
+            DataType = FieldDataType.Text,
             Enabled = true
         };
         formInfo.AddFormItem(formItem);
@@ -146,7 +147,7 @@ public class TypesenseModuleInstaller
             AllowEmpty = false,
             Visible = true,
             Precision = 0,
-            DataType = "guid",
+            DataType = FieldDataType.Guid,
             Enabled = true,
         };
         formInfo.AddFormItem(formItem);
@@ -158,7 +159,7 @@ public class TypesenseModuleInstaller
             Visible = true,
             Precision = 0,
             Size = 100,
-            DataType = "text",
+            DataType = FieldDataType.Text,
             Enabled = true,
         };
         formInfo.AddFormItem(formItem);
@@ -169,7 +170,7 @@ public class TypesenseModuleInstaller
             AllowEmpty = false,
             Visible = true,
             Precision = 0,
-            DataType = "integer",
+            DataType = FieldDataType.Integer,
             ReferenceToObjectType = TypesenseCollectionItemInfo.OBJECT_TYPE,
             ReferenceType = ObjectDependencyEnum.Required
         };
@@ -210,7 +211,7 @@ public class TypesenseModuleInstaller
             Visible = true,
             Precision = 0,
             Size = 100,
-            DataType = "text",
+            DataType = FieldDataType.Text,
             Enabled = true,
         };
         formInfo.AddFormItem(formItem);
@@ -221,7 +222,7 @@ public class TypesenseModuleInstaller
             AllowEmpty = false,
             Visible = true,
             Precision = 0,
-            DataType = "guid",
+            DataType = FieldDataType.Guid,
             Enabled = true
         };
 
@@ -233,7 +234,7 @@ public class TypesenseModuleInstaller
             AllowEmpty = false,
             Visible = true,
             Precision = 0,
-            DataType = "integer",
+            DataType = FieldDataType.Integer,
             ReferenceToObjectType = TypesenseCollectionItemInfo.OBJECT_TYPE,
             ReferenceType = ObjectDependencyEnum.Required,
         };
@@ -274,7 +275,7 @@ public class TypesenseModuleInstaller
             Visible = true,
             Precision = 0,
             Size = 100,
-            DataType = "text",
+            DataType = FieldDataType.Text,
             Enabled = true,
             IsUnique = false
         };
@@ -286,34 +287,9 @@ public class TypesenseModuleInstaller
             AllowEmpty = false,
             Visible = true,
             Precision = 0,
-            DataType = "integer",
+            DataType = FieldDataType.Integer,
             ReferenceToObjectType = TypesenseIncludedPathItemInfo.OBJECT_TYPE,
             ReferenceType = ObjectDependencyEnum.Required,
-        };
-
-        formInfo.AddFormItem(formItem);
-
-        formItem = new FormFieldInfo
-        {
-            Name = nameof(TypesenseContentTypeItemInfo.TypesenseContentTypeItemGuid),
-            Enabled = true,
-            AllowEmpty = false,
-            Visible = true,
-            Precision = 0,
-            DataType = "guid",
-        };
-
-        formInfo.AddFormItem(formItem);
-
-        formItem = new FormFieldInfo
-        {
-            Name = nameof(TypesenseContentTypeItemInfo.TypesenseContentTypeItemCollectionItemId),
-            AllowEmpty = false,
-            Visible = true,
-            Precision = 0,
-            DataType = "integer",
-            ReferenceToObjectType = TypesenseCollectionItemInfo.OBJECT_TYPE,
-            ReferenceType = ObjectDependencyEnum.Required
         };
 
         formInfo.AddFormItem(formItem);
@@ -342,6 +318,72 @@ public class TypesenseModuleInstaller
         info.ClassDisplayName = "Typesense Sql Queue Item";
         info.ClassType = ClassType.OTHER;
         info.ClassResourceID = resource.ResourceID;
+
+        var formInfo = FormHelper.GetBasicFormDefinition(nameof(IndexQueueItemInfo.IndexQueueItemID));
+
+        var formItem = new FormFieldInfo
+        {
+            Name = nameof(IndexQueueItemInfo.TaskType),
+            AllowEmpty = false,
+            Visible = true,
+            Precision = 0,
+            Size = 100,
+            DataType = FieldDataType.Integer,
+            Enabled = true,
+            IsUnique = false
+        };
+        formInfo.AddFormItem(formItem);
+
+        formItem = new FormFieldInfo
+        {
+            Name = nameof(IndexQueueItemInfo.CollectionName),
+            AllowEmpty = false,
+            Visible = true,
+            Precision = 0,
+            DataType = FieldDataType.Text,
+            Enabled = true,
+        };
+
+        formInfo.AddFormItem(formItem);
+
+        formItem = new FormFieldInfo
+        {
+            Name = nameof(IndexQueueItemInfo.CollectionEvent),
+            AllowEmpty = false,
+            Visible = true,
+            Precision = 0,
+            DataType = FieldDataType.LongText,
+            Enabled = true,
+        };
+
+        formInfo.AddFormItem(formItem);
+
+        formItem = new FormFieldInfo
+        {
+            Name = nameof(IndexQueueItemInfo.EnqueuedAt),
+            AllowEmpty = false,
+            Visible = true,
+            Precision = 0,
+            DataType = FieldDataType.DateTime,
+            Enabled = true,
+        };
+
+        formInfo.AddFormItem(formItem);
+
+        formItem = new FormFieldInfo
+        {
+            Name = nameof(IndexQueueItemInfo.IndexQueueItemGuid),
+            Enabled = true,
+            AllowEmpty = false,
+            Visible = true,
+            Precision = 0,
+            DataType = FieldDataType.Guid,
+        };
+
+        formInfo.AddFormItem(formItem);
+
+        SetFormDefinition(info, formInfo);
+
 
         if (info.HasChanged)
         {

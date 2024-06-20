@@ -18,7 +18,10 @@ public class TypesenseConfigurationModel : ITypesenseConfigurationModel
     [MinLength(1)]
     public string CollectionName { get; set; } = "";
 
-    [GeneralSelectorComponent(dataProviderType: typeof(LanguageOptionsProvider), Label = "Collectioned Languages", Order = 2)]
+    [GeneralSelectorComponent(dataProviderType: typeof(LanguageOptionsProvider),
+        Label = "Collectioned Languages",
+        Order = 2,
+        ExplanationText = "You can choose your strategy but typesense's best practice is to store one language per index")]
     public IEnumerable<string> LanguageNames { get; set; } = Enumerable.Empty<string>();
 
     [DropDownComponent(Label = "Channel Name", DataProviderType = typeof(ChannelOptionsProvider), Order = 3)]
@@ -27,7 +30,7 @@ public class TypesenseConfigurationModel : ITypesenseConfigurationModel
     [DropDownComponent(Label = "Collectioning Strategy", DataProviderType = typeof(CollectioningStrategyOptionsProvider), Order = 4)]
     public string StrategyName { get; set; } = "";
 
-    [TextInputComponent(Label = "Rebuild Hook")]
+    //[TextInputComponent(Label = "Rebuild Hook")] //TODO : Hinerited from Algolia implementation but I am really not sure that it work even in the algolia implementation
     public string RebuildHook { get; set; } = "";
 
     [TypesenseCollectionConfigurationComponent(Label = "Included Paths")]

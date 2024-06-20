@@ -8,5 +8,5 @@ public interface ITypesenseQueue
 {
     Task EnqueueTypesenseQueueItem(TypesenseQueueItem item); 
     Task<TypesenseQueueItem?> DequeueAsync();
-    Task<IEnumerable<TypesenseQueueItem?>?> DequeueBatchAsync(int maxItems);
+    Task<IEnumerable<TypesenseQueueItem>?> DequeueBatchAsync(int maxItems);
 }

@@ -26,7 +26,6 @@ internal class CollectionListingPage : ListingPage
     private readonly IPageUrlGenerator pageUrlGenerator;
     private readonly ITypesenseConfigurationKenticoStorageService configurationStorageService;
     private readonly IConversionService conversionService;
-
     protected override string ObjectType => TypesenseCollectionItemInfo.OBJECT_TYPE;
 
     /// <summary>
@@ -65,11 +64,11 @@ internal class CollectionListingPage : ListingPage
 
         PageConfiguration.ColumnConfigurations
             .AddColumn(nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemId), "ID", defaultSortDirection: SortTypeEnum.Asc, sortable: true)
-            .AddColumn(nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemcollectionName), "Name", sortable: true, searchable: true)
+            .AddColumn(nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemcollectionName), "Name/Alias", sortable: true, searchable: true)
             .AddColumn(nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemChannelName), "Channel", searchable: true, sortable: true)
             .AddColumn(nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemStrategyName), "Collection Strategy", searchable: true, sortable: true)
             .AddColumn(nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemId), "Entries", sortable: true)
-            .AddColumn(nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemId), "Last Updated", sortable: true);
+            .AddColumn(nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemId), "Current Collection", sortable: true);
 
         PageConfiguration.AddEditRowAction<CollectionEditPage>();
         PageConfiguration.TableActions.AddCommand("Rebuild", nameof(Rebuild), icon: Icons.RotateRight);
@@ -150,14 +149,21 @@ internal class CollectionListingPage : ListingPage
         }
     }
 
-    private TypesenseCollectionStatisticsViewModel? GetStatistic(Row row, ICollection<TypesenseCollectionStatisticsViewModel> statistics)
+    private (TypesenseCollectionStatisticsViewModel?, TypesenseCollectionAliasViewModel?) GetStatistic(Row row, ICollection<TypesenseCollectionStatisticsViewModel> statistics, ICollection<TypesenseCollectionAliasViewModel> aliases)
     {
         int indexID = conversionService.GetInteger(row.Identifier, 0);
         string collectionName = TypesenseCollectionStore.Instance.GetCollection(indexID) is TypesenseCollection index
             ? index.CollectionName
             : "";
 
-        return statistics.FirstOrDefault(s => string.Equals(s.Name, collectionName, StringComparison.OrdinalIgnoreCase));
+        var alias = aliases.FirstOrDefault(a => a.CollectionName.Equals(collectionName, StringComparison.OrdinalIgnoreCase)); // Use the alias to retreive the physical collection name
+
+        var stat = statistics.FirstOrDefault(s => string.Equals(s.Name, alias?.Name, StringComparison.OrdinalIgnoreCase));
+        if (stat is null)
+        {
+            stat = statistics.FirstOrDefault(s => string.Equals(s.Name, collectionName, StringComparison.OrdinalIgnoreCase));
+        }
+        return (stat, alias);
     }
 
     /// <inheritdoc/>
@@ -166,6 +172,8 @@ internal class CollectionListingPage : ListingPage
         var result = await base.LoadData(settings, cancellationToken);
 
         var statistics = await xperienceTypesenseClient.GetStatistics(cancellationToken);
+        var aliases = await xperienceTypesenseClient.GetAliases(cancellationToken);
+
         // Add statistics for indexes that are registered but not created in Typesense
         AddMissingStatistics(ref statistics);
 
@@ -175,7 +183,7 @@ internal class CollectionListingPage : ListingPage
         }
 
         int entriesColCollection = columns.FindIndex(c => c.Caption == "Entries");
-        int updatedColCollection = columns.FindIndex(c => c.Caption == "Last Updated");
+        int currentCollectionColCollection = columns.FindIndex(c => c.Caption == "Current Collection");
 
         foreach (var row in result.Rows)
         {
@@ -184,7 +192,7 @@ internal class CollectionListingPage : ListingPage
                 continue;
             }
 
-            var stats = GetStatistic(row, statistics);
+            var (stats, alias) = GetStatistic(row, statistics, aliases);
 
             if (stats is null)
             {
@@ -195,9 +203,10 @@ internal class CollectionListingPage : ListingPage
             {
                 entriesCell.Value = stats.NumberOfDocuments.ToString();
             }
-            if (cells[updatedColCollection] is StringCell updatedCell)
+
+            if (cells[currentCollectionColCollection] is StringCell updatedCell)
             {
-                updatedCell.Value = stats.UpdatedAt.ToLocalTime().ToString();
+                updatedCell.Value = alias?.Name.ToString() ?? string.Empty;
             }
         }
 
@@ -214,8 +223,7 @@ internal class CollectionListingPage : ListingPage
                 statistics.Add(new TypesenseCollectionStatisticsViewModel
                 {
                     Name = collectionName,
-                    NumberOfDocuments = 0,
-                    UpdatedAt = DateTime.MinValue
+                    NumberOfDocuments = 0
                 });
             }
         }

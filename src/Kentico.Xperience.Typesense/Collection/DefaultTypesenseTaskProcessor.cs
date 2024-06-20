@@ -30,8 +30,12 @@ internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
     {
         int successfulOperations = 0;
 
-        // Group queue items based on index name
-        var groups = queueItems.GroupBy(item => item.CollectionName);
+        // Group queue items based on index name except the end of rebuild that we will handle at the end
+        var groups = queueItems
+            .Where(item => item.TaskType != TypesenseTaskType.END_OF_REBUILD)
+            .GroupBy(item => item.CollectionName);
+
+
         foreach (var group in groups)
         {
             try
@@ -41,7 +45,6 @@ internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
 
                 var updateTasks = group.Where(queueItem => queueItem.TaskType is TypesenseTaskType.PUBLISH_INDEX or TypesenseTaskType.UPDATE);
 
-                var endOfQueueItem = group.Where(queueItem => queueItem.TaskType == TypesenseTaskType.END_OF_REBUILD);
                 var upsertData = new List<TypesenseSearchResultModel>();
                 foreach (var queueItem in updateTasks)
                 {
@@ -65,13 +68,15 @@ internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
 
                 successfulOperations += await typesenseClient.DeleteRecords(deleteIds, group.Key, cancellationToken);
                 successfulOperations += await typesenseClient.UpsertRecords(upsertData, group.Key, cancellationToken);
-                successfulOperations += await typesenseClient.SwapAliasWhenRebuildIsDone(endOfQueueItem, group.Key, cancellationToken);
             }
             catch (Exception ex)
             {
                 eventLogService.LogError(nameof(DefaultTypesenseClient), nameof(ProcessTypesenseTasks), ex.Message);
             }
         }
+
+        var endOfQueueItems = queueItems.Where(queueItem => queueItem.TaskType == TypesenseTaskType.END_OF_REBUILD);
+        successfulOperations += await typesenseClient.SwapAliasWhenRebuildIsDone(endOfQueueItems, cancellationToken);
 
         return successfulOperations;
     }
