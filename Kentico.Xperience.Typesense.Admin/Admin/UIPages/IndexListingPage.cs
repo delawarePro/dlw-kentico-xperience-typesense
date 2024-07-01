@@ -206,7 +206,7 @@ internal class CollectionListingPage : ListingPage
 
             if (cells[currentCollectionColCollection] is StringCell updatedCell)
             {
-                updatedCell.Value = alias?.Name.ToString() ?? string.Empty;
+                updatedCell.Value = alias?.Name?.ToString() ?? string.Empty;
             }
         }
 

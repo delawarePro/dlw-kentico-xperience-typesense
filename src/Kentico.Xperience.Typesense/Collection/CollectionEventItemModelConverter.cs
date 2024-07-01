@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 namespace Kentico.Xperience.Typesense.Collection;
 public class CollectionEventItemModelConverter : JsonConverter<ICollectionEventItemModel>
 {
-    public override ICollectionEventItemModel Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override ICollectionEventItemModel? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         using (JsonDocument doc = JsonDocument.ParseValue(ref reader))
         {
@@ -15,7 +15,7 @@ public class CollectionEventItemModelConverter : JsonConverter<ICollectionEventI
                 throw new JsonException("Missing property 'serializedObject'");
             }
 
-            string serializedObjectType = typeElem.GetString();
+            string serializedObjectType = typeElem.GetString() ?? string.Empty;
 
             switch (serializedObjectType)
             {
