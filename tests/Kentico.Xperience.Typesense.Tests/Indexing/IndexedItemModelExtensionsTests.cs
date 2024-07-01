@@ -4,8 +4,8 @@ using CMS.Tests;
 
 using FluentAssertions;
 
-using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Collection;
+using Kentico.Xperience.Typesense.Xperience;
 
 namespace Kentico.Xperience.Typesense.Tests.Collectioning;
 

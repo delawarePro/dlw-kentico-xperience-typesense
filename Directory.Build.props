@@ -1,19 +1,19 @@
 <Project>
 
   <PropertyGroup>
-    <Company>Kentico Software</Company>
+    <Company>delaware Consulting</Company>
     <Authors>$(Company)</Authors>
     <Copyright>Copyright © $(Company) $([System.DateTime]::Now.Year)</Copyright>
     <Trademark>$(Company)™</Trademark>
-    <VersionPrefix>4.1.0</VersionPrefix>
+    <VersionPrefix>0.0.5-beta-1</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 
-    <PackageProjectUrl>https://github.com/Kentico/xperience-by-kentico-algolia</PackageProjectUrl>
-    <PackageReleaseNotes>https://github.com/Kentico/xperience-by-kentico-algolia/releases</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/VGBenjamin/Kentico.Xperience.Typesense</PackageProjectUrl>
+    <PackageReleaseNotes>https://github.com/VGBenjamin/Kentico.Xperience.Typesense/releases</PackageReleaseNotes>
     <PackageIcon>logo.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageTags>kentico;xperience;mvc;algolia;search</PackageTags>
+    <PackageTags>kentico;xperience;mvc;typesense;search</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <WarningsAsErrors>nullable</WarningsAsErrors>
@@ -39,12 +39,5 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
-
-  <ItemGroup Label="StaticCodeAnalysis">
-    <PackageReference Include="SonarAnalyzer.CSharp">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
 
 </Project>

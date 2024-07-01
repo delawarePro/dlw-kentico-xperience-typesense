@@ -21,13 +21,14 @@
 		<DefineConstants>$(DefineConstants);SEPARATED_ADMIN</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="kentico.xperience.admin" />
+		<PackageReference Include="Kentico.Xperience.Admin" />
 		<PackageReference Include="kentico.xperience.azurestorage" />
 		<PackageReference Include="kentico.xperience.cloud" />
 		<PackageReference Include="kentico.xperience.imageprocessing" />
 		<PackageReference Include="kentico.xperience.webapp" />
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\..\Kentico.Xperience.Typesense.Admin\Kentico.Xperience.Typesense.Admin.csproj" />
 		<ProjectReference Include="..\..\src\Kentico.Xperience.Typesense\Kentico.Xperience.Typesense.csproj" />
 	</ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 ﻿namespace Kentico.Xperience.Typesense.Collection;
 
-internal static class StrategyStorage
+public static class StrategyStorage
 {
     public static Dictionary<string, Type> Strategies { get; private set; }
     static StrategyStorage() => Strategies = new Dictionary<string, Type>();

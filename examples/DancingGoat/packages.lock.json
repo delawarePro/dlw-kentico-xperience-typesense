@@ -66,12 +66,6 @@
           "Microsoft.Extensions.Localization": "6.0.29"
         }
       },
-      "SonarAnalyzer.CSharp": {
-        "type": "Direct",
-        "requested": "[9.6.0.74858, )",
-        "resolved": "9.6.0.74858",
-        "contentHash": "tBwiOBYcoSyHVUejjz6iH3VOpSFx7gJSuQ3695BQaoqQBcqy0IeRsKAk5FAR4fbm3QLyEM9bimKk1l038TFN2w=="
-      },
       "AngleSharp": {
         "type": "Transitive",
         "resolved": "0.17.1",
@@ -1234,12 +1228,19 @@
           "System.IO.Hashing": "7.0.0"
         }
       },
-      "kentico.xperience.typesense": {
+      "Delaware.Xperience.Typesense": {
         "type": "Project",
         "dependencies": {
-          "Kentico.Xperience.Admin": "[29.0.0, )",
           "Kentico.Xperience.WebApp": "[29.0.0, )",
           "Typesense": "[7.7.0, )"
+        }
+      },
+      "Delaware.Xperience.Typesense.Admin": {
+        "type": "Project",
+        "dependencies": {
+          "Delaware.Xperience.Typesense": "[0.0.5-beta-1, )",
+          "Kentico.Xperience.Admin": "[29.0.0, )",
+          "Kentico.Xperience.AzureStorage": "[29.0.0, )"
         }
       },
       "Typesense": {

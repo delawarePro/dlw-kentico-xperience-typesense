@@ -1,11 +1,8 @@
-﻿using System.Diagnostics;
-using System.Dynamic;
+﻿using System.Dynamic;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-
-using Kentico.Xperience.Typesense.Search;
 
 /// <summary>
 /// <para>
@@ -24,7 +21,6 @@ using Kentico.Xperience.Typesense.Search;
 /// </remarks>
 public abstract class DerivedTypeJsonConverter<TBase> : JsonConverter<TBase>
 {
-
     #region Abstract members
 
     /// <summary>
@@ -42,20 +38,21 @@ public abstract class DerivedTypeJsonConverter<TBase> : JsonConverter<TBase>
 
     private static Type GetEntityType(string typeName)
     {
-        List<System.Reflection.Assembly> assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
 
         foreach (var assembly in assemblies)
         {
-            Type t = assembly.GetType(typeName, false);
+            var t = assembly.GetType(typeName, false);
             if (t != null)
+            {
                 return t;
+            }
         }
         throw new ArgumentException(
             "Type " + typeName + " doesn't exist in the current app domain");
     }
 
-    #endregion
-
+    #endregion Abstract members
 
     #region Properties
 
@@ -64,60 +61,62 @@ public abstract class DerivedTypeJsonConverter<TBase> : JsonConverter<TBase>
     /// </summary>
     private const string TypePropertyName = "$type";
 
-    #endregion
-
+    #endregion Properties
 
     #region JsonConverter implementation
 
-    public override bool CanConvert(Type objectType)
-    {
-        return typeof(TBase) == objectType;
-    }
+    public override bool CanConvert(Type objectType) => typeof(TBase) == objectType;
 
-
-    public override TBase Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override TBase? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         // get the $type value by parsing the JSON string into a JsonDocument
-        JsonDocument jsonDocument = JsonDocument.ParseValue(ref reader);
-        jsonDocument.RootElement.TryGetProperty(TypePropertyName, out JsonElement typeNameElement);
-        string typeName = (typeNameElement.ValueKind == JsonValueKind.String) ? typeNameElement.GetString() : null;
-        if (string.IsNullOrWhiteSpace(typeName))
-            throw new InvalidOperationException($"Missing or invalid value for {TypePropertyName} (base type {typeof(TBase).FullName}).");
+        var jsonDocument = JsonDocument.ParseValue(ref reader);
+        if (jsonDocument.RootElement.TryGetProperty(TypePropertyName, out var typeNameElement))
+        {
+            string? typeName = (typeNameElement.ValueKind == JsonValueKind.String) ? typeNameElement.GetString() : null;
+            if (string.IsNullOrWhiteSpace(typeName))
+            {
+                throw new InvalidOperationException($"Missing or invalid value for {TypePropertyName} (base type {typeof(TBase).FullName}).");
+            }
 
-        // get the JSON text that was read by the JsonDocument
-        string json;
-        using (var stream = new MemoryStream())
-        using (var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Encoder = options.Encoder }))
-        {
-            jsonDocument.WriteTo(writer);
-            writer.Flush();
-            json = Encoding.UTF8.GetString(stream.ToArray());
+            // get the JSON text that was read by the JsonDocument
+            string json;
+            using (var stream = new MemoryStream())
+            using (var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Encoder = options.Encoder }))
+            {
+                jsonDocument.WriteTo(writer);
+                writer.Flush();
+                json = Encoding.UTF8.GetString(stream.ToArray());
+            }
+
+            // deserialize the JSON to the type specified by $type
+            try
+            {
+                return (TBase?)JsonSerializer.Deserialize(json, NameToType(typeName), options);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Invalid JSON in request.", ex);
+            }
         }
 
-        // deserialize the JSON to the type specified by $type
-        try
-        {
-            return (TBase)JsonSerializer.Deserialize(json, NameToType(typeName), options);
-        }
-        catch (Exception ex)
-        {
-            throw new InvalidOperationException("Invalid JSON in request.", ex);
-        }
+        throw new InvalidOperationException("Invalid JSON in request. typeNameElement is null");
     }
-
 
     public override void Write(Utf8JsonWriter writer, TBase value, JsonSerializerOptions options)
     {
         // create an ExpandoObject from the value to serialize so we can dynamically add a $type property to it
-        ExpandoObject expando = ToExpandoObject(value);
-        expando.TryAdd(TypePropertyName, TypeToName(value.GetType()));
+        if (value != null)
+        {
+            var expando = ToExpandoObject(value);
+            expando.TryAdd(TypePropertyName, TypeToName(value.GetType()));
 
-        // serialize the expando
-        JsonSerializer.Serialize(writer, expando, options);
+            // serialize the expando
+            JsonSerializer.Serialize(writer, expando, options);
+        }
     }
 
-    #endregion
-
+    #endregion JsonConverter implementation
 
     #region Private methods
 
@@ -141,6 +140,5 @@ public abstract class DerivedTypeJsonConverter<TBase> : JsonConverter<TBase>
         return expando;
     }
 
-    #endregion
-
+    #endregion Private methods
 }

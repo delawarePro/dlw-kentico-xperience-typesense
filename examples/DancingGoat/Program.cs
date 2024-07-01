@@ -55,7 +55,8 @@ builder.Services.AddLocalization()
 
 builder.Services.AddDancingGoatServices();
 
-builder.Services.AddKenticoTypesenseServices(builder.Configuration);
+builder.Services
+    .AddKenticoTypesenseServices(builder.Configuration);
 
 ConfigureMembershipServices(builder.Services);
 

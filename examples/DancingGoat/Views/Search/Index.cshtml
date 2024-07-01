@@ -4,10 +4,16 @@
 @using DancingGoat.Search.Models
 @using Typesense
 
-@model XperienceSearchResult<DancingGoatSearchResultModel>
+@model SearchResult<DancingGoatSearchResultModel>
 @{
+    var searchText = "";
+
+    if (Context.Request.Query.ContainsKey("query"))
+    {
+        searchText = Context.Request.Query["query"];
+    }
     Dictionary<string, string> GetRouteData(int page) =>
-        new Dictionary<string, string>() { { "searchText", Model.SearchText }, { "pageSize", Model.ToString() }, { "page", page.ToString() } };
+        new Dictionary<string, string>() { { "searchText", searchText }, { "pageSize", Model.ToString() }, { "page", page.ToString() } };
 }
 
 <h1>Search</h1>
@@ -24,9 +30,9 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-field">
-                        <label class="control-label" asp-for="@Model.SearchText"></label>
+                        <label class="control-label" asp-for="@searchText"></label>
                         <div class="editing-form-control-nested-control">
-                            <input class="form-control" asp-for="@Model.SearchText" name="query">
+                            <input class="form-control" asp-for="@searchText" name="query">
                             <input type="hidden" asp-for="@Model.Page" name="page" />
                         </div>
                     </div>
@@ -40,9 +46,9 @@
 
 @if (!Model.Hits.Any())
 {
-    if (!String.IsNullOrWhiteSpace(Model.SearchText))
+    if (!String.IsNullOrWhiteSpace(searchText))
     {
-        @HtmlLocalizer["Sorry, no results match {0}", Model.SearchText]
+        @HtmlLocalizer["Sorry, no results match {0}", searchText]
     }
 
     return;

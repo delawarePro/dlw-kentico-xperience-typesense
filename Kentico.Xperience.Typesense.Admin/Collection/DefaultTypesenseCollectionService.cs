@@ -1,6 +1,7 @@
-﻿using System.Text;
+﻿using Kentico.Xperience.Typesense.Xperience;
 
-using Kentico.Xperience.Typesense.Admin;
+using System.Text;
+
 
 namespace Kentico.Xperience.Typesense.Collection;
 
@@ -16,7 +17,7 @@ public class DefaultTypesenseCollectionService : ITypesenseCollectionService
         this.typesenseConfigurationKenticoStorageService = typesenseConfigurationKenticoStorageService;
     }
 
-    public async Task<bool> CreateOrEditCollection(TypesenseConfigurationModel configuration)
+    public async Task<bool> CreateOrEditCollection(ITypesenseConfigurationModel configuration)
     {
         static string RemoveWhitespacesUsingStringBuilder(string source)
         {
