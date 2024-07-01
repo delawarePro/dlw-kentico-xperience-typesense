@@ -57,11 +57,11 @@ dotnet add package Kentico.Xperience.Typesense
    ![Administration search edit form](/images/xperience-administration-search-collection-edit-form.jpg)
 5. Rebuild the collection in Xperience's Administration within the Search application added by this library.
    ![Administration search edit form](/images/xperience-administration-search-collection-list.jpg)
-6. Display the results on your site with a Razor View 👍.
+6. Display the results on your site with a Razor View 👍 .
 
 ## Full Instructions
 
-View the [Usage Guide](docs/Usage-Guide.md) for more detailed instructions.
+View the [Usage Guide](docs/Usage-Guide.md) for more detailed instructions. 
 
 ## Contributing
 
