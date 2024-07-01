@@ -1,8 +1,10 @@
-﻿namespace Kentico.Xperience.Typesense.Collection;
+﻿using Kentico.Xperience.Typesense.QueueWorker;
+
+namespace Kentico.Xperience.Typesense.Collection;
 
 /// <summary>
 /// Contains methods for logging <see cref="TypesenseQueueItem"/>s and <see cref="TypesenseQueueItem"/>s
-/// for processing by <see cref="TypesenseQueueWorker"/> and <see cref="TypesenseQueueWorker"/>.
+/// for processing by <see cref="ITypesenseQueue"/> and <see cref="ITypesenseQueue"/>.
 /// </summary>
 public interface ITypesenseTaskLogger
 {

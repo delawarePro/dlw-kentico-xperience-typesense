@@ -12,17 +12,22 @@ public static class DancingGoatSearchStartupExtensions
         {
             builder.RegisterStrategy<AdvancedSearchCollectionStrategy>("DancingGoatAdvancedExampleStrategy");
             builder.RegisterStrategy<SimpleSearchCollectionStrategy>("DancingGoatMinimalExampleStrategy");
-        }, configuration);
-
-        services.AddKenticoAdminTypesense(builder =>
-        {
-        }, configuration);
+        }, configuration, false);
 
         services.AddHttpClient<WebCrawlerService>();
         services.AddSingleton<WebScraperHtmlSanitizer>();
 
         services.AddSingleton<SimpleSearchService>();
         services.AddSingleton<AdvancedSearchService>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddKenticoAdminTypesenseServices(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddKenticoAdminTypesense(builder =>
+        {
+        }, configuration);
 
         return services;
     }

@@ -1,7 +1,9 @@
-﻿namespace Kentico.Xperience.Typesense.Collection;
+﻿using Kentico.Xperience.Typesense.QueueWorker;
+
+namespace Kentico.Xperience.Typesense.Collection;
 
 /// <summary>
-/// A queued item to be processed by <see cref="TypesenseQueueWorker"/> which
+/// A queued item to be processed by <see cref="ITypesenseQueue"/> which
 /// represents a recent change made to an indexed <see cref="ItemToCollection"/> which is a representation of a WebPageItem.
 /// </summary>
 public class TypesenseQueueItem
@@ -9,7 +11,7 @@ public class TypesenseQueueItem
     /// <summary>
     /// The <see cref="ItemToCollection"/> that was changed.
     /// </summary>
-    public ICollectionEventItemModel ItemToCollection
+    public ICollectionEventItemModel? ItemToCollection
     {
         get;
     }
@@ -38,7 +40,7 @@ public class TypesenseQueueItem
     /// <param name="taskType">The type of the Typesense task.</param>
     /// <param name="collectionName">The code name of the Typesense index to be updated.</param>
     /// <exception cref="ArgumentNullException" />
-    public TypesenseQueueItem(ICollectionEventItemModel itemToCollection, TypesenseTaskType taskType, string collectionName)
+    public TypesenseQueueItem(ICollectionEventItemModel? itemToCollection, TypesenseTaskType taskType, string collectionName)
     {
         if (string.IsNullOrEmpty(collectionName))
         {

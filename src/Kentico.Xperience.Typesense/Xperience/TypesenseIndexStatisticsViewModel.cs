@@ -9,11 +9,6 @@ public class TypesenseCollectionStatisticsViewModel
 
     //
     // Summary:
-    //     Date of last update.
-    public DateTime UpdatedAt { get; set; }
-
-    //
-    // Summary:
     //     Number of records contained in the index
     public long NumberOfDocuments { get; set; }
 

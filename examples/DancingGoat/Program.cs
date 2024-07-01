@@ -56,7 +56,8 @@ builder.Services.AddLocalization()
 builder.Services.AddDancingGoatServices();
 
 builder.Services
-    .AddKenticoTypesenseServices(builder.Configuration);
+    .AddKenticoTypesenseServices(builder.Configuration)
+    .AddKenticoAdminTypesenseServices(builder.Configuration); //Only add this line if you are using the Kentico Admin only one app is suppose to do the dequeuing.
 
 ConfigureMembershipServices(builder.Services);
 

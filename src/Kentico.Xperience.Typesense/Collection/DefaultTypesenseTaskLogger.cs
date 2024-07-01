@@ -1,6 +1,8 @@
 ﻿using CMS.Core;
 using CMS.Websites;
 
+using Kentico.Xperience.Typesense.QueueWorker;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Kentico.Xperience.Typesense.Collection;
@@ -12,12 +14,14 @@ internal class DefaultTypesenseTaskLogger : ITypesenseTaskLogger
 {
     private readonly IEventLogService eventLogService;
     private readonly IServiceProvider serviceProvider;
+    private readonly ITypesenseQueue typesenseQueue;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DefaultTypesenseTaskLogger"/> class.
     /// </summary>
-    public DefaultTypesenseTaskLogger(IEventLogService eventLogService, IServiceProvider serviceProvider)
+    public DefaultTypesenseTaskLogger(IEventLogService eventLogService, IServiceProvider serviceProvider, ITypesenseQueue typesenseQueue)
     {
+        this.typesenseQueue = typesenseQueue;
         this.eventLogService = eventLogService;
         this.serviceProvider = serviceProvider;
     }
@@ -91,7 +95,7 @@ internal class DefaultTypesenseTaskLogger : ITypesenseTaskLogger
     {
         try
         {
-            TypesenseQueueWorker.EnqueueTypesenseQueueItem(task);
+            typesenseQueue.EnqueueTypesenseQueueItem(task);
         }
         catch (InvalidOperationException ex)
         {

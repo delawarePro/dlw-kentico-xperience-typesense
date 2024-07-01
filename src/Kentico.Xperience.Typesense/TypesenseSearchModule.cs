@@ -7,6 +7,7 @@ using CMS.Websites;
 
 using Kentico.Xperience.Typesense;
 using Kentico.Xperience.Typesense.Collection;
+using Kentico.Xperience.Typesense.QueueWorker;
 using Kentico.Xperience.Typesense.Xperience;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -56,7 +57,7 @@ public class TypesenseSearchModule : Module
         ContentItemEvents.Publish.Execute += HandleContentItemEvent;
         ContentItemEvents.Delete.Execute += HandleContentItemEvent;
 
-        RequestEvents.RunEndRequestTasks.Execute += (sender, eventArgs) => TypesenseQueueWorker.Current.EnsureRunningThread();
+        //RequestEvents.RunEndRequestTasks.Execute += (sender, eventArgs) => KenticoMemoryTypesenseQueueWorker.Current.EnsureRunningThread();
     }
 
 

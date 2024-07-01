@@ -30,11 +30,11 @@ public sealed class TypesenseCollectionConfigurationComponentAttribute : FormCom
 [ComponentAttribute(typeof(TypesenseCollectionConfigurationComponentAttribute))]
 public class TypesenseCollectionConfigurationComponent : FormComponent<TypesenseCollectionConfigurationComponentProperties, TypesenseCollectionConfigurationComponentClientProperties, IEnumerable<TypesenseCollectionIncludedPath>>
 {
-    public const string IDENTIFIER = "kentico.xperience-integrations-typesense.typesense-index-configuration";
+    public const string IDENTIFIER = "delaware.xperience-integrations-typesense.typesense-index-configuration";
 
     internal List<TypesenseCollectionIncludedPath>? Value { get; set; }
 
-    public override string ClientComponentName => "@kentico/xperience-integrations-typesense/TypesenseCollectionConfiguration";
+    public override string ClientComponentName => "@delaware/xperience-integrations-typesense/TypesenseCollectionConfiguration";
 
     public override IEnumerable<TypesenseCollectionIncludedPath> GetValue() => Value ?? [];
     public override void SetValue(IEnumerable<TypesenseCollectionIncludedPath> value) => Value = value.ToList();
