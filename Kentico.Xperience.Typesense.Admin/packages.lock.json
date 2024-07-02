@@ -909,7 +909,7 @@
           "System.IO.Hashing": "7.0.0"
         }
       },
-      "Delaware.Xperience.Typesense": {
+      "Delaware.Kentico.Xperience.Typesense.": {
         "type": "Project",
         "dependencies": {
           "Kentico.Xperience.WebApp": "[29.0.0, )",
