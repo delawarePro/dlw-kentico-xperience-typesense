@@ -179,7 +179,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         Parallel.ForEach(objectIds.Chunk(20), async page =>
         {
             string idsToDelete = string.Join(",", page);
-            var batchCollectioningResponse = await searchClient.DeleteDocuments(collectionName, $"{BaseObjectProperties.OBJECT_ID}:[{idsToDelete}]");
+            var batchCollectioningResponse = await searchClient.DeleteDocuments(collectionName, $"{BaseObjectProperties.ID}:[{idsToDelete}]");
             Interlocked.Add(ref deletedCount, batchCollectioningResponse.NumberOfDeleted);
         });
 
@@ -213,7 +213,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
                 }
             }
         }
-        await searchClient.DeleteDocuments(typesenseCollection.CollectionName, $"{BaseObjectProperties.OBJECT_ID}: &gt;= 0");
+        await searchClient.DeleteDocuments(typesenseCollection.CollectionName, $"{BaseObjectProperties.ID}: &gt;= 0");
 
         var (activeCollectionName, newCollectionName) = await GetCollectionNames(typesenseCollection.CollectionName);
 
@@ -253,15 +253,6 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
 
         return item;
     }
-
-    private static readonly MediaTypeHeaderValue JsonMediaTypeHeaderValue = MediaTypeHeaderValue.Parse($"{MediaTypeNames.Application.Json};charset={Encoding.UTF8.WebName}");
-    private static readonly JsonSerializerOptions JsonOptionsCamelCaseIgnoreWritingNull = new()
-    {
-        //PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        //DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-        //MaxDepth = 3
-         
-    };
 
     private async Task<int> UpsertRecordsInternal(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, CancellationToken cancellationToken)
     {

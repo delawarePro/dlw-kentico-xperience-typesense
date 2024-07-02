@@ -1,24 +1,32 @@
 ﻿using System.Text.Json.Serialization;
 
-using Kentico.Xperience.Typesense.JsonConverter;
-
 namespace Kentico.Xperience.Typesense.Search;
 
-[JsonConverter(typeof(TypesenseSearchResultModelConverter))]
 public class TypesenseSearchResultModel
 {
     [JsonPropertyName("ItemGuid")]
     public Guid ItemGuid { get; set; }
+
     [JsonPropertyName("ContentTypeName")]
     public string ContentTypeName { get; set; } = "";
+
     [JsonPropertyName("LanguageName")]
     public string LanguageName { get; set; } = "";
-    [JsonPropertyName("ObjectID")]
-    public string ObjectID { get; set; } = "";
+
+    [JsonPropertyName("id")]
+    public string ID { get; set; }
+
     [JsonPropertyName("Url")]
     public string Url { get; set; } = "";
 
-    public TypesenseSearchResultModel()
+    public TypesenseSearchResultModel(string id) => ID = id;
+
+}
+
+//Fake class because we need at least one subclass for the json resolver to work
+public class FakeTypesenseSearchResultModel : TypesenseSearchResultModel
+{
+    public FakeTypesenseSearchResultModel(string id) : base(id)
     {
     }
 }

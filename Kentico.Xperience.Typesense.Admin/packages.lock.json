@@ -913,7 +913,7 @@
         "type": "Project",
         "dependencies": {
           "Kentico.Xperience.WebApp": "[29.0.0, )",
-          "Typesense": "[7.7.0, )"
+          "Typesense": "[7.11.0, )"
         }
       },
       "Kentico.Xperience.WebApp": {
@@ -934,9 +934,9 @@
       },
       "Typesense": {
         "type": "CentralTransitive",
-        "requested": "[7.7.0, )",
-        "resolved": "7.7.0",
-        "contentHash": "rMHuM3F5XIEhjo6XxieVen/W8q+f1cMAQ244apdmhxoInYmJ1O+okr/jyWrNS+Y07Cdxkty/v6KgQzSaJ7II2A==",
+        "requested": "[7.11.0, )",
+        "resolved": "7.11.0",
+        "contentHash": "HizloLEI4ZFjbmgMPmqu5BZVyPPc7JsKySF6TvQx/Nz9WaIHpWYF9enFXrTqYfNqVV408iB22dyPJBbvieXWIQ==",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection": "8.0.0",
           "Microsoft.Extensions.Http": "8.0.0",

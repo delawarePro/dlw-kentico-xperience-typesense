@@ -13,6 +13,10 @@ public class SimpleSearchResultModel : TypesenseSearchResultModel
 {
     [JsonPropertyName("Title")]
     public string Title { get; set; }
+
+    public SimpleSearchResultModel(string id) : base(id)
+    {
+    }
 }
 
 public class SimpleSearchCollectionStrategy : DefaultTypesenseCollectionStrategy
@@ -62,7 +66,7 @@ public class SimpleSearchCollectionStrategy : DefaultTypesenseCollectionStrategy
                     return null;
                 }
 
-                result.Add(new SimpleSearchResultModel()
+                result.Add(new SimpleSearchResultModel(indexedPage.ItemGuid.ToString("D"))
                 {
                     Title = page!.HomePageBanner.First().BannerHeaderText
                 });
@@ -82,7 +86,7 @@ public class SimpleSearchCollectionStrategy : DefaultTypesenseCollectionStrategy
                     return null;
                 }
 
-                var item = new SimpleSearchResultModel()
+                var item = new SimpleSearchResultModel(indexedPage.ItemGuid.ToString("D"))
                 {
                     Title = page!.ArticleTitle
                 };

@@ -41,8 +41,7 @@ public class AdvancedSearchCollectionStrategy : DefaultTypesenseCollectionStrate
 
     public override async Task<IEnumerable<TypesenseSearchResultModel>?> MapToTypesenseObjectsOrNull(ICollectionEventItemModel typesensePageItem)
     {
-        var resultProperties = new DancingGoatSearchResultModel();
-
+        var res = new List<TypesenseSearchResultModel>();
         // ICollectionEventItemModel could be a reusable content item or a web page item, so we use
         // pattern matching to get access to the web page item specific type and fields
         if (typesensePageItem is CollectionEventWebPageItemModel indexedPage)
@@ -60,11 +59,12 @@ public class AdvancedSearchCollectionStrategy : DefaultTypesenseCollectionStrate
                 {
                     return null;
                 }
-
+                var resultProperties = new DancingGoatSearchResultModel(indexedPage.ItemGuid.ToString("D"));
                 resultProperties.SortableTitle = resultProperties.Title = page?.ArticleTitle ?? "";
 
                 string rawContent = await webCrawler.CrawlWebPage(page!);
                 resultProperties.Content = htmlSanitizer.SanitizeHtmlDocument(rawContent);
+                res.Add(resultProperties);
             }
             else if (string.Equals(typesensePageItem.ContentTypeName, HomePage.CONTENT_TYPE_NAME, StringComparison.OrdinalIgnoreCase))
             {
@@ -83,8 +83,10 @@ public class AdvancedSearchCollectionStrategy : DefaultTypesenseCollectionStrate
                 {
                     return null;
                 }
+                var resultProperties = new DancingGoatSearchResultModel(indexedPage.ItemGuid.ToString("D"));
 
                 resultProperties.Title = page!.HomePageBanner.First().BannerHeaderText;
+                res.Add(resultProperties);
             }
             else
             {
@@ -96,10 +98,7 @@ public class AdvancedSearchCollectionStrategy : DefaultTypesenseCollectionStrate
             return null;
         }
 
-        return new List<TypesenseSearchResultModel>
-        {
-            resultProperties
-        };
+        return res;
     }
 
     public override async Task<IEnumerable<ICollectionEventItemModel>> FindItemsToReindex(CollectionEventWebPageItemModel changedItem)

@@ -2,7 +2,6 @@
 
 using Typesense;
 
-
 namespace Kentico.Xperience.Typesense.Collection;
 
 /// <summary>
@@ -20,11 +19,10 @@ public class DefaultTypesenseCollectionStrategy : ITypesenseCollectionStrategy
 
         var result = new List<TypesenseSearchResultModel>()
         {
-            new() {
+            new( typesensePageItem.ItemID.ToString()) {
                 ItemGuid = typesensePageItem.ItemGuid,
                 ContentTypeName = typesensePageItem.ContentTypeName,
                 LanguageName = typesensePageItem.LanguageName,
-                ObjectID = typesensePageItem.ItemID.ToString(),
                 Url = string.Empty // TODO : handle the urls
             }
         };
@@ -39,7 +37,6 @@ public class DefaultTypesenseCollectionStrategy : ITypesenseCollectionStrategy
             new Field(BaseObjectProperties.ITEM_GUID, FieldType.String),
             new Field(BaseObjectProperties.CONTENT_TYPE_NAME, FieldType.String),
             new Field(BaseObjectProperties.LANGUAGE_NAME, FieldType.String),
-            new Field(BaseObjectProperties.OBJECT_ID, FieldType.String),
             new Field(BaseObjectProperties.URL, FieldType.String),
         ]
     };
@@ -48,4 +45,3 @@ public class DefaultTypesenseCollectionStrategy : ITypesenseCollectionStrategy
 
     public virtual async Task<IEnumerable<ICollectionEventItemModel>> FindItemsToReindex(CollectionEventReusableItemModel changedItem) => await Task.FromResult(new List<CollectionEventWebPageItemModel>());
 }
-

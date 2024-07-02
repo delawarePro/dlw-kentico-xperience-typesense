@@ -110,7 +110,7 @@ internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
         {
             item.ItemGuid = baseItem.ItemGuid;
             item.ContentTypeName = baseItem.ContentTypeName;
-            item.ObjectID = baseItem.ItemGuid.ToString();
+            item.ID = baseItem.ItemGuid.ToString();
             item.LanguageName = baseItem.LanguageName;
 
             if (baseItem is CollectionEventWebPageItemModel webpageItem && string.IsNullOrEmpty(item.Url))

@@ -1,4 +1,7 @@
-﻿using Kentico.Xperience.Typesense.Collection;
+﻿using System.Text.Json;
+
+using Kentico.Xperience.Typesense.Collection;
+using Kentico.Xperience.Typesense.JsonResolvers;
 using Kentico.Xperience.Typesense.QueueWorker;
 
 using Microsoft.Extensions.Configuration;
@@ -61,6 +64,10 @@ public static class TypesenseStartupExtensions
 
                 config.ApiKey = options.Value.ApiKey;
                 config.Nodes = new List<Node> { new( options.Value.Node.Host, options.Value.Node.Port.ToString(), options.Value.Node.Protocol) };
+                config.JsonSerializerOptions = new JsonSerializerOptions()
+                {
+                    TypeInfoResolver = new TypeSenseTypeResolver()
+                };
             })
             /*
             .AddSingleton<IXperienceTypesenseClient>(s =>

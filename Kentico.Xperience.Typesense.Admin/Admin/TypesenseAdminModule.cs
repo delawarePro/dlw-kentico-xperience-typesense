@@ -21,7 +21,9 @@ internal class TypesenseAdminModule : AdminModule
     private ITypesenseConfigurationKenticoStorageService storageService = null!;
     private TypesenseModuleInstaller installer = null!;
 
-    public TypesenseAdminModule() : base(nameof(TypesenseAdminModule)) { }
+    public TypesenseAdminModule() : base(nameof(TypesenseAdminModule))
+    {
+    }
 
     protected override void OnInit(ModuleInitParameters parameters)
     {
@@ -40,14 +42,9 @@ internal class TypesenseAdminModule : AdminModule
 
         installer = services.GetRequiredService<TypesenseModuleInstaller>();
         storageService = services.GetRequiredService<ITypesenseConfigurationKenticoStorageService>();
-
+        installer.Install();
         ApplicationEvents.PostStart.Execute += InitializeModule;
     }
 
-    private void InitializeModule(object? sender, EventArgs e)
-    {
-        installer.Install();
-
-        TypesenseCollectionStore.SetIndicies(storageService);
-    }
+    private void InitializeModule(object? sender, EventArgs e) => TypesenseCollectionStore.SetIndicies(storageService);
 }

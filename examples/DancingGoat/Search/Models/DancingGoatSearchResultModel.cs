@@ -7,4 +7,8 @@ public class DancingGoatSearchResultModel : TypesenseSearchResultModel
     public string Title { get; set; }
     public string SortableTitle { get; set; }
     public string Content { get; set; }
+
+    public DancingGoatSearchResultModel(string id) : base(id)
+    {
+    }
 }

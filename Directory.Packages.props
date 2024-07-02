@@ -22,6 +22,6 @@
     <PackageVersion Include="NSubstitute" Version="5.1.0" />
     <PackageVersion Include="FluentAssertions" Version="6.12.0" />
     <PackageVersion Include="AutoFixture" Version="4.18.1" />
-    <PackageVersion Include="Typesense" Version="7.7.0" />
+    <PackageVersion Include="Typesense" Version="7.11.0" />
   </ItemGroup>
 </Project>

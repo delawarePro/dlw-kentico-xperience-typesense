@@ -8,4 +8,8 @@ public class DancingGoatSimpleSearchResultModel : TypesenseSearchResultModel
 {
     [JsonPropertyName("Title")]
     public string Title { get; set; }
+
+    public DancingGoatSimpleSearchResultModel(string id) : base(id)
+    {
+    }
 }
