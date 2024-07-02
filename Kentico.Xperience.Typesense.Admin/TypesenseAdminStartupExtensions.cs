@@ -23,7 +23,7 @@ public static class TypesenseAdminStartupExtensions
     /// <param name="configure"></param>
     /// <param name="configuration">The application configuration.</param>
     /// <returns></returns>
-    public static IServiceCollection AddKenticoAdminTypesense(this IServiceCollection serviceCollection, Action<ITypesenseBuilder> configure, IConfiguration configuration) =>
+    public static IServiceCollection AddKenticoAdminTypesense(this IServiceCollection serviceCollection) =>
         serviceCollection
             .AddSingleton<TypesenseModuleInstaller>()
             .AddSingleton<ITypesenseConfigurationKenticoStorageService, DefaultTypesenseConfigurationKenticoStorageService>()

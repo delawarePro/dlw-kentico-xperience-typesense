@@ -6,6 +6,7 @@ using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Typesense.Collection;
 using Kentico.Xperience.Typesense.Xperience;
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -44,6 +45,13 @@ internal class TypesenseAdminModule : AdminModule
         storageService = services.GetRequiredService<ITypesenseConfigurationKenticoStorageService>();
         installer.Install();
         ApplicationEvents.PostStart.Execute += InitializeModule;
+    }
+
+    protected override void OnPreInit(ModulePreInitParameters parameters)
+    {
+        PreInit(parameters);
+        var services = parameters.Services;
+        services.AddKenticoAdminTypesense();
     }
 
     private void InitializeModule(object? sender, EventArgs e) => TypesenseCollectionStore.SetIndicies(storageService);

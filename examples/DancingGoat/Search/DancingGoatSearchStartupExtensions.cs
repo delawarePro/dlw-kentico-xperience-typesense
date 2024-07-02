@@ -22,14 +22,4 @@ public static class DancingGoatSearchStartupExtensions
 
         return services;
     }
-
-    public static IServiceCollection AddKenticoAdminTypesenseServices(this IServiceCollection services, IConfiguration configuration)
-    {
-        services.AddKenticoAdminTypesense(builder =>
-        {
-        }, configuration);
-
-        return services;
-    }
 }
-
