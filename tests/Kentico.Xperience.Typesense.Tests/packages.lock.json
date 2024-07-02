@@ -1883,7 +1883,7 @@
           "System.IO.Hashing": "7.0.0"
         }
       },
-      "Delaware.Kentico.Xperience.Typesense.": {
+      "Delaware.Kentico.Xperience.Typesense": {
         "type": "Project",
         "dependencies": {
           "Kentico.Xperience.WebApp": "[29.0.0, )",
@@ -1893,7 +1893,7 @@
       "Delaware.Kentico.Xperience.Typesense.Admin": {
         "type": "Project",
         "dependencies": {
-          "Delaware.Kentico.Xperience.Typesense.": "[0.0.5-beta-1, )",
+          "Delaware.Kentico.Xperience.Typesense": "[0.0.4-beta-1, )",
           "Kentico.Xperience.Admin": "[29.0.0, )",
           "Kentico.Xperience.AzureStorage": "[29.0.0, )"
         }

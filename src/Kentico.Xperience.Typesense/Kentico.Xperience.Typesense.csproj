@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<Product>Xperience by Kentico Typesense Search</Product>
 		<Title>$(Product)</Title>
-		<PackageId>Delaware.Kentico.Xperience.Typesense.</PackageId>
+		<PackageId>Delaware.Kentico.Xperience.Typesense</PackageId>
 		<Description>Enables the creation of Typesense search indexes and the indexing of Xperience website channel pages and reusable content items.</Description>
 		<RepositoryUrl>https://github.com/kentico/xperience-by-kentico-typesense</RepositoryUrl>
 		<IsPackable>true</IsPackable>
