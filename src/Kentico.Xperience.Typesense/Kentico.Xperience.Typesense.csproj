@@ -5,7 +5,7 @@
 		<PackageId>Delaware.Kentico.Xperience.Typesense.</PackageId>
 		<Description>Enables the creation of Typesense search indexes and the indexing of Xperience website channel pages and reusable content items.</Description>
 		<RepositoryUrl>https://github.com/kentico/xperience-by-kentico-typesense</RepositoryUrl>
-		<IsPackable>false</IsPackable>
+		<IsPackable>true</IsPackable>
 	</PropertyGroup>
 
 	<PropertyGroup>

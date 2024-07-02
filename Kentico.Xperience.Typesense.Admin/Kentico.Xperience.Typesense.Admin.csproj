@@ -16,7 +16,7 @@
 		<RootNamespace>Kentico.Xperience.Typesense</RootNamespace>
 		<NoWarn>$(NoWarn);S1075</NoWarn>
 		<LangVersion>latest</LangVersion>
-		<IsPackable>false</IsPackable>
+		<IsPackable>true</IsPackable>
 		<!-- Required to prevent type conflicts with existing types -->
 		<HotChocolateImplicitUsings>disable</HotChocolateImplicitUsings>
 		<TargetFramework>net8.0</TargetFramework>
