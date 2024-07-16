@@ -124,7 +124,7 @@ internal class CollectionListingPage : ListingPage
     /// <param name="id">The ID of the row whose action was performed, which corresponds with the internal
     /// <see cref="TypesenseCollection.Identifier"/> to rebuild.</param>
     /// <param name="cancellationToken">The cancellation token for the action.</param>
-    [PageCommand]
+    [PageCommand(Permission = TypesenseCollectionPermissions.REBUILD)]
     public async Task<ICommandResponse<RowActionResult>> Rebuild(int id, CancellationToken cancellationToken)
     {
         var result = new RowActionResult(false);
