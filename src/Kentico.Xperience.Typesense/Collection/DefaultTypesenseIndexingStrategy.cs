@@ -30,16 +30,16 @@ public class DefaultTypesenseCollectionStrategy : ITypesenseCollectionStrategy
         return Task.FromResult<IEnumerable<TypesenseSearchResultModel>?>(result);
     }
 
-    public virtual ITypesenseCollectionSettings GetTypesenseCollectionSettings() => new TypesenseCollectionSettings()
-    {
-        Fields =
-        [
+    public virtual Task<ITypesenseCollectionSettings> GetTypesenseCollectionSettings() =>
+        Task.FromResult<ITypesenseCollectionSettings>(new TypesenseCollectionSettings()
+        {
+            Fields = new(){
             new Field(BaseObjectProperties.ITEM_GUID, FieldType.String),
             new Field(BaseObjectProperties.CONTENT_TYPE_NAME, FieldType.String),
             new Field(BaseObjectProperties.LANGUAGE_NAME, FieldType.String),
             new Field(BaseObjectProperties.URL, FieldType.String),
-        ]
-    };
+            }
+        });
 
     public virtual async Task<IEnumerable<ICollectionEventItemModel>> FindItemsToReindex(CollectionEventWebPageItemModel changedItem) => await Task.FromResult(new List<CollectionEventWebPageItemModel>() { changedItem });
 

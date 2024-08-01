@@ -10,7 +10,7 @@ public interface ITypesenseCollectionStrategy
     /// <returns>Modified Typesense document.</returns>
     Task<IEnumerable<TypesenseSearchResultModel>?> MapToTypesenseObjectsOrNull(ICollectionEventItemModel typesensePageItem);
 
-    ITypesenseCollectionSettings GetTypesenseCollectionSettings();
+    Task<ITypesenseCollectionSettings> GetTypesenseCollectionSettings();
 
     Task<IEnumerable<ICollectionEventItemModel>> FindItemsToReindex(CollectionEventWebPageItemModel changedItem);
 

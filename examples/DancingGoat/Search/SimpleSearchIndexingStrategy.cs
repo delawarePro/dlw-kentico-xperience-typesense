@@ -24,9 +24,9 @@ public class SimpleSearchCollectionStrategy : DefaultTypesenseCollectionStrategy
     private readonly IWebPageQueryResultMapper webPageMapper;
     private readonly IContentQueryExecutor queryExecutor;
 
-    public override ITypesenseCollectionSettings GetTypesenseCollectionSettings()
+    public override async Task<ITypesenseCollectionSettings> GetTypesenseCollectionSettings()
     {
-        var baseSettings = base.GetTypesenseCollectionSettings();
+        var baseSettings = await base.GetTypesenseCollectionSettings();
         baseSettings.Fields.Add(new Field(nameof(SimpleSearchResultModel.Title), FieldType.String, false));
         return baseSettings;
     }

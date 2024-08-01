@@ -329,7 +329,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         var typesenseCollection = TypesenseCollectionStore.Instance.GetCollection(configuration.CollectionName) ?? throw new InvalidOperationException($"Registered index with name '{configuration.CollectionName}' doesn't exist.");
 
         var typesenseStrategy = serviceProvider.GetRequiredStrategy(typesenseCollection);
-        var indexSettings = typesenseStrategy.GetTypesenseCollectionSettings();
+        var indexSettings = await typesenseStrategy.GetTypesenseCollectionSettings();
 
         var createdCollection = await searchClient.CreateCollection(indexSettings.ToSchema($"{configuration.CollectionName}-primary"));
         if (createdCollection == null)
@@ -353,7 +353,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         var typesenseCollection = TypesenseCollectionStore.Instance.GetCollection(configuration.CollectionName) ?? throw new InvalidOperationException($"Registered index with name '{configuration.CollectionName}' doesn't exist.");
 
         var typesenseStrategy = serviceProvider.GetRequiredStrategy(typesenseCollection);
-        var indexSettings = typesenseStrategy.GetTypesenseCollectionSettings();
+        var indexSettings = await typesenseStrategy.GetTypesenseCollectionSettings();
 
         var currentCollection = await searchClient.RetrieveCollection(configuration.CollectionName); //Search by alias the current collection
 
@@ -379,7 +379,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
     public async Task<bool> EnsureNewCollection(string newCollection, TypesenseCollection typesenseCollection)
     {
         var typesenseStrategy = serviceProvider.GetRequiredStrategy(typesenseCollection);
-        var indexSettings = typesenseStrategy.GetTypesenseCollectionSettings();
+        var indexSettings = await typesenseStrategy.GetTypesenseCollectionSettings();
 
         var allCollections = await searchClient.RetrieveCollections();
 
