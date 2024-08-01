@@ -30,9 +30,10 @@ public class DefaultTypesenseCollectionStrategy : ITypesenseCollectionStrategy
         return Task.FromResult<IEnumerable<TypesenseSearchResultModel>?>(result);
     }
 
-    public virtual Task<ITypesenseCollectionSettings> GetTypesenseCollectionSettings() =>
+    public virtual Task<ITypesenseCollectionSettings> GetTypesenseCollectionSettings(bool enableNestedFields = false) =>
         Task.FromResult<ITypesenseCollectionSettings>(new TypesenseCollectionSettings()
         {
+            EnableNestedFields = enableNestedFields,
             Fields = new(){
             new Field(BaseObjectProperties.ITEM_GUID, FieldType.String),
             new Field(BaseObjectProperties.CONTENT_TYPE_NAME, FieldType.String),
