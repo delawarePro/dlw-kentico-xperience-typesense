@@ -66,7 +66,6 @@ public class TypesenseModuleInstaller
             Precision = 0,
             DataType = FieldDataType.Guid,
             Enabled = true,
-
         };
         formInfo.AddFormItem(formItem);
 
@@ -311,6 +310,18 @@ public class TypesenseModuleInstaller
 
         formInfo.AddFormItem(formItem);
 
+        formItem = new FormFieldInfo
+        {
+            Name = nameof(TypesenseContentTypeItemInfo.TypesenseContentTypeItemGuid),
+            AllowEmpty = false,
+            Visible = true,
+            Precision = 0,
+            DataType = FieldDataType.Guid,
+            Enabled = true
+        };
+
+        formInfo.AddFormItem(formItem);
+
         SetFormDefinition(info, formInfo);
 
         if (info.HasChanged)
@@ -400,7 +411,6 @@ public class TypesenseModuleInstaller
         formInfo.AddFormItem(formItem);
 
         SetFormDefinition(info, formInfo);
-
 
         if (info.HasChanged)
         {
