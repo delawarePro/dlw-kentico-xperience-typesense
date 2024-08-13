@@ -1,7 +1,5 @@
 using CMS.DataEngine;
 
-using Kentico.Xperience.Typesense.Admin;
-
 namespace Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIncludedPathItem;
 
 /// <summary>

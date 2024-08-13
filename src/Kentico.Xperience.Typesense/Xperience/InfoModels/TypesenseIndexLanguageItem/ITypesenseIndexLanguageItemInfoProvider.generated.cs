@@ -1,12 +1,10 @@
 using CMS.DataEngine;
 
-using Kentico.Xperience.Typesense.Admin;
-
 namespace Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexLanguageItem;
 
 /// <summary>
-/// Declares members for <see cref="TypesenseCollectionLanguageItemInfo"/> management.
+/// Declares members for <see cref="TypesenseIndexLanguageItemInfo"/> management.
 /// </summary>
-public partial interface ITypesenseCollectionLanguageItemInfoProvider : IInfoProvider<TypesenseCollectionLanguageItemInfo>, IInfoByIdProvider<TypesenseCollectionLanguageItemInfo>
+public partial interface ITypesenseCollectionLanguageItemInfoProvider : IInfoProvider<TypesenseIndexLanguageItemInfo>, IInfoByIdProvider<TypesenseIndexLanguageItemInfo>
 {
 }

@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using Kentico.Xperience.Typesense.Admin;
+using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIncludedPathItem;
 
 namespace Kentico.Xperience.Typesense.Xperience;
 

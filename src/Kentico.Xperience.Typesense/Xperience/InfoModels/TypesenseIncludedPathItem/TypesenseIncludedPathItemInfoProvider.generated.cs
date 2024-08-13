@@ -1,8 +1,6 @@
 using CMS.DataEngine;
 
-using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIncludedPathItem;
-
-namespace Kentico.Xperience.Typesense.Admin;
+namespace Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIncludedPathItem;
 
 /// <summary>
 /// Class providing <see cref="TypesenseIncludedPathItemInfo"/> management.

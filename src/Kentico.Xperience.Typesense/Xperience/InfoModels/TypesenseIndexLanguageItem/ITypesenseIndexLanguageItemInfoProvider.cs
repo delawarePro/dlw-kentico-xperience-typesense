@@ -5,7 +5,7 @@ using Kentico.Xperience.Typesense.Admin;
 namespace Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexLanguageItem;
 
 /// <summary>
-/// Declares members for <see cref="TypesenseCollectionLanguageItemInfo"/> management.
+/// Declares members for <see cref="TypesenseIndexLanguageItemInfo"/> management.
 /// </summary>
 public partial interface ITypesenseCollectionLanguageItemInfoProvider
 {

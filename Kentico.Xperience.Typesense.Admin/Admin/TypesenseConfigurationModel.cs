@@ -3,6 +3,9 @@
 using Kentico.Xperience.Admin.Base.FormAnnotations;
 using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Admin.Providers;
+using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIncludedPathItem;
+using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexItem;
+using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexLanguageItem;
 
 namespace Kentico.Xperience.Typesense.Xperience;
 
@@ -39,8 +42,8 @@ public class TypesenseConfigurationModel : ITypesenseConfigurationModel
     public TypesenseConfigurationModel() { }
 
     public TypesenseConfigurationModel(
-        TypesenseCollectionItemInfo index,
-        IEnumerable<TypesenseCollectionLanguageItemInfo> indexLanguages,
+        TypesenseIndexItemInfo index,
+        IEnumerable<TypesenseIndexLanguageItemInfo> indexLanguages,
         IEnumerable<TypesenseIncludedPathItemInfo> indexPaths,
         IEnumerable<TypesenseCollectionContentType> contentTypes
     )

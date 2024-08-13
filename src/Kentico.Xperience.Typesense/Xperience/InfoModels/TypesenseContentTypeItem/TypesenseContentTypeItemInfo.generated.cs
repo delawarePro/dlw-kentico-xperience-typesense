@@ -1,4 +1,3 @@
-
 using System.Data;
 using System.Runtime.Serialization;
 
@@ -8,10 +7,12 @@ using CMS.Helpers;
 
 using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseContentTypeItem;
+using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIncludedPathItem;
+using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexItem;
 
 [assembly: RegisterObjectType(typeof(TypesenseContentTypeItemInfo), TypesenseContentTypeItemInfo.OBJECT_TYPE)]
 
-namespace Kentico.Xperience.Typesense.Admin;
+namespace Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseContentTypeItem;
 
 /// <summary>
 /// Data container class for <see cref="TypesenseContentTypeItemInfo"/>.
@@ -24,7 +25,6 @@ public partial class TypesenseContentTypeItemInfo : AbstractInfo<TypesenseConten
     /// </summary>
     public const string OBJECT_TYPE = "kenticotypesense.typesensecontenttypeitem";
 
-
     /// <summary>
     /// Type information.
     /// </summary>
@@ -34,14 +34,13 @@ public partial class TypesenseContentTypeItemInfo : AbstractInfo<TypesenseConten
         DependsOn = new List<ObjectDependency>()
         {
             new(nameof(TypesenseContentTypeItemIncludedPathItemId), TypesenseIncludedPathItemInfo.OBJECT_TYPE, ObjectDependencyEnum.Required),
-            new(nameof(TypesenseContentTypeItemCollectionItemId), TypesenseCollectionItemInfo.OBJECT_TYPE, ObjectDependencyEnum.Required),
+            new(nameof(TypesenseContentTypeItemCollectionItemId), TypesenseIndexItemInfo.OBJECT_TYPE, ObjectDependencyEnum.Required),
         },
         ContinuousIntegrationSettings =
         {
             Enabled = true
         }
     };
-
 
     /// <summary>
     /// Typesense content type item id.
@@ -53,7 +52,6 @@ public partial class TypesenseContentTypeItemInfo : AbstractInfo<TypesenseConten
         set => SetValue(nameof(TypesenseContentTypeItemId), value);
     }
 
-
     /// <summary>
     /// Typesense content type item guid.
     /// </summary>
@@ -63,7 +61,6 @@ public partial class TypesenseContentTypeItemInfo : AbstractInfo<TypesenseConten
         get => ValidationHelper.GetGuid(GetValue(nameof(TypesenseContentTypeItemGuid)), default);
         set => SetValue(nameof(TypesenseContentTypeItemGuid), value);
     }
-
 
     /// <summary>
     /// Content type name.
@@ -75,7 +72,6 @@ public partial class TypesenseContentTypeItemInfo : AbstractInfo<TypesenseConten
         set => SetValue(nameof(TypesenseContentTypeItemContentTypeName), value);
     }
 
-
     /// <summary>
     /// Typesense included path item id.
     /// </summary>
@@ -85,7 +81,6 @@ public partial class TypesenseContentTypeItemInfo : AbstractInfo<TypesenseConten
         get => ValidationHelper.GetInteger(GetValue(nameof(TypesenseContentTypeItemIncludedPathItemId)), 0);
         set => SetValue(nameof(TypesenseContentTypeItemIncludedPathItemId), value);
     }
-
 
     /// <summary>
     /// Typesense index item id.
@@ -97,7 +92,6 @@ public partial class TypesenseContentTypeItemInfo : AbstractInfo<TypesenseConten
         set => SetValue(nameof(TypesenseContentTypeItemCollectionItemId), value);
     }
 
-
     /// <summary>
     /// Deletes the object using appropriate provider.
     /// </summary>
@@ -106,7 +100,6 @@ public partial class TypesenseContentTypeItemInfo : AbstractInfo<TypesenseConten
         Provider.Delete(this);
     }
 
-
     /// <summary>
     /// Updates the object using appropriate provider.
     /// </summary>
@@ -114,7 +107,6 @@ public partial class TypesenseContentTypeItemInfo : AbstractInfo<TypesenseConten
     {
         Provider.Set(this);
     }
-
 
     /// <summary>
     /// Constructor for de-serialization.
@@ -126,7 +118,6 @@ public partial class TypesenseContentTypeItemInfo : AbstractInfo<TypesenseConten
     {
     }
 
-
     /// <summary>
     /// Creates an empty instance of the <see cref="TypesenseContentTypeItemInfo"/> class.
     /// </summary>
@@ -134,7 +125,6 @@ public partial class TypesenseContentTypeItemInfo : AbstractInfo<TypesenseConten
         : base(TYPEINFO)
     {
     }
-
 
     /// <summary>
     /// Creates a new instances of the <see cref="TypesenseContentTypeItemInfo"/> class from the given <see cref="DataRow"/>.

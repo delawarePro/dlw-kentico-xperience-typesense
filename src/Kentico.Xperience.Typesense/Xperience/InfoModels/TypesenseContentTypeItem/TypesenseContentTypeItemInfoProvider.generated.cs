@@ -1,8 +1,6 @@
 using CMS.DataEngine;
 
-using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseContentTypeItem;
-
-namespace Kentico.Xperience.Typesense.Admin;
+namespace Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseContentTypeItem;
 
 /// <summary>
 /// Class providing <see cref="TypesenseContentTypeItemInfo"/> management.

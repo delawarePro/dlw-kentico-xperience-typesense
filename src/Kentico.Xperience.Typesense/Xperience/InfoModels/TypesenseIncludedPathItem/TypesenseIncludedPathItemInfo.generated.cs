@@ -8,10 +8,11 @@ using CMS.DataEngine;
 using CMS.Helpers;
 using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIncludedPathItem;
+using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexItem;
 
 [assembly: RegisterObjectType(typeof(TypesenseIncludedPathItemInfo), TypesenseIncludedPathItemInfo.OBJECT_TYPE)]
 
-namespace Kentico.Xperience.Typesense.Admin;
+namespace Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIncludedPathItem;
 
 /// <summary>
 /// Data container class for <see cref="TypesenseIncludedPathItemInfo"/>.
@@ -33,7 +34,7 @@ public partial class TypesenseIncludedPathItemInfo : AbstractInfo<TypesenseInclu
         TouchCacheDependencies = true,
         DependsOn = new List<ObjectDependency>()
         {
-            new(nameof(TypesenseIncludedPathItemCollectionItemId), TypesenseCollectionItemInfo.OBJECT_TYPE, ObjectDependencyEnum.Required),
+            new(nameof(TypesenseIncludedPathItemCollectionItemId), TypesenseIndexItemInfo.OBJECT_TYPE, ObjectDependencyEnum.Required),
         },
         ContinuousIntegrationSettings =
         {
