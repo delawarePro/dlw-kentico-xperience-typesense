@@ -1,3 +1,5 @@
+using System.Collections;
+
 using CMS.ContentEngine;
 using CMS.Core;
 using CMS.DataEngine;
@@ -115,34 +117,16 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
     }
 
     /// <inheritdoc />
-    public async Task Rebuild(string collectionName, CancellationToken cancellationToken)
+    public Task Rebuild(string collectionName, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(collectionName))
         {
             throw new ArgumentNullException(nameof(collectionName));
         }
 
-        TypesenseCollection? typesenseCollection = null;
-        try
-        {
-            typesenseCollection = TypesenseCollectionStore.Instance.GetRequiredCollection(collectionName);
-        }
-        //index does not exist
-        catch (InvalidOperationException)
-        {
-            bool isCreated = await TryCreateCollectionInternal(collectionName);
-            if (isCreated)
-            {
-                typesenseCollection = TypesenseCollectionStore.Instance.GetRequiredCollection(collectionName);
-            }
-        }
+        var typesenseCollection = TypesenseCollectionStore.Instance.GetRequiredCollection(collectionName);
 
-        if (typesenseCollection is null)
-        {
-            throw new Exception($"typesenseCollection is null. Could not get {collectionName}");
-        }
-
-        await RebuildInternal(typesenseCollection, cancellationToken);
+        return RebuildInternal(typesenseCollection, cancellationToken);
     }
 
     /// <inheritdoc />
@@ -226,6 +210,16 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
                 }
             }
         }
+
+        try
+        {
+            await searchClient.RetrieveCollection(typesenseCollection.CollectionName, cancellationToken);
+        }
+        catch (TypesenseApiNotFoundException)
+        {
+            await TryCreateCollectionInternal(typesenseCollection.CollectionName);
+        }
+
         await searchClient.DeleteDocuments(typesenseCollection.CollectionName, $"{BaseObjectProperties.ID}: &gt;= 0");
 
         var (activeCollectionName, newCollectionName) = await GetCollectionNames(typesenseCollection.CollectionName);
@@ -349,15 +343,11 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         var typesenseStrategy = serviceProvider.GetRequiredStrategy(typesenseCollection);
         var indexSettings = await typesenseStrategy.GetTypesenseCollectionSettings();
 
-        var createdCollection =
-            await searchClient.CreateCollection(indexSettings.ToSchema($"{collectionName}-primary"));
-        if (createdCollection == null)
-        {
-            return false;
-        }
+        await searchClient.CreateCollection(indexSettings.ToSchema($"{collectionName}-primary"));
 
         await searchClient.UpsertCollectionAlias(collectionName,
             new CollectionAlias($"{collectionName}-primary"));
+
         return true;
     }
 
@@ -474,10 +464,6 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
     public async Task<(string activeCollectionName, string newCollectionName)> GetCollectionNames(string collectionName)
     {
         var currentCollection = await searchClient.RetrieveCollection(collectionName); //Search by alias the current collection
-        if (currentCollection == null)
-        {
-            return (string.Empty, string.Empty);
-        }
 
         string newCollectionName = $"{collectionName}-primary"; //Default to primary
         if (currentCollection.Name.EndsWith("-primary"))
