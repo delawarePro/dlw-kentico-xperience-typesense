@@ -1,21 +1,16 @@
-using System.Net.Http.Headers;
-using System.Net.Mime;
-using System.Text;
-using System.Text.Json;
-
 using CMS.ContentEngine;
 using CMS.Core;
 using CMS.DataEngine;
 using CMS.Helpers;
 using CMS.Websites;
 
+using Kentico.Xperience.Typesense.QueueWorker;
 using Kentico.Xperience.Typesense.Search;
+using Kentico.Xperience.Typesense.Xperience;
 
 using Microsoft.Extensions.DependencyInjection;
 
 using Typesense;
-using Kentico.Xperience.Typesense.QueueWorker;
-using Kentico.Xperience.Typesense.Xperience;
 
 namespace Kentico.Xperience.Typesense.Collection;
 
@@ -77,6 +72,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
 
         return DeleteRecordsInternal(itemGuids, collectionName);
     }
+
     /// <inheritdoc/>
     public async Task<ICollection<TypesenseCollectionStatisticsViewModel>> GetStatistics(CancellationToken cancellationToken)
     {
@@ -119,16 +115,34 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
     }
 
     /// <inheritdoc />
-    public Task Rebuild(string collectionName, CancellationToken cancellationToken)
+    public async Task Rebuild(string collectionName, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(collectionName))
         {
             throw new ArgumentNullException(nameof(collectionName));
         }
 
-        var typesenseCollection = TypesenseCollectionStore.Instance.GetRequiredCollection(collectionName);
+        TypesenseCollection? typesenseCollection = null;
+        try
+        {
+            typesenseCollection = TypesenseCollectionStore.Instance.GetRequiredCollection(collectionName);
+        }
+        //index does not exist
+        catch (InvalidOperationException)
+        {
+            bool isCreated = await TryCreateCollectionInternal(collectionName);
+            if (isCreated)
+            {
+                typesenseCollection = TypesenseCollectionStore.Instance.GetRequiredCollection(collectionName);
+            }
+        }
 
-        return RebuildInternal(typesenseCollection, cancellationToken);
+        if (typesenseCollection is null)
+        {
+            throw new Exception($"typesenseCollection is null. Could not get {collectionName}");
+        }
+
+        await RebuildInternal(typesenseCollection, cancellationToken);
     }
 
     /// <inheritdoc />
@@ -153,7 +167,6 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
             return primary != null || secondary != null;
         }
         return false;
-
     }
 
     /// <inheritdoc />
@@ -219,7 +232,6 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
 
         await EnsureNewCollection(newCollectionName, typesenseCollection);
 
-
         indexedItems.ForEach(async node => await queue.EnqueueTypesenseQueueItem(new TypesenseQueueItem(node, TypesenseTaskType.PUBLISH_INDEX, newCollectionName)));
 
         queue.EnqueueTypesenseQueueItem(new TypesenseQueueItem(new EndOfRebuildItemModel(activeCollectionName, newCollectionName, typesenseCollection.CollectionName), TypesenseTaskType.END_OF_REBUILD, typesenseCollection.CollectionName));
@@ -241,7 +253,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
             languageName,
             content.ContentTypeName,
             content.WebPageItemName,
-            content.ContentItemIsSecured, 
+            content.ContentItemIsSecured,
             content.ContentItemContentTypeID,
             content.ContentItemCommonDataContentLanguageID,
             channelName,
@@ -297,7 +309,6 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
     private Task<IEnumerable<(int WebsiteChannelID, string ChannelName)>> GetAllWebsiteChannels() =>
         cache.LoadAsync(async cs =>
         {
-
             var results = await channelProvider.Get()
                 .Source(s => s.Join<WebsiteChannelInfo>(nameof(ChannelInfo.ChannelID), nameof(WebsiteChannelInfo.WebsiteChannelChannelID)))
                 .Columns(nameof(WebsiteChannelInfo.WebsiteChannelID), nameof(ChannelInfo.ChannelName))
@@ -325,23 +336,30 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
             return false;
         }
 
+        return await TryCreateCollectionInternal(configuration.CollectionName);
+    }
+
+    private async Task<bool> TryCreateCollectionInternal(string collectionName)
+    {
         //Create the collection in Typesense
-        var typesenseCollection = TypesenseCollectionStore.Instance.GetCollection(configuration.CollectionName) ?? throw new InvalidOperationException($"Registered index with name '{configuration.CollectionName}' doesn't exist.");
+        var typesenseCollection = TypesenseCollectionStore.Instance.GetCollection(collectionName) ??
+                                  throw new InvalidOperationException(
+                                      $"Registered index with name '{collectionName}' doesn't exist.");
 
         var typesenseStrategy = serviceProvider.GetRequiredStrategy(typesenseCollection);
         var indexSettings = await typesenseStrategy.GetTypesenseCollectionSettings();
 
-        var createdCollection = await searchClient.CreateCollection(indexSettings.ToSchema($"{configuration.CollectionName}-primary"));
+        var createdCollection =
+            await searchClient.CreateCollection(indexSettings.ToSchema($"{collectionName}-primary"));
         if (createdCollection == null)
         {
             return false;
         }
 
-        await searchClient.UpsertCollectionAlias(configuration.CollectionName, new CollectionAlias($"{configuration.CollectionName}-primary"));
+        await searchClient.UpsertCollectionAlias(collectionName,
+            new CollectionAlias($"{collectionName}-primary"));
         return true;
     }
-
-
 
     public async Task<bool> TryEditCollection(ITypesenseConfigurationModel configuration, Func<string, Task> rebuildAction)
     {
@@ -441,6 +459,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         }
         return processed;
     }
+
     public async Task SwapAliasWhenRebuildIsDone(string alias, string newCollectionRebuilded)
     {
         if (string.IsNullOrEmpty(alias) || string.IsNullOrEmpty(newCollectionRebuilded))
@@ -468,5 +487,4 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
 
         return (currentCollection.Name, newCollectionName);
     }
-
 }
