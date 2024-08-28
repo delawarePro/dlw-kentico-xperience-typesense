@@ -1,11 +1,15 @@
 ﻿using System.Text;
 
+using CMS.ContentEngine;
 using CMS.DataEngine;
+using CMS.Websites;
+
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseContentTypeItem;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIncludedPathItem;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexItem;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexLanguageItem;
 using Kentico.Xperience.Typesense.Xperience;
+using System.Linq;
 
 namespace Kentico.Xperience.Typesense.Admin.Admin;
 
@@ -123,7 +127,8 @@ internal class DefaultTypesenseConfigurationKenticoStorageService : ITypesenseCo
         var contentTypesInfoItems = contentTypeProvider
         .Get()
         .WhereEquals(nameof(TypesenseContentTypeItemInfo.TypesenseContentTypeItemCollectionItemId), indexInfo.TypesenseCollectionItemId)
-        .GetEnumerableTypedResult();
+        .GetEnumerableTypedResult()
+        .ToList();
 
         var contentTypes = DataClassInfoProvider.ProviderObject
             .Get()
@@ -138,7 +143,7 @@ internal class DefaultTypesenseConfigurationKenticoStorageService : ITypesenseCo
 
         var languages = languageProvider.Get().WhereEquals(nameof(TypesenseIndexLanguageItemInfo.TypesenseCollectionLanguageItemCollectionItemId), indexInfo.TypesenseCollectionItemId).GetEnumerableTypedResult();
 
-        return (ITypesenseConfigurationModel)new TypesenseConfigurationModel(indexInfo, languages, paths, contentTypes);
+        return (ITypesenseConfigurationModel)new TypesenseConfigurationModel(indexInfo, languages, paths, contentTypes, contentTypesInfoItems);
     }
     public List<string> GetExistingcollectionNames() => indexProvider.Get().Select(x => x.TypesenseCollectionItemcollectionName).ToList();
     public List<int> GetCollectionIds() => indexProvider.Get().Select(x => x.TypesenseCollectionItemId).ToList();
@@ -154,7 +159,8 @@ internal class DefaultTypesenseConfigurationKenticoStorageService : ITypesenseCo
 
         var contentTypesInfoItems = contentTypeProvider
             .Get()
-            .GetEnumerableTypedResult();
+            .GetEnumerableTypedResult()
+            .ToList();
 
         var contentTypes = DataClassInfoProvider.ProviderObject
             .Get()
@@ -168,7 +174,7 @@ internal class DefaultTypesenseConfigurationKenticoStorageService : ITypesenseCo
 
         var languages = languageProvider.Get().ToList();
 
-        return indexInfos.Select(index => (ITypesenseConfigurationModel)new TypesenseConfigurationModel(index, languages, paths, contentTypes));
+        return indexInfos.Select(index => (ITypesenseConfigurationModel)new TypesenseConfigurationModel(index, languages, paths, contentTypes, contentTypesInfoItems));
     }
     public async Task<bool> TryEditCollection(ITypesenseConfigurationModel configuration)
     {

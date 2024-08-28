@@ -1,4 +1,6 @@
-﻿namespace Kentico.Xperience.Typesense.Xperience;
+﻿using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseContentTypeItem;
+
+namespace Kentico.Xperience.Typesense.Xperience;
 
 public class TypesenseCollectionContentType
 {

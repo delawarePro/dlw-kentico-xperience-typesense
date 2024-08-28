@@ -3,6 +3,7 @@
 using Kentico.Xperience.Admin.Base.FormAnnotations;
 using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Admin.Providers;
+using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseContentTypeItem;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIncludedPathItem;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexItem;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexLanguageItem;
@@ -41,25 +42,25 @@ public class TypesenseConfigurationModel : ITypesenseConfigurationModel
 
     public TypesenseConfigurationModel() { }
 
-    public TypesenseConfigurationModel(
-        TypesenseIndexItemInfo index,
+    public TypesenseConfigurationModel(TypesenseIndexItemInfo index,
         IEnumerable<TypesenseIndexLanguageItemInfo> indexLanguages,
         IEnumerable<TypesenseIncludedPathItemInfo> indexPaths,
-        IEnumerable<TypesenseCollectionContentType> contentTypes
-    )
+        IEnumerable<TypesenseCollectionContentType> contentTypes,
+        List<TypesenseContentTypeItemInfo> typesenseContentTypeItemInfos)
     {
         Id = index.TypesenseCollectionItemId;
         CollectionName = index.TypesenseCollectionItemcollectionName;
         ChannelName = index.TypesenseCollectionItemChannelName;
         RebuildHook = index.TypesenseCollectionItemRebuildHook;
         StrategyName = index.TypesenseCollectionItemStrategyName;
+        
         LanguageNames = indexLanguages
             .Where(l => l.TypesenseCollectionLanguageItemCollectionItemId == index.TypesenseCollectionItemId)
             .Select(l => l.TypesenseCollectionLanguageItemName)
             .ToList();
         Paths = indexPaths
             .Where(p => p.TypesenseIncludedPathItemCollectionItemId == index.TypesenseCollectionItemId)
-            .Select(p => new TypesenseCollectionIncludedPath(p, contentTypes))
+            .Select(p => new TypesenseCollectionIncludedPath(p, contentTypes, typesenseContentTypeItemInfos))
             .ToList();
     }
 }

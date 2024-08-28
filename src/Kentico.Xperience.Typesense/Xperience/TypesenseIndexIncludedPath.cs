@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using Kentico.Xperience.Typesense.Admin;
+using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseContentTypeItem;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIncludedPathItem;
 
 namespace Kentico.Xperience.Typesense.Xperience;
@@ -30,10 +31,17 @@ public class TypesenseCollectionIncludedPath
     /// </summary>
     /// <param name="indexPath"></param>
     /// <param name="contentTypes"></param>
-    public TypesenseCollectionIncludedPath(TypesenseIncludedPathItemInfo indexPath, IEnumerable<TypesenseCollectionContentType> contentTypes)
+    /// <param name="typesenseContentTypeItemInfos"></param>
+    /// <param name="contentTypeLinked"></param>
+    public TypesenseCollectionIncludedPath(TypesenseIncludedPathItemInfo indexPath,
+        IEnumerable<TypesenseCollectionContentType> contentTypes,
+        IEnumerable<TypesenseContentTypeItemInfo> typesenseContentTypeItemInfos)
     {
+        var contentTypesToLink = typesenseContentTypeItemInfos.Where(x =>
+            x.TypesenseContentTypeItemIncludedPathItemId == indexPath.TypesenseIncludedPathItemId);
+        var linkedContentType = contentTypes.Where(x => contentTypesToLink.Select(ctl => ctl.TypesenseContentTypeItemContentTypeName).Contains(x.ContentTypeName));
         AliasPath = indexPath.TypesenseIncludedPathItemAliasPath;
-        ContentTypes = contentTypes.ToList();
+        ContentTypes = linkedContentType.ToList();
         Identifier = indexPath.TypesenseIncludedPathItemId.ToString();
     }
 }
