@@ -168,7 +168,7 @@ internal class TypesenseBuilder : ITypesenseBuilder
     public ITypesenseBuilder RegisterStrategy<TStrategy>(string strategyName) where TStrategy : class, ITypesenseCollectionStrategy
     {
         StrategyStorage.AddStrategy<TStrategy>(strategyName);
-        serviceCollection.AddSingleton<TStrategy>();
+        serviceCollection.AddTransient<TStrategy>();
 
         return this;
     }
