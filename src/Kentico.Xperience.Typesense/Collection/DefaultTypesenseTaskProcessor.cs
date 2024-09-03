@@ -108,9 +108,18 @@ internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
     {
         if (item is not null && baseItem is not null)
         {
-            item.ItemGuid = baseItem.ItemGuid;
-            item.ContentTypeName = baseItem.ContentTypeName;
-            item.LanguageName = baseItem.LanguageName;
+            if (item.ItemGuid == null || item.ItemGuid == Guid.Empty)
+            {
+                item.ItemGuid = baseItem.ItemGuid;
+            }
+            if (string.IsNullOrEmpty(item.ContentTypeName))
+            {
+                item.ContentTypeName = baseItem.ContentTypeName;
+            }
+            if (string.IsNullOrEmpty(item.LanguageName))
+            {
+                item.LanguageName = baseItem.LanguageName;
+            }
 
             if (baseItem is CollectionEventWebPageItemModel webpageItem && string.IsNullOrEmpty(item.Url))
             {
