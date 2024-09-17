@@ -154,7 +154,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
     }
 
     /// <inheritdoc />
-    public Task<int> UpsertRecords(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, CancellationToken cancellationToken)
+    public Task<int> UpsertRecords(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, ImportType importType = ImportType.Create, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(collectionName))
         {
@@ -166,7 +166,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
             return Task.FromResult(0);
         }
 
-        return UpsertRecordsInternal(dataObjects, collectionName, cancellationToken);
+        return UpsertRecordsInternal(dataObjects, collectionName, importType, cancellationToken);
     }
 
     private async Task<int> DeleteRecordsInternal(IEnumerable<string> objectIds, string collectionName)
@@ -260,11 +260,11 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         return item;
     }
 
-    private async Task<int> UpsertRecordsInternal(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, CancellationToken cancellationToken)
+    private async Task<int> UpsertRecordsInternal(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, ImportType importType = ImportType.Create,  CancellationToken cancellationToken = default)
     {
         try
         {
-            var response = await typesenseClient.ImportDocuments(collectionName, dataObjects);
+            var response = await typesenseClient.ImportDocuments(collectionName, dataObjects, importType: importType);
             return response.Count;
         }
         catch (Exception ex)
@@ -273,21 +273,6 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         }
 
         return 0;
-
-        //foreach (var item in dataObjects) //TODO : Test in parralele mode but be carrefull about the counter
-        //{
-        //    try
-        //    {
-        //        await typesenseClient.UpsertDocument(collectionName, item);
-        //        upsertedCount++;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        eventLogService.LogException($"{nameof(DefaultTypesenseClient)} - {nameof(UpsertRecordsInternal)}", $"Error when indexing the item (guid): {item.ItemGuid} in language: {item.LanguageName}", ex);
-        //    }
-        //}
-
-        //return upsertedCount;
     }
 
     private Task<IEnumerable<ContentLanguageInfo>> GetAllLanguages() =>
