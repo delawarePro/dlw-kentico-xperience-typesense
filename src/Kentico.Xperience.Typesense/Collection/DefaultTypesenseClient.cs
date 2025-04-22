@@ -86,7 +86,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
             return Task.FromResult(0);
         }
 
-        return DeleteRecordsInternal(itemGuids, collectionName);
+        return DeleteRecordsInternal(itemGuids, collectionName, activity);
     }
 
     /// <inheritdoc/>
@@ -163,7 +163,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
 
         var typesenseCollection = TypesenseCollectionStore.Instance.GetRequiredCollection(collectionName);
 
-        return RebuildInternal(typesenseCollection, cancellationToken);
+        return RebuildInternal(typesenseCollection, cancellationToken, activity);
     }
 
     /// <inheritdoc />
@@ -244,32 +244,34 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
             return Task.FromResult(0);
         }
 
-        return UpsertRecordsInternal(dataObjects, collectionName, importType);
+        return UpsertRecordsInternal(dataObjects, collectionName, importType, activity);
     }
 
-    private async Task<int> DeleteRecordsInternal(IEnumerable<string> objectIds, string collectionName)
+    private async Task<int> DeleteRecordsInternal(IEnumerable<string> objectIds, string collectionName, Activity? activity = null)
     {
         int deletedCount = 0;
-        //Bulk delete per page of 20 objectIds in parralel
+        activity?.AddEvent(new ActivityEvent($"DeleteRecordsInternal started for {collectionName}"));
+        //Bulk delete per page of 20 objectIds in parallel
         Parallel.ForEach(objectIds.Chunk(20), async page =>
         {
             string idsToDelete = string.Join(",", page);
             var batchCollectioningResponse = await searchClient.DeleteDocuments(collectionName, $"{BaseObjectProperties.ID}:[{idsToDelete}]");
             Interlocked.Add(ref deletedCount, batchCollectioningResponse.NumberOfDeleted);
+            activity?.AddEvent(new ActivityEvent($"Deleted {batchCollectioningResponse.NumberOfDeleted} records in chunk"));
         });
-
+        activity?.AddEvent(new ActivityEvent($"DeleteRecordsInternal finished for {collectionName}, total deleted: {deletedCount}"));
         return deletedCount;
     }
 
-    private async Task RebuildInternal(TypesenseCollection typesenseCollection, CancellationToken cancellationToken)
+    private async Task RebuildInternal(TypesenseCollection typesenseCollection, CancellationToken cancellationToken, Activity? activity = null)
     {
+        activity?.AddEvent(new ActivityEvent($"RebuildInternal started for {typesenseCollection.CollectionName}"));
         var indexedItems = new List<CollectionEventWebPageItemModel>();
         foreach (var includedPathAttribute in typesenseCollection.IncludedPaths)
         {
             foreach (string language in typesenseCollection.LanguageNames)
             {
                 var queryBuilder = new ContentItemQueryBuilder();
-
                 if (includedPathAttribute.ContentTypes != null && includedPathAttribute.ContentTypes.Count > 0)
                 {
                     foreach (var contentType in includedPathAttribute.ContentTypes)
@@ -278,47 +280,37 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
                     }
                 }
                 queryBuilder.InLanguage(language);
-
                 var webpages = await executor.GetWebPageResult(queryBuilder, container => container, cancellationToken: cancellationToken);
-
                 foreach (var page in webpages)
                 {
-                    var item = await MapToEventItem(page);
+                    var item = await MapToEventItem(page, activity);
                     indexedItems.Add(item);
                 }
             }
         }
-
         try
         {
             await searchClient.RetrieveCollection(typesenseCollection.CollectionName, cancellationToken);
         }
         catch (TypesenseApiNotFoundException)
         {
-            await TryCreateCollectionInternal(typesenseCollection.CollectionName);
+            await TryCreateCollectionInternal(typesenseCollection.CollectionName, activity);
         }
-
-        await searchClient.DeleteDocuments(typesenseCollection.CollectionName, $"{BaseObjectProperties.ID}: &gt;= 0");
-
-        var (activeCollectionName, newCollectionName) = await GetCollectionNames(typesenseCollection.CollectionName);
-
-        await EnsureNewCollection(newCollectionName, typesenseCollection);
-
+        await searchClient.DeleteDocuments(typesenseCollection.CollectionName, $"{BaseObjectProperties.ID}: >= 0");
+        var (activeCollectionName, newCollectionName) = await GetCollectionNames(typesenseCollection.CollectionName, activity);
+        await EnsureNewCollection(newCollectionName, typesenseCollection, activity);
         indexedItems.ForEach(async node => await queue.EnqueueTypesenseQueueItem(new TypesenseQueueItem(node, TypesenseTaskType.PUBLISH_INDEX, newCollectionName)));
-
         queue.EnqueueTypesenseQueueItem(new TypesenseQueueItem(new EndOfRebuildItemModel(activeCollectionName, newCollectionName, typesenseCollection.CollectionName), TypesenseTaskType.END_OF_REBUILD, typesenseCollection.CollectionName));
+        activity?.AddEvent(new ActivityEvent($"RebuildInternal finished for {typesenseCollection.CollectionName}"));
     }
 
-    private async Task<CollectionEventWebPageItemModel> MapToEventItem(IWebPageContentQueryDataContainer content)
+    private async Task<CollectionEventWebPageItemModel> MapToEventItem(IWebPageContentQueryDataContainer content, Activity? activity = null)
     {
-        var languages = await GetAllLanguages();
-
+        activity?.AddEvent(new ActivityEvent($"MapToEventItem for WebPageItemID: {content.WebPageItemID}"));
+        var languages = await GetAllLanguages(activity);
         string languageName = languages.FirstOrDefault(l => l.ContentLanguageID == content.ContentItemCommonDataContentLanguageID)?.ContentLanguageName ?? "";
-
-        var websiteChannels = await GetAllWebsiteChannels();
-
+        var websiteChannels = await GetAllWebsiteChannels(activity);
         string channelName = websiteChannels.FirstOrDefault(c => c.WebsiteChannelID == content.WebPageItemWebsiteChannelID).ChannelName ?? "";
-
         var item = new CollectionEventWebPageItemModel(
             content.WebPageItemID,
             content.WebPageItemGUID,
@@ -334,47 +326,46 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
             content.WebPageItemOrder,
             string.Empty // TODO : Add URL
             );
-
+        activity?.AddEvent(new ActivityEvent($"MapToEventItem finished for WebPageItemID: {content.WebPageItemID}"));
         return item;
     }
 
-    private async Task<int> UpsertRecordsInternal(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, ImportType importType = ImportType.Create)
+    private async Task<int> UpsertRecordsInternal(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, ImportType importType = ImportType.Create, Activity? activity = null)
     {
         try
         {
+            activity?.AddEvent(new ActivityEvent($"UpsertRecordsInternal started for {collectionName}, count: {dataObjects.Count()}"));
             var response = await typesenseClient.ImportDocuments(collectionName, dataObjects, importType: importType);
+            activity?.AddEvent(new ActivityEvent($"UpsertRecordsInternal finished for {collectionName}, imported: {response.Count}"));
             return response.Count;
         }
         catch (Exception ex)
         {
             eventLogService.LogException($"{nameof(DefaultTypesenseClient)} - {nameof(UpsertRecordsInternal)}", $"Error when indexing item in bulk", ex);
+            activity?.AddEvent(new ActivityEvent($"UpsertRecordsInternal error: {ex.Message}"));
         }
-
         return 0;
     }
 
-    private Task<IEnumerable<ContentLanguageInfo>> GetAllLanguages() =>
+    private Task<IEnumerable<ContentLanguageInfo>> GetAllLanguages(Activity? activity = null) =>
         cache.LoadAsync(async cs =>
         {
+            activity?.AddEvent(new ActivityEvent("GetAllLanguages cache load"));
             var results = await languageProvider.Get().GetEnumerableTypedResultAsync();
-
             cs.GetCacheDependency = () => CacheHelper.GetCacheDependency($"{ContentLanguageInfo.OBJECT_TYPE}|all");
-
             return results;
         }, new CacheSettings(5, nameof(DefaultTypesenseClient), nameof(GetAllLanguages)));
 
-    private Task<IEnumerable<(int WebsiteChannelID, string ChannelName)>> GetAllWebsiteChannels() =>
+    private Task<IEnumerable<(int WebsiteChannelID, string ChannelName)>> GetAllWebsiteChannels(Activity? activity = null) =>
         cache.LoadAsync(async cs =>
         {
+            activity?.AddEvent(new ActivityEvent("GetAllWebsiteChannels cache load"));
             var results = await channelProvider.Get()
                 .Source(s => s.Join<WebsiteChannelInfo>(nameof(ChannelInfo.ChannelID), nameof(WebsiteChannelInfo.WebsiteChannelChannelID)))
                 .Columns(nameof(WebsiteChannelInfo.WebsiteChannelID), nameof(ChannelInfo.ChannelName))
                 .GetDataContainerResultAsync();
-
             cs.GetCacheDependency = () => CacheHelper.GetCacheDependency(new[] { $"{ChannelInfo.OBJECT_TYPE}|all", $"{WebsiteChannelInfo.OBJECT_TYPE}|all" });
-
             var items = new List<(int WebsiteChannelID, string ChannelName)>();
-
             foreach (var item in results)
             {
                 if (item.TryGetValue(nameof(WebsiteChannelInfo.WebsiteChannelID), out object channelID) && item.TryGetValue(nameof(ChannelInfo.ChannelName), out object channelName))
@@ -382,43 +373,21 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
                     items.Add(new(conversionService.GetInteger(channelID, 0), conversionService.GetString(channelName, "")));
                 }
             }
-
             return items.AsEnumerable();
         }, new CacheSettings(5, nameof(DefaultTypesenseClient), nameof(GetAllWebsiteChannels)));
 
-    public async Task<bool> TryCreateCollection(ITypesenseConfigurationModel configuration)
+    private async Task<bool> TryCreateCollectionInternal(string collectionName, Activity? activity = null)
     {
-        using var activity = activitySource.StartActivity($"{nameof(TryCreateCollection)}", ActivityKind.Client);
-        activity?.AddTag("typesense.operation", "try_create_collection");
-
-        if (configuration is null)
-        {
-            activity?.SetStatus(ActivityStatusCode.Ok, "Configuration is null");
-            return false;
-        }
-
-        activity?.AddTag("typesense.configuration_name", configuration.CollectionName);
-        bool result = await TryCreateCollectionInternal(configuration.CollectionName);
-        activity?.SetStatus(ActivityStatusCode.Ok);
-        activity?.AddTag("typesense.success", result);
-        return result;
-    }
-
-    private async Task<bool> TryCreateCollectionInternal(string collectionName)
-    {
-        //Create the collection in Typesense
+        activity?.AddEvent(new ActivityEvent($"TryCreateCollectionInternal started for {collectionName}"));
         var typesenseCollection = TypesenseCollectionStore.Instance.GetCollection(collectionName) ??
                                   throw new InvalidOperationException(
                                       $"Registered index with name '{collectionName}' doesn't exist.");
-
         var typesenseStrategy = serviceProvider.GetRequiredStrategy(typesenseCollection);
         var indexSettings = await typesenseStrategy.GetTypesenseCollectionSettings();
-
         await searchClient.CreateCollection(indexSettings.ToSchema($"{collectionName}-primary"));
-
         await searchClient.UpsertCollectionAlias(collectionName,
             new CollectionAlias($"{collectionName}-primary"));
-
+        activity?.AddEvent(new ActivityEvent($"TryCreateCollectionInternal finished for {collectionName}"));
         return true;
     }
 
@@ -448,12 +417,12 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
             return false;
         }
 
-        var (_, collectionToReCreate) = await GetCollectionNames(configuration.CollectionName);
+        var (_, collectionToReCreate) = await GetCollectionNames(configuration.CollectionName, activity);
 
         if (CheckIfFieldsRequiredARebuild(currentCollection.Fields, indexSettings.Fields))
         {
             activity?.AddTag("typesense.rebuild_required", true);
-            await RebuildInternal(typesenseCollection, default); // Rebuild with a zero down time strategy
+            await RebuildInternal(typesenseCollection, default, activity); // Rebuild with a zero down time strategy
             activity?.SetStatus(ActivityStatusCode.Ok);
             return true;
         }
@@ -466,24 +435,18 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         }
     }
 
-    public async Task<bool> EnsureNewCollection(string newCollection, TypesenseCollection typesenseCollection)
+    public async Task<bool> EnsureNewCollection(string newCollection, TypesenseCollection typesenseCollection, Activity? activity = null)
     {
-        using var activity = activitySource.StartActivity($"{nameof(EnsureNewCollection)}_{newCollection}", ActivityKind.Client);
-        activity?.AddTag("typesense.operation", "ensure_new_collection");
-        activity?.AddTag("typesense.collection", newCollection);
-
+        activity?.AddEvent(new ActivityEvent($"EnsureNewCollection started for {newCollection}"));
         var typesenseStrategy = serviceProvider.GetRequiredStrategy(typesenseCollection);
         var indexSettings = await typesenseStrategy.GetTypesenseCollectionSettings();
-
         var allCollections = await searchClient.RetrieveCollections();
-
         //First delete the old collection with the new name
         if (allCollections.Exists(x => x.Name == newCollection))
         {
             activity?.AddEvent(new ActivityEvent("Deleting existing collection"));
             await searchClient.DeleteCollection(newCollection);
         }
-
         //Then create the new collection with the new schema
         var createdCollection = await searchClient.CreateCollection(indexSettings.ToSchema(newCollection));
         if (createdCollection == null)
@@ -491,23 +454,22 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
             activity?.SetStatus(ActivityStatusCode.Error, "Failed to create collection");
             return false;
         }
-
+        activity?.AddEvent(new ActivityEvent($"EnsureNewCollection finished for {newCollection}"));
         activity?.SetStatus(ActivityStatusCode.Ok);
         return true;
     }
 
-    private bool CheckIfFieldsRequiredARebuild(IReadOnlyCollection<Field> oldFields, List<Field> newFields)
+    private bool CheckIfFieldsRequiredARebuild(IReadOnlyCollection<Field> oldFields, List<Field> newFields, Activity? activity = null)
     {
-        //TODO : This can be still improved because some changes deoesn't require a rebuild but we need to play with the uopdate schema then.
+        activity?.AddEvent(new ActivityEvent("CheckIfFieldsRequiredARebuild started"));
         foreach (var oldField in oldFields)
         {
             var newField = newFields.Find(x => x.Name == oldField.Name);
-
             if (newField == null)
             {
+                activity?.AddEvent(new ActivityEvent($"Field {oldField.Name} missing in new fields"));
                 return true;
             }
-
             if (oldField.Infix != newField.Infix
                 || oldField.Index != newField.Index
                 || oldField.Type != newField.Type
@@ -518,10 +480,11 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
                 || oldField.Reference != newField.Reference
                 || oldField.Sort != newField.Sort)
             {
+                activity?.AddEvent(new ActivityEvent($"Field {oldField.Name} property changed"));
                 return true;
             }
         }
-
+        activity?.AddEvent(new ActivityEvent("CheckIfFieldsRequiredARebuild finished"));
         return oldFields.Count == newFields.Count;
     }
 
@@ -530,7 +493,6 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         using var activity = activitySource.StartActivity($"{nameof(SwapAliasWhenRebuildIsDone)}", ActivityKind.Client);
         activity?.AddTag("typesense.operation", "swap_alias_batch");
         activity?.AddTag("typesense.items_count", endOfQueueItems?.Count() ?? 0);
-
         int processed = 0;
         if (endOfQueueItems is not null)
         {
@@ -539,7 +501,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
                 if (item.ItemToCollection is EndOfRebuildItemModel model)
                 {
                     activity?.AddEvent(new ActivityEvent($"Processing alias swap for {model.CollectionAlias}"));
-                    await SwapAliasWhenRebuildIsDone(model.CollectionAlias, model.RebuildedCollection);
+                    await SwapAliasWhenRebuildIsDone(model.CollectionAlias, model.RebuildedCollection, activity);
                     processed++;
                 }
             }
@@ -549,20 +511,15 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         return processed;
     }
 
-    public async Task SwapAliasWhenRebuildIsDone(string alias, string newCollectionRebuilded)
+    public async Task SwapAliasWhenRebuildIsDone(string alias, string newCollectionRebuilded, Activity? activity = null)
     {
-        using var activity = activitySource.StartActivity($"{nameof(SwapAliasWhenRebuildIsDone)}_{alias}", ActivityKind.Client);
-        activity?.AddTag("typesense.operation", "swap_alias");
-        activity?.AddTag("typesense.alias", alias);
-        activity?.AddTag("typesense.new_collection", newCollectionRebuilded);
-
+        activity?.AddEvent(new ActivityEvent($"SwapAliasWhenRebuildIsDone started for alias: {alias}, newCollection: {newCollectionRebuilded}"));
         if (string.IsNullOrEmpty(alias) || string.IsNullOrEmpty(newCollectionRebuilded))
         {
             activity?.SetStatus(ActivityStatusCode.Error, "Alias or new collection name is null or empty");
             //TODO : log a message
             return;
         }
-
         try
         {
             await searchClient.UpsertCollectionAlias(alias, new CollectionAlias(newCollectionRebuilded));
@@ -574,14 +531,12 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
             activity?.RecordException(ex);
             throw;
         }
+        activity?.AddEvent(new ActivityEvent($"SwapAliasWhenRebuildIsDone finished for alias: {alias}"));
     }
 
-    public async Task<(string activeCollectionName, string newCollectionName)> GetCollectionNames(string collectionName)
+    public async Task<(string activeCollectionName, string newCollectionName)> GetCollectionNames(string collectionName, Activity? activity = null)
     {
-        using var activity = activitySource.StartActivity($"{nameof(GetCollectionNames)}_{collectionName}", ActivityKind.Client);
-        activity?.AddTag("typesense.operation", "get_collection_names");
-        activity?.AddTag("typesense.collection", collectionName);
-
+        activity?.AddEvent(new ActivityEvent($"GetCollectionNames started for {collectionName}"));
         try
         {
             var currentCollection = await searchClient.RetrieveCollection(collectionName); //Search by alias the current collection
@@ -591,17 +546,16 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
                 activity?.AddTag("typesense.found", false);
                 return (string.Empty, string.Empty);
             }
-
             string newCollectionName = $"{collectionName}-primary"; //Default to primary
             if (currentCollection.Name.EndsWith("-primary"))
             {
                 newCollectionName = $"{collectionName}-secondary";
             }
-
             activity?.SetStatus(ActivityStatusCode.Ok);
             activity?.AddTag("typesense.found", true);
             activity?.AddTag("typesense.active_collection", currentCollection.Name);
             activity?.AddTag("typesense.new_collection", newCollectionName);
+            activity?.AddEvent(new ActivityEvent($"GetCollectionNames finished for {collectionName}"));
             return (currentCollection.Name, newCollectionName);
         }
         catch (Exception ex)
