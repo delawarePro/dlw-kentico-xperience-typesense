@@ -311,6 +311,9 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
 
     private async Task<CollectionEventWebPageItemModel> MapToEventItem(IWebPageContentQueryDataContainer content)
     {
+        using var activity = activitySource.StartActivity($"{nameof(MapToEventItem)}", ActivityKind.Internal);
+        activity?.AddTag("typesense.operation", "map_to_event_item");
+        activity?.AddTag("typesense.content_id", content.WebPageItemID);
         var languages = await GetAllLanguages();
 
         string languageName = languages.FirstOrDefault(l => l.ContentLanguageID == content.ContentItemCommonDataContentLanguageID)?.ContentLanguageName ?? "";
@@ -335,18 +338,33 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
             string.Empty // TODO : Add URL
             );
 
+        activity?.SetStatus(ActivityStatusCode.Ok);
         return item;
     }
 
     private async Task<int> UpsertRecordsInternal(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, ImportType importType = ImportType.Create)
     {
+        using var activity = activitySource.StartActivity($"{nameof(UpsertRecordsInternal)}_{collectionName}", ActivityKind.Internal);
+        activity?.AddTag("typesense.operation", "upsert_records_internal");
+        activity?.AddTag("typesense.collection", collectionName);
+        activity?.AddTag("typesense.import_type", importType.ToString());
+        activity?.AddTag("typesense.items_count", dataObjects?.Count() ?? 0);
+
+        if (dataObjects is null)
+        {
+            return 0;
+        }
         try
         {
             var response = await typesenseClient.ImportDocuments(collectionName, dataObjects, importType: importType);
+            activity?.SetStatus(ActivityStatusCode.Ok);
+            activity?.AddTag("typesense.imported_count", response.Count);
             return response.Count;
         }
         catch (Exception ex)
         {
+            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            activity?.RecordException(ex);
             eventLogService.LogException($"{nameof(DefaultTypesenseClient)} - {nameof(UpsertRecordsInternal)}", $"Error when indexing item in bulk", ex);
         }
 
@@ -354,36 +372,64 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
     }
 
     private Task<IEnumerable<ContentLanguageInfo>> GetAllLanguages() =>
-        cache.LoadAsync(async cs =>
+        cache!.LoadAsync(async cs =>
         {
-            var results = await languageProvider.Get().GetEnumerableTypedResultAsync();
+            using var activity = activitySource.StartActivity($"{nameof(GetAllLanguages)}", ActivityKind.Internal);
+            activity?.AddTag("typesense.operation", "get_all_languages");
 
-            cs.GetCacheDependency = () => CacheHelper.GetCacheDependency($"{ContentLanguageInfo.OBJECT_TYPE}|all");
+            try
+            {
+                var results = await languageProvider.Get().GetEnumerableTypedResultAsync();
 
-            return results;
+                cs.GetCacheDependency = () => CacheHelper.GetCacheDependency($"{ContentLanguageInfo.OBJECT_TYPE}|all");
+
+                activity?.AddTag("typesense.languages_count", results?.Count() ?? 0);
+                activity?.SetStatus(ActivityStatusCode.Ok);
+                return results ?? new List<ContentLanguageInfo>();
+            }
+            catch (Exception ex)
+            {
+                activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+                activity?.RecordException(ex);
+                throw;
+            }
         }, new CacheSettings(5, nameof(DefaultTypesenseClient), nameof(GetAllLanguages)));
 
     private Task<IEnumerable<(int WebsiteChannelID, string ChannelName)>> GetAllWebsiteChannels() =>
         cache.LoadAsync(async cs =>
         {
-            var results = await channelProvider.Get()
-                .Source(s => s.Join<WebsiteChannelInfo>(nameof(ChannelInfo.ChannelID), nameof(WebsiteChannelInfo.WebsiteChannelChannelID)))
-                .Columns(nameof(WebsiteChannelInfo.WebsiteChannelID), nameof(ChannelInfo.ChannelName))
-                .GetDataContainerResultAsync();
+            using var activity = activitySource.StartActivity($"{nameof(GetAllWebsiteChannels)}", ActivityKind.Internal);
+            activity?.AddTag("typesense.operation", "get_all_website_channels");
 
-            cs.GetCacheDependency = () => CacheHelper.GetCacheDependency(new[] { $"{ChannelInfo.OBJECT_TYPE}|all", $"{WebsiteChannelInfo.OBJECT_TYPE}|all" });
-
-            var items = new List<(int WebsiteChannelID, string ChannelName)>();
-
-            foreach (var item in results)
+            try
             {
-                if (item.TryGetValue(nameof(WebsiteChannelInfo.WebsiteChannelID), out object channelID) && item.TryGetValue(nameof(ChannelInfo.ChannelName), out object channelName))
-                {
-                    items.Add(new(conversionService.GetInteger(channelID, 0), conversionService.GetString(channelName, "")));
-                }
-            }
+                var results = await channelProvider.Get()
+                    .Source(s => s.Join<WebsiteChannelInfo>(nameof(ChannelInfo.ChannelID), nameof(WebsiteChannelInfo.WebsiteChannelChannelID)))
+                    .Columns(nameof(WebsiteChannelInfo.WebsiteChannelID), nameof(ChannelInfo.ChannelName))
+                    .GetDataContainerResultAsync();
 
-            return items.AsEnumerable();
+                cs.GetCacheDependency = () => CacheHelper.GetCacheDependency(new[] { $"{ChannelInfo.OBJECT_TYPE}|all", $"{WebsiteChannelInfo.OBJECT_TYPE}|all" });
+
+                var items = new List<(int WebsiteChannelID, string ChannelName)>();
+
+                foreach (var item in results)
+                {
+                    if (item.TryGetValue(nameof(WebsiteChannelInfo.WebsiteChannelID), out object channelID) && item.TryGetValue(nameof(ChannelInfo.ChannelName), out object channelName))
+                    {
+                        items.Add(new(conversionService.GetInteger(channelID, 0), conversionService.GetString(channelName, "")));
+                    }
+                }
+
+                activity?.AddTag("typesense.channels_count", items.Count);
+                activity?.SetStatus(ActivityStatusCode.Ok);
+                return items.AsEnumerable();
+            }
+            catch (Exception ex)
+            {
+                activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+                activity?.RecordException(ex);
+                throw;
+            }
         }, new CacheSettings(5, nameof(DefaultTypesenseClient), nameof(GetAllWebsiteChannels)));
 
     public async Task<bool> TryCreateCollection(ITypesenseConfigurationModel configuration)
@@ -498,6 +544,11 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
 
     private bool CheckIfFieldsRequiredARebuild(IReadOnlyCollection<Field> oldFields, List<Field> newFields)
     {
+        using var activity = activitySource.StartActivity($"{nameof(CheckIfFieldsRequiredARebuild)}", ActivityKind.Internal);
+        activity?.AddTag("typesense.operation", "check_rebuild_required");
+        activity?.AddTag("typesense.old_fields_count", oldFields.Count);
+        activity?.AddTag("typesense.new_fields_count", newFields.Count);
+
         //TODO : This can be still improved because some changes deoesn't require a rebuild but we need to play with the uopdate schema then.
         foreach (var oldField in oldFields)
         {
@@ -505,6 +556,8 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
 
             if (newField == null)
             {
+                activity?.AddTag("typesense.rebuild_reason", "missing_field");
+                activity?.SetStatus(ActivityStatusCode.Ok);
                 return true;
             }
 
@@ -518,11 +571,20 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
                 || oldField.Reference != newField.Reference
                 || oldField.Sort != newField.Sort)
             {
+                activity?.AddTag("typesense.rebuild_reason", "field_property_changed");
+                activity?.AddTag("typesense.field_name", newField.Name);
+                activity?.SetStatus(ActivityStatusCode.Ok);
                 return true;
             }
         }
 
-        return oldFields.Count == newFields.Count;
+        bool result = oldFields.Count == newFields.Count;
+        if (result)
+        {
+            activity?.AddTag("typesense.rebuild_reason", "field_count_mismatch");
+        }
+        activity?.SetStatus(ActivityStatusCode.Ok);
+        return result;
     }
 
     public async Task<int> SwapAliasWhenRebuildIsDone(IEnumerable<TypesenseQueueItem> endOfQueueItems, CancellationToken cancellationToken)
