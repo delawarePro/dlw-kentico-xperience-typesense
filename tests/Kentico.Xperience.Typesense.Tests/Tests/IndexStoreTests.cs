@@ -1,8 +1,8 @@
 ﻿using CMS.Tests;
 
+using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Collection;
 using Kentico.Xperience.Typesense.Tests.Base;
-using Kentico.Xperience.Typesense.Xperience;
 
 namespace Kentico.Xperience.Typesense.Tests.Tests;
 internal class CollectionStoreTests : UnitTests

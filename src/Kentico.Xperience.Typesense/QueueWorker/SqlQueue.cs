@@ -1,7 +1,6 @@
 ﻿
 using System.Text.Json;
 
-using CMS.Base;
 using CMS.DataEngine;
 
 using Kentico.Xperience.Typesense.Admin;

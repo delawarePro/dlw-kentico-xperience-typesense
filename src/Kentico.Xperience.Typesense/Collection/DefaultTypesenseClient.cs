@@ -1,7 +1,5 @@
 using System.Diagnostics;
 
-using System.Collections;
-
 using CMS.ContentEngine;
 using CMS.Core;
 using CMS.DataEngine;
@@ -26,7 +24,8 @@ namespace Kentico.Xperience.Typesense.Collection;
 /// </summary>
 internal class DefaultTypesenseClient : IXperienceTypesenseClient
 {
-    private static readonly ActivitySource activitySource = new ActivitySource("Kentico.Xperience.Typesense");
+    private static readonly ActivitySource activitySource = new("Kentico.Xperience.Typesense");
+
     private static readonly TextMapPropagator propagator = Propagators.DefaultTextMapPropagator;
 
     private readonly IInfoProvider<ContentLanguageInfo> languageProvider;
@@ -245,7 +244,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
             return Task.FromResult(0);
         }
 
-        return UpsertRecordsInternal(dataObjects, collectionName, importType, cancellationToken);
+        return UpsertRecordsInternal(dataObjects, collectionName, importType);
     }
 
     private async Task<int> DeleteRecordsInternal(IEnumerable<string> objectIds, string collectionName)
@@ -339,7 +338,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         return item;
     }
 
-    private async Task<int> UpsertRecordsInternal(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, ImportType importType = ImportType.Create,  CancellationToken cancellationToken = default)
+    private async Task<int> UpsertRecordsInternal(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, ImportType importType = ImportType.Create)
     {
         try
         {
@@ -533,16 +532,18 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         activity?.AddTag("typesense.items_count", endOfQueueItems?.Count() ?? 0);
 
         int processed = 0;
-        foreach (var item in endOfQueueItems)
+        if (endOfQueueItems is not null)
         {
-            if (item.ItemToCollection is EndOfRebuildItemModel model)
+            foreach (var item in endOfQueueItems)
             {
-                activity?.AddEvent(new ActivityEvent($"Processing alias swap for {model.CollectionAlias}"));
-                await SwapAliasWhenRebuildIsDone(model.CollectionAlias, model.RebuildedCollection);
-                processed++;
+                if (item.ItemToCollection is EndOfRebuildItemModel model)
+                {
+                    activity?.AddEvent(new ActivityEvent($"Processing alias swap for {model.CollectionAlias}"));
+                    await SwapAliasWhenRebuildIsDone(model.CollectionAlias, model.RebuildedCollection);
+                    processed++;
+                }
             }
         }
-
         activity?.SetStatus(ActivityStatusCode.Ok);
         activity?.AddTag("typesense.processed_count", processed);
         return processed;

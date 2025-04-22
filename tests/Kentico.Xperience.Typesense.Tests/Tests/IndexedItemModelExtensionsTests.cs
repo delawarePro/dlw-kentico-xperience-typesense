@@ -5,6 +5,7 @@ using DancingGoat.Models;
 using Kentico.Xperience.Typesense.Tests.Base;
 using Kentico.Xperience.Typesense.Collection;
 using Kentico.Xperience.Typesense.Xperience;
+using Kentico.Xperience.Typesense.Admin;
 
 namespace Kentico.Xperience.Typesense.Tests.Tests;
 

@@ -27,22 +27,20 @@ public static class TypesenseStartupExtensions
         var typesenseSection = configuration.GetSection(TypesenseOptions.CMS_TYPESENSE_SECTION_NAME);
         var typesenseOptions = typesenseSection.GetChildren();
 
-        bool isConfigured = false;
 
         var nodeOptions = typesenseOptions.Single(x => x.Key == nameof(TypesenseOptions.Node));
 
-        if (typesenseOptions.Single(x => x.Key == nameof(TypesenseOptions.ApiKey)).Value != ""
-            && nodeOptions != null
-            && nodeOptions.GetChildren().Single(x => x.Key == nameof(NodeOptions.Host)).Value != ""
-            && nodeOptions.GetChildren().Single(x => x.Key == nameof(NodeOptions.Protocol)).Value != ""
-            && nodeOptions.GetChildren().Single(x => x.Key == nameof(NodeOptions.Port)).Value != "")
-        {
-            isConfigured = true;
-        }
-        else
+        bool isConfigured = !string.IsNullOrEmpty(typesenseOptions.Single(x => x.Key == nameof(TypesenseOptions.ApiKey)).Value) &&
+               nodeOptions != null &&
+               !string.IsNullOrEmpty(nodeOptions.GetChildren().Single(x => x.Key == nameof(NodeOptions.Host)).Value) &&
+               !string.IsNullOrEmpty(nodeOptions.GetChildren().Single(x => x.Key == nameof(NodeOptions.Protocol)).Value) &&
+               !string.IsNullOrEmpty(nodeOptions.GetChildren().Single(x => x.Key == nameof(NodeOptions.Port)).Value);
+
+        if (!isConfigured)
         {
             throw new ArgumentException("Typesense configuration is not valid. Please check the configuration in the appsettings.json file.");
         }
+
 
         services
             .Configure<TypesenseOptions>(typesenseSection)
@@ -151,7 +149,7 @@ public interface ITypesenseBuilder
     ///     Thrown if an strategy has already been registered with the given <paramref name="strategyName"/>
     /// </exception>
     /// <returns></returns>
-    ITypesenseBuilder RegisterStrategy<TStrategy>(string strategyName) where TStrategy : class, ITypesenseCollectionStrategy;
+    public ITypesenseBuilder RegisterStrategy<TStrategy>(string strategyName) where TStrategy : class, ITypesenseCollectionStrategy;
 }
 
 internal class TypesenseBuilder : ITypesenseBuilder
