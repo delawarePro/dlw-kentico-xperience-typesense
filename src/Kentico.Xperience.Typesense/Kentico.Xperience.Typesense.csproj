@@ -29,6 +29,9 @@
 
 	<ItemGroup>
 		<PackageReference Include="Kentico.Xperience.WebApp" />
+		<PackageReference Include="OpenTelemetry" />
+		<PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.Http" />
 		<PackageReference Include="Typesense" />
 	</ItemGroup>
 </Project>

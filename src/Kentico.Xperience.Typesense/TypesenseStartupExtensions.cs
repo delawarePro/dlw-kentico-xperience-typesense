@@ -68,6 +68,7 @@ public static class TypesenseStartupExtensions
                 {
                     TypeInfoResolver = new TypeSenseTypeResolver()
                 };
+                
             })
             /*
             .AddSingleton<IXperienceTypesenseClient>(s =>
