@@ -2,7 +2,7 @@
 
 using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Collection;
-using Kentico.Xperience.Typesense.Tests.Base;
+using Kentico.Xperience.Typesense.Tests.Data;
 
 namespace Kentico.Xperience.Typesense.Tests.Tests;
 internal class CollectionStoreTests : UnitTests
