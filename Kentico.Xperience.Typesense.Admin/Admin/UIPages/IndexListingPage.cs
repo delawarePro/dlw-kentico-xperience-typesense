@@ -5,6 +5,7 @@ using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Collection;
 using Kentico.Xperience.Typesense.Xperience;
+using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexItem;
 
 [assembly: UIPage(
    parentType: typeof(TypesenseApplicationPage),
@@ -26,7 +27,7 @@ internal class CollectionListingPage : ListingPage
     private readonly IPageUrlGenerator pageUrlGenerator;
     private readonly ITypesenseConfigurationKenticoStorageService configurationStorageService;
     private readonly IConversionService conversionService;
-    protected override string ObjectType => TypesenseCollectionItemInfo.OBJECT_TYPE;
+    protected override string ObjectType => TypesenseIndexItemInfo.OBJECT_TYPE;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CollectionListingPage"/> class.
@@ -63,12 +64,12 @@ internal class CollectionListingPage : ListingPage
         }
 
         PageConfiguration.ColumnConfigurations
-            .AddColumn(nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemId), "ID", defaultSortDirection: SortTypeEnum.Asc, sortable: true)
-            .AddColumn(nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemcollectionName), "Name/Alias", sortable: true, searchable: true)
-            .AddColumn(nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemChannelName), "Channel", searchable: true, sortable: true)
-            .AddColumn(nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemStrategyName), "Collection Strategy", searchable: true, sortable: true)
-            .AddColumn(nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemId), "Entries", sortable: true)
-            .AddColumn(nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemId), "Current Collection", sortable: true);
+            .AddColumn(nameof(TypesenseIndexItemInfo.TypesenseCollectionItemId), "ID", defaultSortDirection: SortTypeEnum.Asc, sortable: true)
+            .AddColumn(nameof(TypesenseIndexItemInfo.TypesenseCollectionItemcollectionName), "Name/Alias", sortable: true, searchable: true)
+            .AddColumn(nameof(TypesenseIndexItemInfo.TypesenseCollectionItemChannelName), "Channel", searchable: true, sortable: true)
+            .AddColumn(nameof(TypesenseIndexItemInfo.TypesenseCollectionItemStrategyName), "Collection Strategy", searchable: true, sortable: true)
+            .AddColumn(nameof(TypesenseIndexItemInfo.TypesenseCollectionItemId), "Entries", sortable: true)
+            .AddColumn(nameof(TypesenseIndexItemInfo.TypesenseCollectionItemId), "Current Collection", sortable: true);
 
         PageConfiguration.AddEditRowAction<CollectionEditPage>();
         PageConfiguration.TableActions.AddCommand("Rebuild", nameof(Rebuild), icon: Icons.RotateRight);

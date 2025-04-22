@@ -50,9 +50,14 @@ internal static class CollectionedItemModelExtensions
             }
 
             // Supports wildcard matching
-            if (path.AliasPath.EndsWith("/%", StringComparison.OrdinalIgnoreCase))
+            if (path.AliasPath.EndsWith("%", StringComparison.OrdinalIgnoreCase))
             {
-                string pathToMatch = path.AliasPath[..^2];
+                string pathToMatch = string.Empty;
+                if (!path.AliasPath.Equals("%"))
+                {
+                    pathToMatch = path.AliasPath[..^2];
+                }
+
                 var pathsOnPath = TreePathUtils.GetTreePathsOnPath(indexedItemModel.WebPageItemTreePath, true, false).ToHashSet();
 
                 return pathsOnPath.Any(p => p.StartsWith(pathToMatch, StringComparison.OrdinalIgnoreCase));

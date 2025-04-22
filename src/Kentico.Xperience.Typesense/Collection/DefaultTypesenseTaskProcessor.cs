@@ -5,6 +5,8 @@ using Kentico.Xperience.Typesense.Search;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using Typesense;
+
 namespace Kentico.Xperience.Typesense.Collection;
 
 internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
@@ -35,7 +37,6 @@ internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
             .Where(item => item.TaskType != TypesenseTaskType.END_OF_REBUILD)
             .GroupBy(item => item.CollectionName);
 
-
         foreach (var group in groups)
         {
             try
@@ -46,6 +47,7 @@ internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
                 var updateTasks = group.Where(queueItem => queueItem.TaskType is TypesenseTaskType.PUBLISH_INDEX or TypesenseTaskType.UPDATE);
 
                 var upsertData = new List<TypesenseSearchResultModel>();
+                var updateData = new List<TypesenseSearchResultModel>();
                 foreach (var queueItem in updateTasks)
                 {
                     var documents = await GetDocument(queueItem);
@@ -53,7 +55,14 @@ internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
                     {
                         foreach (var document in documents)
                         {
-                            upsertData.Add(document);
+                            if (queueItem.TaskType is TypesenseTaskType.UPDATE)
+                            {
+                                updateData.Add(document);
+                            }
+                            else
+                            {
+                                upsertData.Add(document);
+                            }
                         }
                     }
                     else
@@ -67,7 +76,8 @@ internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
                         .Select(x => x ?? ""));
 
                 successfulOperations += await typesenseClient.DeleteRecords(deleteIds, group.Key, cancellationToken);
-                successfulOperations += await typesenseClient.UpsertRecords(upsertData, group.Key, cancellationToken);
+                successfulOperations += await typesenseClient.UpsertRecords(upsertData, group.Key, ImportType.Create, cancellationToken);
+                successfulOperations += await typesenseClient.UpsertRecords(updateData, group.Key, ImportType.Update, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -108,9 +118,18 @@ internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
     {
         if (item is not null && baseItem is not null)
         {
-            item.ItemGuid = baseItem.ItemGuid;
-            item.ContentTypeName = baseItem.ContentTypeName;
-            item.LanguageName = baseItem.LanguageName;
+            if (item.ItemGuid == null || item.ItemGuid == Guid.Empty)
+            {
+                item.ItemGuid = baseItem.ItemGuid;
+            }
+            if (string.IsNullOrEmpty(item.ContentTypeName))
+            {
+                item.ContentTypeName = baseItem.ContentTypeName;
+            }
+            if (string.IsNullOrEmpty(item.LanguageName))
+            {
+                item.LanguageName = baseItem.LanguageName;
+            }
 
             if (baseItem is CollectionEventWebPageItemModel webpageItem && string.IsNullOrEmpty(item.Url))
             {
@@ -127,7 +146,6 @@ internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
                 }
             }
         }
-
     }
 
     private static IEnumerable<string?> GetIdsToDelete(IEnumerable<TypesenseQueueItem> deleteTasks)

@@ -1,6 +1,8 @@
 using Kentico.Xperience.Typesense.Search;
 using Kentico.Xperience.Typesense.Xperience;
 
+using Typesense;
+
 
 namespace Kentico.Xperience.Typesense.Collection;
 
@@ -44,13 +46,14 @@ public interface IXperienceTypesenseClient
     /// <remarks>Logs an error if there are issues loading the node data.</remarks>
     /// <param name="dataObjects">The objects to upsert into Typesense.</param>
     /// <param name="collectionName">The index to upsert the data to.</param>
+    /// <param name="importType">Create or update type</param>
     /// <param name="cancellationToken">The cancellation token for the task.</param>
     /// <exception cref="ArgumentNullException" />
     /// <exception cref="OperationCanceledException" />
     /// <exception cref="ObjectDisposedException" />
     /// <exception cref="OverflowException" />
     /// <returns>The number of objects processed.</returns>
-    Task<int> UpsertRecords(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, CancellationToken cancellationToken);
+    Task<int> UpsertRecords(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, ImportType importType = ImportType.Create, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Rebuilds the Typesense index by removing existing data from Typesense and indexing all

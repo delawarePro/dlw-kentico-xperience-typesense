@@ -1,11 +1,15 @@
 ﻿using System.Text;
 
+using CMS.ContentEngine;
 using CMS.DataEngine;
+using CMS.Websites;
+
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseContentTypeItem;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIncludedPathItem;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexItem;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexLanguageItem;
 using Kentico.Xperience.Typesense.Xperience;
+using System.Linq;
 
 namespace Kentico.Xperience.Typesense.Admin.Admin;
 
@@ -45,7 +49,7 @@ internal class DefaultTypesenseConfigurationKenticoStorageService : ITypesenseCo
     public async Task<bool> TryCreateCollection(ITypesenseConfigurationModel configuration)
     {
         var existingCollection = indexProvider.Get()
-            .WhereEquals(nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemcollectionName), configuration.CollectionName)
+            .WhereEquals(nameof(TypesenseIndexItemInfo.TypesenseCollectionItemcollectionName), configuration.CollectionName)
             .TopN(1)
             .FirstOrDefault();
 
@@ -55,7 +59,7 @@ internal class DefaultTypesenseConfigurationKenticoStorageService : ITypesenseCo
         }
 
         //Create in Kentico
-        var newInfo = new TypesenseCollectionItemInfo()
+        var newInfo = new TypesenseIndexItemInfo()
         {
             TypesenseCollectionItemcollectionName = configuration.CollectionName ?? "",
             TypesenseCollectionItemChannelName = configuration.ChannelName ?? "",
@@ -71,7 +75,7 @@ internal class DefaultTypesenseConfigurationKenticoStorageService : ITypesenseCo
         {
             foreach (string? language in configuration.LanguageNames)
             {
-                var languageInfo = new TypesenseCollectionLanguageItemInfo()
+                var languageInfo = new TypesenseIndexLanguageItemInfo()
                 {
                     TypesenseCollectionLanguageItemName = language,
                     TypesenseCollectionLanguageItemCollectionItemId = newInfo.TypesenseCollectionItemId
@@ -123,7 +127,8 @@ internal class DefaultTypesenseConfigurationKenticoStorageService : ITypesenseCo
         var contentTypesInfoItems = contentTypeProvider
         .Get()
         .WhereEquals(nameof(TypesenseContentTypeItemInfo.TypesenseContentTypeItemCollectionItemId), indexInfo.TypesenseCollectionItemId)
-        .GetEnumerableTypedResult();
+        .GetEnumerableTypedResult()
+        .ToList();
 
         var contentTypes = DataClassInfoProvider.ProviderObject
             .Get()
@@ -136,9 +141,9 @@ internal class DefaultTypesenseConfigurationKenticoStorageService : ITypesenseCo
             .Select(x => new TypesenseCollectionContentType(x.ClassName, x.ClassDisplayName));
 
 
-        var languages = languageProvider.Get().WhereEquals(nameof(TypesenseCollectionLanguageItemInfo.TypesenseCollectionLanguageItemCollectionItemId), indexInfo.TypesenseCollectionItemId).GetEnumerableTypedResult();
+        var languages = languageProvider.Get().WhereEquals(nameof(TypesenseIndexLanguageItemInfo.TypesenseCollectionLanguageItemCollectionItemId), indexInfo.TypesenseCollectionItemId).GetEnumerableTypedResult();
 
-        return (ITypesenseConfigurationModel)new TypesenseConfigurationModel(indexInfo, languages, paths, contentTypes);
+        return (ITypesenseConfigurationModel)new TypesenseConfigurationModel(indexInfo, languages, paths, contentTypes, contentTypesInfoItems);
     }
     public List<string> GetExistingcollectionNames() => indexProvider.Get().Select(x => x.TypesenseCollectionItemcollectionName).ToList();
     public List<int> GetCollectionIds() => indexProvider.Get().Select(x => x.TypesenseCollectionItemId).ToList();
@@ -154,7 +159,8 @@ internal class DefaultTypesenseConfigurationKenticoStorageService : ITypesenseCo
 
         var contentTypesInfoItems = contentTypeProvider
             .Get()
-            .GetEnumerableTypedResult();
+            .GetEnumerableTypedResult()
+            .ToList();
 
         var contentTypes = DataClassInfoProvider.ProviderObject
             .Get()
@@ -168,14 +174,14 @@ internal class DefaultTypesenseConfigurationKenticoStorageService : ITypesenseCo
 
         var languages = languageProvider.Get().ToList();
 
-        return indexInfos.Select(index => (ITypesenseConfigurationModel)new TypesenseConfigurationModel(index, languages, paths, contentTypes));
+        return indexInfos.Select(index => (ITypesenseConfigurationModel)new TypesenseConfigurationModel(index, languages, paths, contentTypes, contentTypesInfoItems));
     }
     public async Task<bool> TryEditCollection(ITypesenseConfigurationModel configuration)
     {
         configuration.CollectionName = RemoveWhitespacesUsingStringBuilder(configuration.CollectionName ?? "");
 
         var indexInfo = indexProvider.Get()
-            .WhereEquals(nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemId), configuration.Id)
+            .WhereEquals(nameof(TypesenseIndexItemInfo.TypesenseCollectionItemId), configuration.Id)
             .TopN(1)
             .FirstOrDefault();
 
@@ -185,7 +191,7 @@ internal class DefaultTypesenseConfigurationKenticoStorageService : ITypesenseCo
         }
 
         pathProvider.BulkDelete(new WhereCondition($"{nameof(TypesenseIncludedPathItemInfo.TypesenseIncludedPathItemCollectionItemId)} = {configuration.Id}"));
-        languageProvider.BulkDelete(new WhereCondition($"{nameof(TypesenseCollectionLanguageItemInfo.TypesenseCollectionLanguageItemCollectionItemId)} = {configuration.Id}"));
+        languageProvider.BulkDelete(new WhereCondition($"{nameof(TypesenseIndexLanguageItemInfo.TypesenseCollectionLanguageItemCollectionItemId)} = {configuration.Id}"));
         contentTypeProvider.BulkDelete(new WhereCondition($"{nameof(TypesenseContentTypeItemInfo.TypesenseContentTypeItemCollectionItemId)} = {configuration.Id}"));
 
         indexInfo.TypesenseCollectionItemRebuildHook = configuration.RebuildHook ?? "";
@@ -199,7 +205,7 @@ internal class DefaultTypesenseConfigurationKenticoStorageService : ITypesenseCo
         {
             foreach (string? language in configuration.LanguageNames)
             {
-                var languageInfo = new TypesenseCollectionLanguageItemInfo()
+                var languageInfo = new TypesenseIndexLanguageItemInfo()
                 {
                     TypesenseCollectionLanguageItemName = language,
                     TypesenseCollectionLanguageItemCollectionItemId = indexInfo.TypesenseCollectionItemId,
@@ -251,9 +257,9 @@ internal class DefaultTypesenseConfigurationKenticoStorageService : ITypesenseCo
 
     public async Task<bool> TryDeleteCollection(ITypesenseConfigurationModel configuration)
     {
-        indexProvider.BulkDelete(new WhereCondition($"{nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemId)} = {configuration.Id}"));
+        indexProvider.BulkDelete(new WhereCondition($"{nameof(TypesenseIndexItemInfo.TypesenseCollectionItemId)} = {configuration.Id}"));
         pathProvider.BulkDelete(new WhereCondition($"{nameof(TypesenseIncludedPathItemInfo.TypesenseIncludedPathItemCollectionItemId)} = {configuration.Id}"));
-        languageProvider.BulkDelete(new WhereCondition($"{nameof(TypesenseCollectionLanguageItemInfo.TypesenseCollectionLanguageItemCollectionItemId)} = {configuration.Id}"));
+        languageProvider.BulkDelete(new WhereCondition($"{nameof(TypesenseIndexLanguageItemInfo.TypesenseCollectionLanguageItemCollectionItemId)} = {configuration.Id}"));
         contentTypeProvider.BulkDelete(new WhereCondition($"{nameof(TypesenseContentTypeItemInfo.TypesenseContentTypeItemCollectionItemId)} = {configuration.Id}"));
 
         return true;

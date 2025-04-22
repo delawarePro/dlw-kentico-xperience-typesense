@@ -1,5 +1,7 @@
 using System.Diagnostics;
 
+using System.Collections;
+
 using CMS.ContentEngine;
 using CMS.Core;
 using CMS.DataEngine;
@@ -148,7 +150,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
     }
 
     /// <inheritdoc />
-    public async Task Rebuild(string collectionName, CancellationToken cancellationToken)
+    public Task Rebuild(string collectionName, CancellationToken cancellationToken)
     {
         using var activity = activitySource.StartActivity($"{nameof(Rebuild)}_{collectionName}", ActivityKind.Client);
         activity?.AddTag("typesense.collection", collectionName);
@@ -160,36 +162,9 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
             throw new ArgumentNullException(nameof(collectionName));
         }
 
-        TypesenseCollection? typesenseCollection = null;
-        try
-        {
-            typesenseCollection = TypesenseCollectionStore.Instance.GetRequiredCollection(collectionName);
-        }
-        //index does not exist
-        catch (InvalidOperationException ex)
-        {
-            activity?.AddEvent(new ActivityEvent("Collection not found, attempting to create"));
-            activity?.RecordException(ex, new TagList { { "typesense.error", "collection_not_found" } });
+        var typesenseCollection = TypesenseCollectionStore.Instance.GetRequiredCollection(collectionName);
 
-            bool isCreated = await TryCreateCollectionInternal(collectionName);
-            activity?.AddTag("typesense.collection_created", isCreated);
-
-            if (isCreated)
-            {
-                typesenseCollection = TypesenseCollectionStore.Instance.GetRequiredCollection(collectionName);
-            }
-        }
-
-        if (typesenseCollection is null)
-        {
-            var exception = new Exception($"typesenseCollection is null. Could not get {collectionName}");
-            activity?.SetStatus(ActivityStatusCode.Error, exception.Message);
-            activity?.RecordException(exception);
-            throw exception;
-        }
-
-        await RebuildInternal(typesenseCollection, cancellationToken);
-        activity?.SetStatus(ActivityStatusCode.Ok);
+        return RebuildInternal(typesenseCollection, cancellationToken);
     }
 
     /// <inheritdoc />
@@ -251,7 +226,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
     }
 
     /// <inheritdoc />
-    public Task<int> UpsertRecords(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, CancellationToken cancellationToken)
+    public Task<int> UpsertRecords(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, ImportType importType = ImportType.Create, CancellationToken cancellationToken = default)
     {
         using var activity = activitySource.StartActivity($"{nameof(UpsertRecords)}_{collectionName}", ActivityKind.Client);
         activity?.AddTag("typesense.collection", collectionName);
@@ -270,7 +245,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
             return Task.FromResult(0);
         }
 
-        return UpsertRecordsInternal(dataObjects, collectionName, cancellationToken);
+        return UpsertRecordsInternal(dataObjects, collectionName, importType, cancellationToken);
     }
 
     private async Task<int> DeleteRecordsInternal(IEnumerable<string> objectIds, string collectionName)
@@ -314,6 +289,16 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
                 }
             }
         }
+
+        try
+        {
+            await searchClient.RetrieveCollection(typesenseCollection.CollectionName, cancellationToken);
+        }
+        catch (TypesenseApiNotFoundException)
+        {
+            await TryCreateCollectionInternal(typesenseCollection.CollectionName);
+        }
+
         await searchClient.DeleteDocuments(typesenseCollection.CollectionName, $"{BaseObjectProperties.ID}: &gt;= 0");
 
         var (activeCollectionName, newCollectionName) = await GetCollectionNames(typesenseCollection.CollectionName);
@@ -354,11 +339,11 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         return item;
     }
 
-    private async Task<int> UpsertRecordsInternal(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, CancellationToken cancellationToken)
+    private async Task<int> UpsertRecordsInternal(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, ImportType importType = ImportType.Create,  CancellationToken cancellationToken = default)
     {
         try
         {
-            var response = await typesenseClient.ImportDocuments(collectionName, dataObjects);
+            var response = await typesenseClient.ImportDocuments(collectionName, dataObjects, importType: importType);
             return response.Count;
         }
         catch (Exception ex)
@@ -367,21 +352,6 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         }
 
         return 0;
-
-        //foreach (var item in dataObjects) //TODO : Test in parralele mode but be carrefull about the counter
-        //{
-        //    try
-        //    {
-        //        await typesenseClient.UpsertDocument(collectionName, item);
-        //        upsertedCount++;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        eventLogService.LogException($"{nameof(DefaultTypesenseClient)} - {nameof(UpsertRecordsInternal)}", $"Error when indexing the item (guid): {item.ItemGuid} in language: {item.LanguageName}", ex);
-        //    }
-        //}
-
-        //return upsertedCount;
     }
 
     private Task<IEnumerable<ContentLanguageInfo>> GetAllLanguages() =>
@@ -445,15 +415,11 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         var typesenseStrategy = serviceProvider.GetRequiredStrategy(typesenseCollection);
         var indexSettings = await typesenseStrategy.GetTypesenseCollectionSettings();
 
-        var createdCollection =
-            await searchClient.CreateCollection(indexSettings.ToSchema($"{collectionName}-primary"));
-        if (createdCollection == null)
-        {
-            return false;
-        }
+        await searchClient.CreateCollection(indexSettings.ToSchema($"{collectionName}-primary"));
 
         await searchClient.UpsertCollectionAlias(collectionName,
             new CollectionAlias($"{collectionName}-primary"));
+
         return true;
     }
 

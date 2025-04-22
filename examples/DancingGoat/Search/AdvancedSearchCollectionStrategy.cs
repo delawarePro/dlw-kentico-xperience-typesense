@@ -101,7 +101,7 @@ public class AdvancedSearchCollectionStrategy : DefaultTypesenseCollectionStrate
         return res;
     }
 
-    public override async Task<IEnumerable<ICollectionEventItemModel>> FindItemsToReindex(CollectionEventWebPageItemModel changedItem)
+    /*public override async Task<IEnumerable<ICollectionEventItemModel>> FindItemsToReindex(CollectionEventWebPageItemModel changedItem)
     {
         var reindexedItems = new List<ICollectionEventItemModel>();
 
@@ -148,7 +148,7 @@ public class AdvancedSearchCollectionStrategy : DefaultTypesenseCollectionStrate
         }
 
         return reindexedItems;
-    }
+    }*/
 
     private async Task<T?> GetPage<T>(Guid id, string channelName, string languageName, string contentTypeName)
         where T : IWebPageFieldsSource, new()

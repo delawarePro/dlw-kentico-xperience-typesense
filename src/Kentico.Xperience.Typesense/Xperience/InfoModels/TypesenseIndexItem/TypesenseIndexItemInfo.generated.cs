@@ -4,29 +4,29 @@ using System.Runtime.Serialization;
 using CMS;
 using CMS.DataEngine;
 using CMS.Helpers;
+
 using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexItem;
 
-[assembly: RegisterObjectType(typeof(TypesenseCollectionItemInfo), TypesenseCollectionItemInfo.OBJECT_TYPE)]
+[assembly: RegisterObjectType(typeof(TypesenseIndexItemInfo), TypesenseIndexItemInfo.OBJECT_TYPE)]
 
-namespace Kentico.Xperience.Typesense.Admin;
+namespace Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexItem;
 
 /// <summary>
-/// Data container class for <see cref="TypesenseCollectionItemInfo"/>.
+/// Data container class for <see cref="TypesenseIndexItemInfo"/>.
 /// </summary>
 [Serializable]
-public partial class TypesenseCollectionItemInfo : AbstractInfo<TypesenseCollectionItemInfo, ITypesenseCollectionItemInfoProvider>
+public partial class TypesenseIndexItemInfo : AbstractInfo<TypesenseIndexItemInfo, ITypesenseCollectionItemInfoProvider>
 {
     /// <summary>
     /// Object type.
     /// </summary>
     public const string OBJECT_TYPE = "kenticotypesense.typesenseindexitem";
 
-
     /// <summary>
     /// Type information.
     /// </summary>
-    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(TypesenseCollectionItemInfoProvider), OBJECT_TYPE, "KenticoTypesense.TypesenseCollectionItem", nameof(TypesenseCollectionItemId), null, nameof(TypesenseCollectionItemGuid), nameof(TypesenseCollectionItemcollectionName), null, null, null, null)
+    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(TypesenseCollectionItemInfoProvider), OBJECT_TYPE, "KenticoTypesense.TypesenseIndexItem", nameof(TypesenseCollectionItemId), null, nameof(TypesenseCollectionItemGuid), nameof(TypesenseCollectionItemcollectionName), null, null, null, null)
     {
         TouchCacheDependencies = true,
         ContinuousIntegrationSettings =
@@ -34,7 +34,6 @@ public partial class TypesenseCollectionItemInfo : AbstractInfo<TypesenseCollect
             Enabled = true,
         },
     };
-
 
     /// <summary>
     /// Typesense index item id.
@@ -46,7 +45,6 @@ public partial class TypesenseCollectionItemInfo : AbstractInfo<TypesenseCollect
         set => SetValue(nameof(TypesenseCollectionItemId), value);
     }
 
-
     /// <summary>
     /// Typesense index item Guid.
     /// </summary>
@@ -56,7 +54,6 @@ public partial class TypesenseCollectionItemInfo : AbstractInfo<TypesenseCollect
         get => ValidationHelper.GetGuid(GetValue(nameof(TypesenseCollectionItemGuid)), default);
         set => SetValue(nameof(TypesenseCollectionItemGuid), value);
     }
-
 
     /// <summary>
     /// Collection name.
@@ -68,7 +65,6 @@ public partial class TypesenseCollectionItemInfo : AbstractInfo<TypesenseCollect
         set => SetValue(nameof(TypesenseCollectionItemcollectionName), value);
     }
 
-
     /// <summary>
     /// Channel name.
     /// </summary>
@@ -78,7 +74,6 @@ public partial class TypesenseCollectionItemInfo : AbstractInfo<TypesenseCollect
         get => ValidationHelper.GetString(GetValue(nameof(TypesenseCollectionItemChannelName)), String.Empty);
         set => SetValue(nameof(TypesenseCollectionItemChannelName), value);
     }
-
 
     /// <summary>
     /// Strategy name.
@@ -90,7 +85,6 @@ public partial class TypesenseCollectionItemInfo : AbstractInfo<TypesenseCollect
         set => SetValue(nameof(TypesenseCollectionItemStrategyName), value);
     }
 
-
     /// <summary>
     /// Rebuild hook.
     /// </summary>
@@ -101,7 +95,6 @@ public partial class TypesenseCollectionItemInfo : AbstractInfo<TypesenseCollect
         set => SetValue(nameof(TypesenseCollectionItemRebuildHook), value, String.Empty);
     }
 
-
     /// <summary>
     /// Deletes the object using appropriate provider.
     /// </summary>
@@ -109,7 +102,6 @@ public partial class TypesenseCollectionItemInfo : AbstractInfo<TypesenseCollect
     {
         Provider.Delete(this);
     }
-
 
     /// <summary>
     /// Updates the object using appropriate provider.
@@ -119,32 +111,29 @@ public partial class TypesenseCollectionItemInfo : AbstractInfo<TypesenseCollect
         Provider.Set(this);
     }
 
-
     /// <summary>
     /// Constructor for de-serialization.
     /// </summary>
     /// <param name="info">Serialization info.</param>
     /// <param name="context">Streaming context.</param>
-    protected TypesenseCollectionItemInfo(SerializationInfo info, StreamingContext context)
+    protected TypesenseIndexItemInfo(SerializationInfo info, StreamingContext context)
         : base(info, context)
     {
     }
 
-
     /// <summary>
-    /// Creates an empty instance of the <see cref="TypesenseCollectionItemInfo"/> class.
+    /// Creates an empty instance of the <see cref="TypesenseIndexItemInfo"/> class.
     /// </summary>
-    public TypesenseCollectionItemInfo()
+    public TypesenseIndexItemInfo()
         : base(TYPEINFO)
     {
     }
 
-
     /// <summary>
-    /// Creates a new instances of the <see cref="TypesenseCollectionItemInfo"/> class from the given <see cref="DataRow"/>.
+    /// Creates a new instances of the <see cref="TypesenseIndexItemInfo"/> class from the given <see cref="DataRow"/>.
     /// </summary>
     /// <param name="dr">DataRow with the object data.</param>
-    public TypesenseCollectionItemInfo(DataRow dr)
+    public TypesenseIndexItemInfo(DataRow dr)
         : base(TYPEINFO, dr)
     {
     }

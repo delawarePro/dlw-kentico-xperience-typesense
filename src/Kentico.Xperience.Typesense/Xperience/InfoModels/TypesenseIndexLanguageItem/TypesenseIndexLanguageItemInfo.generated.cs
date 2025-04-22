@@ -6,17 +6,18 @@ using CMS.DataEngine;
 using CMS.Helpers;
 
 using Kentico.Xperience.Typesense.Admin;
+using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexItem;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexLanguageItem;
 
-[assembly: RegisterObjectType(typeof(TypesenseCollectionLanguageItemInfo), TypesenseCollectionLanguageItemInfo.OBJECT_TYPE)]
+[assembly: RegisterObjectType(typeof(TypesenseIndexLanguageItemInfo), TypesenseIndexLanguageItemInfo.OBJECT_TYPE)]
 
-namespace Kentico.Xperience.Typesense.Admin;
+namespace Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexLanguageItem;
 
 /// <summary>
-/// Data container class for <see cref="TypesenseCollectionLanguageItemInfo"/>.
+/// Data container class for <see cref="TypesenseIndexLanguageItemInfo"/>.
 /// </summary>
 [Serializable]
-public partial class TypesenseCollectionLanguageItemInfo : AbstractInfo<TypesenseCollectionLanguageItemInfo, ITypesenseCollectionLanguageItemInfoProvider>
+public partial class TypesenseIndexLanguageItemInfo : AbstractInfo<TypesenseIndexLanguageItemInfo, ITypesenseCollectionLanguageItemInfoProvider>
 {
     /// <summary>
     /// Object type.
@@ -27,12 +28,12 @@ public partial class TypesenseCollectionLanguageItemInfo : AbstractInfo<Typesens
     /// <summary>
     /// Type information.
     /// </summary>
-    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(TypesenseCollectionedLanguageInfoProvider), OBJECT_TYPE, "KenticoTypesense.TypesenseCollectionLanguageItem", nameof(TypesenseCollectionLanguageItemID), null, nameof(TypesenseCollectionLanguageItemGuid), null, null, null, null, null)
+    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(TypesenseCollectionedLanguageInfoProvider), OBJECT_TYPE, "KenticoTypesense.TypesenseIndexLanguageItem", nameof(TypesenseCollectionLanguageItemID), null, nameof(TypesenseCollectionLanguageItemGuid), null, null, null, null, null)
     {
         TouchCacheDependencies = true,
         DependsOn = new List<ObjectDependency>()
         {
-            new(nameof(TypesenseCollectionLanguageItemCollectionItemId), TypesenseCollectionItemInfo.OBJECT_TYPE, ObjectDependencyEnum.Required),
+            new(nameof(TypesenseCollectionLanguageItemCollectionItemId), TypesenseIndexItemInfo.OBJECT_TYPE, ObjectDependencyEnum.Required),
         },
         ContinuousIntegrationSettings =
         {
@@ -108,26 +109,26 @@ public partial class TypesenseCollectionLanguageItemInfo : AbstractInfo<Typesens
     /// </summary>
     /// <param name="info">Serialization info.</param>
     /// <param name="context">Streaming context.</param>
-    protected TypesenseCollectionLanguageItemInfo(SerializationInfo info, StreamingContext context)
+    protected TypesenseIndexLanguageItemInfo(SerializationInfo info, StreamingContext context)
         : base(info, context)
     {
     }
 
 
     /// <summary>
-    /// Creates an empty instance of the <see cref="TypesenseCollectionLanguageItemInfo"/> class.
+    /// Creates an empty instance of the <see cref="TypesenseIndexLanguageItemInfo"/> class.
     /// </summary>
-    public TypesenseCollectionLanguageItemInfo()
+    public TypesenseIndexLanguageItemInfo()
         : base(TYPEINFO)
     {
     }
 
 
     /// <summary>
-    /// Creates a new instances of the <see cref="TypesenseCollectionLanguageItemInfo"/> class from the given <see cref="DataRow"/>.
+    /// Creates a new instances of the <see cref="TypesenseIndexLanguageItemInfo"/> class from the given <see cref="DataRow"/>.
     /// </summary>
     /// <param name="dr">DataRow with the object data.</param>
-    public TypesenseCollectionLanguageItemInfo(DataRow dr)
+    public TypesenseIndexLanguageItemInfo(DataRow dr)
         : base(TYPEINFO, dr)
     {
     }

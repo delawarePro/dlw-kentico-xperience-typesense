@@ -3,6 +3,10 @@ using CMS.FormEngine;
 using CMS.Modules;
 
 using Kentico.Xperience.Typesense.Admin;
+using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseContentTypeItem;
+using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIncludedPathItem;
+using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexItem;
+using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexLanguageItem;
 
 namespace Kentico.Xperience.Typesense.Xperience;
 
@@ -44,31 +48,30 @@ public class TypesenseModuleInstaller
 
     public void InstallTypesenseItemInfo(ResourceInfo resource)
     {
-        var info = DataClassInfoProvider.GetDataClassInfo(TypesenseCollectionItemInfo.OBJECT_TYPE) ?? DataClassInfo.New(TypesenseCollectionItemInfo.OBJECT_TYPE);
+        var info = DataClassInfoProvider.GetDataClassInfo(TypesenseIndexItemInfo.OBJECT_TYPE) ?? DataClassInfo.New(TypesenseIndexItemInfo.OBJECT_TYPE);
 
-        info.ClassName = TypesenseCollectionItemInfo.TYPEINFO.ObjectClassName;
-        info.ClassTableName = TypesenseCollectionItemInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
-        info.ClassDisplayName = "Typesense Collection Item";
+        info.ClassName = TypesenseIndexItemInfo.TYPEINFO.ObjectClassName;
+        info.ClassTableName = TypesenseIndexItemInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
+        info.ClassDisplayName = "Typesense Index Item";
         info.ClassType = ClassType.OTHER;
         info.ClassResourceID = resource.ResourceID;
 
-        var formInfo = FormHelper.GetBasicFormDefinition(nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemId));
+        var formInfo = FormHelper.GetBasicFormDefinition(nameof(TypesenseIndexItemInfo.TypesenseCollectionItemId));
 
         var formItem = new FormFieldInfo
         {
-            Name = nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemGuid),
+            Name = nameof(TypesenseIndexItemInfo.TypesenseCollectionItemGuid),
             AllowEmpty = false,
             Visible = true,
             Precision = 0,
             DataType = FieldDataType.Guid,
             Enabled = true,
-
         };
         formInfo.AddFormItem(formItem);
 
         formItem = new FormFieldInfo
         {
-            Name = nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemcollectionName),
+            Name = nameof(TypesenseIndexItemInfo.TypesenseCollectionItemcollectionName),
             AllowEmpty = false,
             Visible = true,
             Precision = 0,
@@ -80,7 +83,7 @@ public class TypesenseModuleInstaller
 
         formItem = new FormFieldInfo
         {
-            Name = nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemChannelName),
+            Name = nameof(TypesenseIndexItemInfo.TypesenseCollectionItemChannelName),
             AllowEmpty = false,
             Visible = true,
             Precision = 0,
@@ -92,7 +95,7 @@ public class TypesenseModuleInstaller
 
         formItem = new FormFieldInfo
         {
-            Name = nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemStrategyName),
+            Name = nameof(TypesenseIndexItemInfo.TypesenseCollectionItemStrategyName),
             AllowEmpty = false,
             Visible = true,
             Precision = 0,
@@ -104,7 +107,7 @@ public class TypesenseModuleInstaller
 
         formItem = new FormFieldInfo
         {
-            Name = nameof(TypesenseCollectionItemInfo.TypesenseCollectionItemRebuildHook),
+            Name = nameof(TypesenseIndexItemInfo.TypesenseCollectionItemRebuildHook),
             AllowEmpty = true,
             Visible = true,
             Precision = 0,
@@ -171,7 +174,7 @@ public class TypesenseModuleInstaller
             Visible = true,
             Precision = 0,
             DataType = FieldDataType.Integer,
-            ReferenceToObjectType = TypesenseCollectionItemInfo.OBJECT_TYPE,
+            ReferenceToObjectType = TypesenseIndexItemInfo.OBJECT_TYPE,
             ReferenceType = ObjectDependencyEnum.Required
         };
 
@@ -194,19 +197,19 @@ public class TypesenseModuleInstaller
 
     public void InstallTypesenseLanguageInfo(ResourceInfo resource)
     {
-        var info = DataClassInfoProvider.GetDataClassInfo(TypesenseCollectionLanguageItemInfo.OBJECT_TYPE) ?? DataClassInfo.New(TypesenseCollectionLanguageItemInfo.OBJECT_TYPE);
+        var info = DataClassInfoProvider.GetDataClassInfo(TypesenseIndexLanguageItemInfo.OBJECT_TYPE) ?? DataClassInfo.New(TypesenseIndexLanguageItemInfo.OBJECT_TYPE);
 
-        info.ClassName = TypesenseCollectionLanguageItemInfo.TYPEINFO.ObjectClassName;
-        info.ClassTableName = TypesenseCollectionLanguageItemInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
+        info.ClassName = TypesenseIndexLanguageItemInfo.TYPEINFO.ObjectClassName;
+        info.ClassTableName = TypesenseIndexLanguageItemInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
         info.ClassDisplayName = "Typesense Collectioned Language Item";
         info.ClassType = ClassType.OTHER;
         info.ClassResourceID = resource.ResourceID;
 
-        var formInfo = FormHelper.GetBasicFormDefinition(nameof(TypesenseCollectionLanguageItemInfo.TypesenseCollectionLanguageItemID));
+        var formInfo = FormHelper.GetBasicFormDefinition(nameof(TypesenseIndexLanguageItemInfo.TypesenseCollectionLanguageItemID));
 
         var formItem = new FormFieldInfo
         {
-            Name = nameof(TypesenseCollectionLanguageItemInfo.TypesenseCollectionLanguageItemName),
+            Name = nameof(TypesenseIndexLanguageItemInfo.TypesenseCollectionLanguageItemName),
             AllowEmpty = false,
             Visible = true,
             Precision = 0,
@@ -218,7 +221,7 @@ public class TypesenseModuleInstaller
 
         formItem = new FormFieldInfo
         {
-            Name = nameof(TypesenseCollectionLanguageItemInfo.TypesenseCollectionLanguageItemGuid),
+            Name = nameof(TypesenseIndexLanguageItemInfo.TypesenseCollectionLanguageItemGuid),
             AllowEmpty = false,
             Visible = true,
             Precision = 0,
@@ -230,12 +233,12 @@ public class TypesenseModuleInstaller
 
         formItem = new FormFieldInfo
         {
-            Name = nameof(TypesenseCollectionLanguageItemInfo.TypesenseCollectionLanguageItemCollectionItemId),
+            Name = nameof(TypesenseIndexLanguageItemInfo.TypesenseCollectionLanguageItemCollectionItemId),
             AllowEmpty = false,
             Visible = true,
             Precision = 0,
             DataType = FieldDataType.Integer,
-            ReferenceToObjectType = TypesenseCollectionItemInfo.OBJECT_TYPE,
+            ReferenceToObjectType = TypesenseIndexItemInfo.OBJECT_TYPE,
             ReferenceType = ObjectDependencyEnum.Required,
         };
 
@@ -290,6 +293,31 @@ public class TypesenseModuleInstaller
             DataType = FieldDataType.Integer,
             ReferenceToObjectType = TypesenseIncludedPathItemInfo.OBJECT_TYPE,
             ReferenceType = ObjectDependencyEnum.Required,
+        };
+
+        formInfo.AddFormItem(formItem);
+
+        formItem = new FormFieldInfo
+        {
+            Name = nameof(TypesenseContentTypeItemInfo.TypesenseContentTypeItemCollectionItemId),
+            AllowEmpty = false,
+            Visible = true,
+            Precision = 0,
+            DataType = FieldDataType.Integer,
+            ReferenceToObjectType = TypesenseIndexItemInfo.OBJECT_TYPE,
+            ReferenceType = ObjectDependencyEnum.Required,
+        };
+
+        formInfo.AddFormItem(formItem);
+
+        formItem = new FormFieldInfo
+        {
+            Name = nameof(TypesenseContentTypeItemInfo.TypesenseContentTypeItemGuid),
+            AllowEmpty = false,
+            Visible = true,
+            Precision = 0,
+            DataType = FieldDataType.Guid,
+            Enabled = true
         };
 
         formInfo.AddFormItem(formItem);
@@ -383,7 +411,6 @@ public class TypesenseModuleInstaller
         formInfo.AddFormItem(formItem);
 
         SetFormDefinition(info, formInfo);
-
 
         if (info.HasChanged)
         {
