@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json;
 
 using CMS.ContentEngine;
 using CMS.Core;
@@ -356,6 +357,10 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         }
         try
         {
+            // add the details of the data objects to the activity (as a json object) for better tracing
+            string dataObjectsJson = JsonSerializer.Serialize(dataObjects, new JsonSerializerOptions { WriteIndented = true });
+            activity?.AddTag("typesense.data_objects", dataObjectsJson);
+
             var response = await typesenseClient.ImportDocuments(collectionName, dataObjects, importType: importType);
             activity?.SetStatus(ActivityStatusCode.Ok);
             activity?.AddTag("typesense.imported_count", response.Count);

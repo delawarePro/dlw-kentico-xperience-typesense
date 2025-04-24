@@ -217,7 +217,7 @@ export const TypesenseCollectionConfigurationFormComponent = (
                 alert('This path already exists!');
             }
         } else {
-            const rowCollection = rows.findCollection((x) => {
+            const rowCollection = rows.findIndex((x) => {
                 return x.identifier === editedIdentifier;
             });
 
@@ -229,7 +229,7 @@ export const TypesenseCollectionConfigurationFormComponent = (
             const editedRow = rows[rowCollection];
             const pathCellInNewRow = rows[rowCollection].cells[0] as StringCell;
             pathCellInNewRow.value = path;
-            const propPathCollection = props.value.findCollection(
+            const propPathCollection = props.value.findIndex(
                 (p) => p.aliasPath === editedIdentifier,
             );
 
