@@ -7,6 +7,7 @@ using CMS.DataEngine;
 using CMS.Helpers;
 using CMS.Websites;
 
+using Kentico.Xperience.Typesense.JsonResolvers;
 using Kentico.Xperience.Typesense.QueueWorker;
 using Kentico.Xperience.Typesense.Search;
 using Kentico.Xperience.Typesense.Xperience;
@@ -358,7 +359,8 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         try
         {
             // add the details of the data objects to the activity (as a json object) for better tracing
-            string dataObjectsJson = JsonSerializer.Serialize(dataObjects, new JsonSerializerOptions { WriteIndented = true });
+
+            string dataObjectsJson = JsonSerializer.Serialize(dataObjects, new JsonSerializerOptions { WriteIndented = true, TypeInfoResolver = new TypeSenseTypeResolver() });
             activity?.AddTag("typesense.data_objects", dataObjectsJson);
 
             var response = await typesenseClient.ImportDocuments(collectionName, dataObjects, importType: importType);
