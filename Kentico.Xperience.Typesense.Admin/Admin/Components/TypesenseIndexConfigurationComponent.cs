@@ -3,7 +3,7 @@
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.FormAnnotations;
 using Kentico.Xperience.Admin.Base.Forms;
-using Kentico.Xperience.Typesense.Admin;
+using Kentico.Xperience.Typesense.Admin.Components;
 using Kentico.Xperience.Typesense.Xperience;
 
 [assembly: RegisterFormComponent(
@@ -11,7 +11,7 @@ using Kentico.Xperience.Typesense.Xperience;
     componentType: typeof(TypesenseCollectionConfigurationComponent),
     name: "Typesense Search Collection Configuration")]
 
-namespace Kentico.Xperience.Typesense.Admin;
+namespace Kentico.Xperience.Typesense.Admin.Components;
 
 #pragma warning disable S2094 // intentionally empty class
 public class TypesenseCollectionConfigurationComponentProperties : FormComponentProperties
@@ -85,7 +85,7 @@ public class TypesenseCollectionConfigurationComponent : FormComponent<Typesense
     {
         var allWebsiteContentTypes = DataClassInfoProvider.ProviderObject
            .Get()
-           .WhereEquals(nameof(DataClassInfo.ClassContentTypeType), "Website")
+           //.WhereEquals(nameof(DataClassInfo.ClassContentTypeType), "Website")
            .GetEnumerableTypedResult()
            .Select(x => new TypesenseCollectionContentType(x.ClassName, x.ClassDisplayName));
 

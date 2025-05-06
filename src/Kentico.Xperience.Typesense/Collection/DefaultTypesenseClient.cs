@@ -366,6 +366,9 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
             var response = await typesenseClient.ImportDocuments(collectionName, dataObjects, importType: importType);
             activity?.SetStatus(ActivityStatusCode.Ok);
             activity?.AddTag("typesense.imported_count", response.Count);
+
+            string responseJson = JsonSerializer.Serialize(response, new JsonSerializerOptions { WriteIndented = true });
+            activity?.AddTag("typesense.response", responseJson);
             return response.Count;
         }
         catch (Exception ex)

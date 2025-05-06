@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 using Kentico.Xperience.Admin.Base.FormAnnotations;
+using Kentico.Xperience.Typesense.Admin.Components;
 using Kentico.Xperience.Typesense.Admin.Providers;
 using Kentico.Xperience.Typesense.Xperience;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseContentTypeItem;
