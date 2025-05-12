@@ -53,7 +53,7 @@ public interface IXperienceTypesenseClient
     /// <exception cref="ObjectDisposedException" />
     /// <exception cref="OverflowException" />
     /// <returns>The number of objects processed.</returns>
-    public Task<int> UpsertRecords(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, ImportType importType = ImportType.Create, CancellationToken cancellationToken = default);
+    public Task<int> UpsertRecords(List<TypesenseSearchResultModel> dataObjects, string collectionName, ImportType importType = ImportType.Create, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Rebuilds the Typesense index by removing existing data from Typesense and indexing all

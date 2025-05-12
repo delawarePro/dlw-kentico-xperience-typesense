@@ -8,11 +8,11 @@ public interface ITypesenseCollectionStrategy
     /// </summary>
     /// <param name="typesensePageItem">The <see cref="ICollectionEventItemModel"/> currently being indexed.</param>
     /// <returns>Modified Typesense document.</returns>
-    Task<IEnumerable<TypesenseSearchResultModel>?> MapToTypesenseObjectsOrNull(ICollectionEventItemModel typesensePageItem);
+    public Task<IEnumerable<TypesenseSearchResultModel>?> MapToTypesenseObjectsOrNull(ICollectionEventItemModel typesensePageItem);
 
-    Task<ITypesenseCollectionSettings> GetTypesenseCollectionSettings(bool enableNestedFields = false);
+    public Task<ITypesenseCollectionSettings> GetTypesenseCollectionSettings(bool enableNestedFields = false);
 
-    Task<IEnumerable<ICollectionEventItemModel>> FindItemsToReindex(CollectionEventWebPageItemModel changedItem);
+    public Task<IEnumerable<ICollectionEventItemModel>> FindItemsToReindex(CollectionEventWebPageItemModel changedItem);
 
-    Task<IEnumerable<ICollectionEventItemModel>> FindItemsToReindex(CollectionEventReusableItemModel changedItem);
+    public Task<IEnumerable<ICollectionEventItemModel>> FindItemsToReindex(CollectionEventReusableItemModel changedItem);
 }

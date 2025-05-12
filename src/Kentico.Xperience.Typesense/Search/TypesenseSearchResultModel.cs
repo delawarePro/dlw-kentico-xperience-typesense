@@ -10,6 +10,9 @@ public class TypesenseSearchResultModel
     [JsonPropertyName("ContentTypeName")]
     public string ContentTypeName { get; set; } = "";
 
+    [JsonPropertyName("ItemName")]
+    public string ItemName { get; set; } = "";
+
     [JsonPropertyName("LanguageName")]
     public string LanguageName { get; set; } = "";
 
@@ -20,6 +23,11 @@ public class TypesenseSearchResultModel
     public string Url { get; set; } = "";
 
     public TypesenseSearchResultModel(string id) => ID = id;
+
+    /// <summary>
+    /// Use this constructor for deserialization only
+    /// </summary>
+    public TypesenseSearchResultModel() => ID = string.Empty;
 
 }
 

@@ -7,7 +7,6 @@ using CMS.Websites;
 
 using Kentico.Xperience.Typesense;
 using Kentico.Xperience.Typesense.Collection;
-using Kentico.Xperience.Typesense.QueueWorker;
 using Kentico.Xperience.Typesense.Xperience;
 
 using Microsoft.Extensions.DependencyInjection;

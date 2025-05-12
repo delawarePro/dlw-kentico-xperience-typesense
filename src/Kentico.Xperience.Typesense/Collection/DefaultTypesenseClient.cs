@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text;
 using System.Text.Json;
 
 using CMS.ContentEngine;
@@ -227,7 +228,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
     }
 
     /// <inheritdoc />
-    public Task<int> UpsertRecords(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, ImportType importType = ImportType.Create, CancellationToken cancellationToken = default)
+    public Task<int> UpsertRecords(List<TypesenseSearchResultModel> dataObjects, string collectionName, ImportType importType = ImportType.Create, CancellationToken cancellationToken = default)
     {
         using var activity = activitySource.StartActivity($"{nameof(UpsertRecords)}_{collectionName}", ActivityKind.Client);
         activity?.AddTag("typesense.collection", collectionName);
@@ -265,27 +266,38 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
 
     private async Task RebuildInternal(TypesenseCollection typesenseCollection, CancellationToken cancellationToken)
     {
-        var indexedItems = new List<CollectionEventWebPageItemModel>();
+        var indexedItems = new List<ICollectionEventItemModel>();
         foreach (var includedPathAttribute in typesenseCollection.IncludedPaths)
         {
             foreach (string language in typesenseCollection.LanguageNames)
             {
-                var queryBuilder = new ContentItemQueryBuilder();
+                var queryBuilderContent = new ContentItemQueryBuilder();
+                var queryBuilderPages = new ContentItemQueryBuilder();
 
                 if (includedPathAttribute.ContentTypes != null && includedPathAttribute.ContentTypes.Count > 0)
                 {
                     foreach (var contentType in includedPathAttribute.ContentTypes)
                     {
-                        queryBuilder.ForContentType(contentType.ContentTypeName, config => config.ForWebsite(typesenseCollection.WebSiteChannelName, includeUrlPath: true));
+                        queryBuilderContent.ForContentType(contentType.ContentTypeName);
+                        queryBuilderPages.ForContentType(contentType.ContentTypeName, config => config.ForWebsite(typesenseCollection.WebSiteChannelName, includeUrlPath: true));
                     }
                 }
-                queryBuilder.InLanguage(language);
+                queryBuilderContent.InLanguage(language);
+                queryBuilderPages.InLanguage(language);
 
-                var webpages = await executor.GetWebPageResult(queryBuilder, container => container, cancellationToken: cancellationToken);
+                var webpages = await executor.GetWebPageResult(queryBuilderPages, container => container, cancellationToken: cancellationToken);
 
                 foreach (var page in webpages)
                 {
-                    var item = await MapToEventItem(page);
+                    var item = await MapToEventPageItem(page);
+                    indexedItems.Add(item);
+                }
+
+                var items = await executor.GetResult(queryBuilderContent, container => container, cancellationToken: cancellationToken);
+                items = items.Where(i => !webpages.Any(p => p.ContentItemGUID == i.ContentItemGUID)); // Remove the webpages that are already indexed
+                foreach (var it in items)
+                {
+                    var item = await MapToEventItem(it);
                     indexedItems.Add(item);
                 }
             }
@@ -311,7 +323,34 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         queue.EnqueueTypesenseQueueItem(new TypesenseQueueItem(new EndOfRebuildItemModel(activeCollectionName, newCollectionName, typesenseCollection.CollectionName), TypesenseTaskType.END_OF_REBUILD, typesenseCollection.CollectionName));
     }
 
-    private async Task<CollectionEventWebPageItemModel> MapToEventItem(IWebPageContentQueryDataContainer content)
+    private async Task<CollectionEventReusableItemModel> MapToEventItem(IContentQueryDataContainer content)
+    {
+        using var activity = activitySource.StartActivity($"{nameof(MapToEventItem)}", ActivityKind.Internal);
+        activity?.AddTag("typesense.operation", "map_to_event_item");
+        activity?.AddTag("typesense.content_id", content.ContentItemID);
+        var languages = await GetAllLanguages();
+
+        string languageName = languages.FirstOrDefault(l => l.ContentLanguageID == content.ContentItemCommonDataContentLanguageID)?.ContentLanguageName ?? "";
+
+        var websiteChannels = await GetAllWebsiteChannels();
+
+        var item = new CollectionEventReusableItemModel(
+            content.ContentItemID,
+            content.ContentItemGUID,
+            languageName,
+            content.ContentTypeName,
+            content.ContentItemName,
+            content.ContentItemIsSecured,
+            content.ContentItemContentTypeID,
+            content.ContentItemCommonDataContentLanguageID
+            );
+
+        activity?.SetStatus(ActivityStatusCode.Ok);
+        return item;
+    }
+
+
+    private async Task<CollectionEventWebPageItemModel> MapToEventPageItem(IWebPageContentQueryDataContainer content)
     {
         using var activity = activitySource.StartActivity($"{nameof(MapToEventItem)}", ActivityKind.Internal);
         activity?.AddTag("typesense.operation", "map_to_event_item");
@@ -344,7 +383,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         return item;
     }
 
-    private async Task<int> UpsertRecordsInternal(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, ImportType importType = ImportType.Create)
+    private async Task<int> UpsertRecordsInternal(List<TypesenseSearchResultModel> dataObjects, string collectionName, ImportType importType = ImportType.Create)
     {
         using var activity = activitySource.StartActivity($"{nameof(UpsertRecordsInternal)}_{collectionName}", ActivityKind.Internal);
         activity?.AddTag("typesense.operation", "upsert_records_internal");
@@ -369,6 +408,22 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
 
             string responseJson = JsonSerializer.Serialize(response, new JsonSerializerOptions { WriteIndented = true });
             activity?.AddTag("typesense.response", responseJson);
+
+            var errorsMessage = new StringBuilder();
+            for (int i = 0; i < response.Count; i++)
+            {
+                if (!response[i].Success)
+                {
+                    errorsMessage.AppendLine($"Error in the item {dataObjects[i]?.ItemName} (id: {dataObjects[i]?.ID}) - {response[i].Error}");
+                }
+            }
+
+            if (errorsMessage.Length > 0)
+            {
+                activity?.AddTag("typesense.errors", errorsMessage.ToString());
+                eventLogService.LogException($"{nameof(DefaultTypesenseClient)} - {nameof(UpsertRecordsInternal)}", $"Error when indexing item in bulk", new Exception(errorsMessage.ToString()));
+            }
+
             return response.Count;
         }
         catch (Exception ex)

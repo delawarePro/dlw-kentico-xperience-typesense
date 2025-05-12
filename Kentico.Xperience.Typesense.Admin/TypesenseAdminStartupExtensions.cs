@@ -1,11 +1,8 @@
-﻿using System.ComponentModel;
-
-using Kentico.Xperience.Typesense.Admin.Admin;
+﻿using Kentico.Xperience.Typesense.Admin.Admin;
 using Kentico.Xperience.Typesense.Collection;
 using Kentico.Xperience.Typesense.QueueWorker;
 using Kentico.Xperience.Typesense.Xperience;
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Kentico.Xperience.Typesense;

@@ -130,6 +130,10 @@ internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
             {
                 item.LanguageName = baseItem.LanguageName;
             }
+            if (string.IsNullOrEmpty(item.ItemName))
+            {
+                item.ItemName = baseItem.Name;
+            }
 
             if (baseItem is CollectionEventWebPageItemModel webpageItem && string.IsNullOrEmpty(item.Url))
             {

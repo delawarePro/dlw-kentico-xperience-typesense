@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<TargetFrameworks>net8.0;net7.0;net6.0;</TargetFrameworks>
+	<TargetFrameworks>net8.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\typesense-dotnet\src\Typesense\Typesense.csproj" />
+    <ProjectReference Include="..\Kentico.Xperience.Typesense\Kentico.Xperience.Typesense.csproj" />
   </ItemGroup>
 
 </Project>

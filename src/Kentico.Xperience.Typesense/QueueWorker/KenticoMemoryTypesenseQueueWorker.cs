@@ -14,7 +14,6 @@ namespace Kentico.Xperience.Typesense.QueueWorker;
 internal class KenticoMemoryTypesenseQueueWorker : ThreadQueueWorker<TypesenseQueueItem, KenticoMemoryTypesenseQueueWorker>
 {
     private readonly ITypesenseTaskProcessor typesenseTaskProcessor;
-    private readonly IXperienceTypesenseClient xperienceTypesenseClient;
 
     /// <inheritdoc />
     protected override int DefaultInterval => 10000;
@@ -25,11 +24,7 @@ internal class KenticoMemoryTypesenseQueueWorker : ThreadQueueWorker<TypesenseQu
     /// Should not be called directly- the worker should be initialized during startup using
     /// <see cref="ThreadWorker{T}.EnsureRunningThread"/>.
     /// </summary>
-    public KenticoMemoryTypesenseQueueWorker()
-    {
-        typesenseTaskProcessor = Service.Resolve<ITypesenseTaskProcessor>();
-        xperienceTypesenseClient = Service.Resolve<IXperienceTypesenseClient>();
-    }
+    public KenticoMemoryTypesenseQueueWorker() => typesenseTaskProcessor = Service.Resolve<ITypesenseTaskProcessor>();
 
 
 
