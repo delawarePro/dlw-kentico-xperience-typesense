@@ -47,7 +47,6 @@ internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
                 var updateTasks = group.Where(queueItem => queueItem.TaskType is TypesenseTaskType.PUBLISH_INDEX or TypesenseTaskType.UPDATE);
 
                 var upsertData = new List<TypesenseSearchResultModel>();
-                var updateData = new List<TypesenseSearchResultModel>();
                 foreach (var queueItem in updateTasks)
                 {
                     var documents = await GetDocument(queueItem);
@@ -55,14 +54,7 @@ internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
                     {
                         foreach (var document in documents)
                         {
-                            if (queueItem.TaskType is TypesenseTaskType.UPDATE)
-                            {
-                                updateData.Add(document);
-                            }
-                            else
-                            {
-                                upsertData.Add(document);
-                            }
+                            upsertData.Add(document);
                         }
                     }
                     else
@@ -76,8 +68,7 @@ internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
                         .Select(x => x ?? ""));
 
                 successfulOperations += await typesenseClient.DeleteRecords(deleteIds, group.Key, cancellationToken);
-                successfulOperations += await typesenseClient.UpsertRecords(upsertData, group.Key, ImportType.Create, cancellationToken);
-                successfulOperations += await typesenseClient.UpsertRecords(updateData, group.Key, ImportType.Update, cancellationToken);
+                successfulOperations += await typesenseClient.UpsertRecords(upsertData, group.Key, ImportType.Upsert, cancellationToken);
             }
             catch (Exception ex)
             {
