@@ -34,11 +34,11 @@ public class DefaultTypesenseCollectionStrategy : ITypesenseCollectionStrategy
         Task.FromResult<ITypesenseCollectionSettings>(new TypesenseCollectionSettings()
         {
             EnableNestedFields = enableNestedFields,
-            Fields = new(){
-            new Field(BaseObjectProperties.ITEM_GUID, FieldType.String),
-            new Field(BaseObjectProperties.CONTENT_TYPE_NAME, FieldType.String),
-            new Field(BaseObjectProperties.LANGUAGE_NAME, FieldType.String),
-            new Field(BaseObjectProperties.URL, FieldType.String),
+            Fields = {
+                new Field(BaseObjectProperties.ITEM_GUID, FieldType.String),
+                new Field(BaseObjectProperties.CONTENT_TYPE_NAME, FieldType.String),
+                new Field(BaseObjectProperties.LANGUAGE_NAME, FieldType.String),
+                new Field(BaseObjectProperties.URL, FieldType.String),
             }
         });
 

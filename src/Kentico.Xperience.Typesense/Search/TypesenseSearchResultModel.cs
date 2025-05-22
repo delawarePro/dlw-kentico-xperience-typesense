@@ -7,17 +7,20 @@ public class TypesenseSearchResultModel
     [JsonPropertyName("ItemGuid")]
     public Guid ItemGuid { get; set; }
 
+    [JsonPropertyName("ItemName")]
+    public string ItemName { get; set; } = string.Empty;
+
     [JsonPropertyName("ContentTypeName")]
-    public string ContentTypeName { get; set; } = "";
+    public string ContentTypeName { get; set; } = string.Empty;
 
     [JsonPropertyName("LanguageName")]
-    public string LanguageName { get; set; } = "";
+    public string LanguageName { get; set; } = string.Empty;
 
     [JsonPropertyName("id")]
     public string ID { get; set; }
 
     [JsonPropertyName("Url")]
-    public string Url { get; set; } = "";
+    public string Url { get; set; } = string.Empty;
 
     public TypesenseSearchResultModel(string id) => ID = id;
 

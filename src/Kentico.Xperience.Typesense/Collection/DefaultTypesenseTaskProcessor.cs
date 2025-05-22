@@ -118,9 +118,13 @@ internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
     {
         if (item is not null && baseItem is not null)
         {
-            if (item.ItemGuid == null || item.ItemGuid == Guid.Empty)
+            if (item.ItemGuid == Guid.Empty)
             {
                 item.ItemGuid = baseItem.ItemGuid;
+            }
+            if (string.IsNullOrEmpty(item.ItemName))
+            {
+                item.ItemName = baseItem.Name;
             }
             if (string.IsNullOrEmpty(item.ContentTypeName))
             {
