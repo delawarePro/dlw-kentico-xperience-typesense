@@ -61,7 +61,7 @@ dotnet add package Kentico.Xperience.Typesense
 
 ## Full Instructions
 
-View the [Usage Guide](docs/Usage-Guide.md) for more detailed instructions. 
+View the [Usage Guide](docs/Usage-Guide.md) for more detailed instructions.
 
 ## Contributing
 
@@ -76,3 +76,10 @@ Distributed under the MIT License. See [`LICENSE.md`](LICENSE.md) for more infor
 ## Support
 
 We didn't provide support for this project, but you can submit an issue or a pull request. The feedbacks are welcome.
+
+## Create the new version of the package
+
+1. Edit the version prefix in Directory.Build.props
+2. `git commit -m "V1.0.23-beta-1"`
+3. `git tag v1.0.xxx`
+4. `git push origin --tags`
