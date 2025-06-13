@@ -81,5 +81,6 @@ We didn't provide support for this project, but you can submit an issue or a pul
 
 1. Edit the version prefix in Directory.Build.props
 2. `git commit -am "V1.0.23-beta-3"`
-3. `git tag V1.0.23-beta-3`
-4. `git push origin --tags`
+3. `git push origin`
+4. `git tag V1.0.23-beta-3`
+5. `git push origin --tags`
