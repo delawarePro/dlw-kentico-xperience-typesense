@@ -3,6 +3,7 @@ using CMS.Membership;
 
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Typesense.Admin;
+using Kentico.Xperience.Typesense.Admin.UIPages;
 using Kentico.Xperience.Typesense.Collection;
 using Kentico.Xperience.Typesense.Xperience;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexItem;
@@ -15,7 +16,7 @@ using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexItem;
    templateName: TemplateNames.LISTING,
    order: UIPageOrder.First)]
 
-namespace Kentico.Xperience.Typesense.Admin;
+namespace Kentico.Xperience.Typesense.Admin.UIPages;
 
 /// <summary>
 /// An admin UI page that displays statistics about the registered Typesense indexes.

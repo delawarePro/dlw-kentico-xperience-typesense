@@ -3,16 +3,16 @@ using CMS.Base;
 using CMS.Core;
 
 using Kentico.Xperience.Admin.Base;
+using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Collection;
 using Kentico.Xperience.Typesense.Xperience;
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 [assembly: RegisterModule(typeof(TypesenseAdminModule))]
 
-namespace Kentico.Xperience.Typesense.Xperience;
+namespace Kentico.Xperience.Typesense.Admin;
 
 /// <summary>
 /// Manages administration features and integration.

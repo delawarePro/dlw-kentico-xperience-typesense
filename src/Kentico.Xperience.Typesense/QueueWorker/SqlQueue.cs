@@ -1,7 +1,6 @@
 ﻿
 using System.Text.Json;
 
-using CMS.Base;
 using CMS.DataEngine;
 
 using Kentico.Xperience.Typesense.Admin;
@@ -10,10 +9,10 @@ using Kentico.Xperience.Typesense.Collection;
 namespace Kentico.Xperience.Typesense.QueueWorker;
 public class SqlQueue : ITypesenseQueue
 {
-    private readonly IIndexQueueItemInfoProvider indexQueueItemInfoProvider;
+    private readonly IInfoProvider<IndexQueueItemInfo> indexQueueItemInfoProvider;
     private readonly JsonSerializerOptions collectionEventItemModelJsonOptions;
 
-    public SqlQueue(IIndexQueueItemInfoProvider indexQueueItemInfoProvider)
+    public SqlQueue(IInfoProvider<IndexQueueItemInfo> indexQueueItemInfoProvider)
     {
         this.indexQueueItemInfoProvider = indexQueueItemInfoProvider;
 

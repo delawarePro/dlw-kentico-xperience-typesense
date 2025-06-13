@@ -3,6 +3,7 @@
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.Forms;
 using Kentico.Xperience.Typesense.Admin;
+using Kentico.Xperience.Typesense.Admin.UIPages;
 using Kentico.Xperience.Typesense.Collection;
 using Kentico.Xperience.Typesense.Xperience;
 

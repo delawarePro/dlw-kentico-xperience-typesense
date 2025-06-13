@@ -1,30 +1,27 @@
 ﻿using System.Text;
 
-using CMS.ContentEngine;
 using CMS.DataEngine;
-using CMS.Websites;
 
+using Kentico.Xperience.Typesense.Xperience;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseContentTypeItem;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIncludedPathItem;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexItem;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexLanguageItem;
-using Kentico.Xperience.Typesense.Xperience;
-using System.Linq;
 
-namespace Kentico.Xperience.Typesense.Admin.Admin;
+namespace Kentico.Xperience.Typesense.Admin;
 
 internal class DefaultTypesenseConfigurationKenticoStorageService : ITypesenseConfigurationKenticoStorageService
 {
-    private readonly ITypesenseCollectionItemInfoProvider indexProvider;
-    private readonly ITypesenseIncludedPathItemInfoProvider pathProvider;
-    private readonly ITypesenseContentTypeItemInfoProvider contentTypeProvider;
-    private readonly ITypesenseCollectionLanguageItemInfoProvider languageProvider;
+    private readonly IInfoProvider<TypesenseIndexItemInfo> indexProvider;
+    private readonly IInfoProvider<TypesenseIncludedPathItemInfo> pathProvider;
+    private readonly IInfoProvider<TypesenseContentTypeItemInfo> contentTypeProvider;
+    private readonly IInfoProvider<TypesenseIndexLanguageItemInfo> languageProvider;
 
     public DefaultTypesenseConfigurationKenticoStorageService(
-        ITypesenseCollectionItemInfoProvider indexProvider,
-        ITypesenseIncludedPathItemInfoProvider pathProvider,
-        ITypesenseContentTypeItemInfoProvider contentTypeProvider,
-        ITypesenseCollectionLanguageItemInfoProvider languageProvider
+        IInfoProvider<TypesenseIndexItemInfo> indexProvider,
+        IInfoProvider<TypesenseIncludedPathItemInfo> pathProvider,
+        IInfoProvider<TypesenseContentTypeItemInfo> contentTypeProvider,
+        IInfoProvider<TypesenseIndexLanguageItemInfo> languageProvider
     )
     {
         this.indexProvider = indexProvider;
@@ -143,7 +140,7 @@ internal class DefaultTypesenseConfigurationKenticoStorageService : ITypesenseCo
 
         var languages = languageProvider.Get().WhereEquals(nameof(TypesenseIndexLanguageItemInfo.TypesenseCollectionLanguageItemCollectionItemId), indexInfo.TypesenseCollectionItemId).GetEnumerableTypedResult();
 
-        return (ITypesenseConfigurationModel)new TypesenseConfigurationModel(indexInfo, languages, paths, contentTypes, contentTypesInfoItems);
+        return new TypesenseConfigurationModel(indexInfo, languages, paths, contentTypes, contentTypesInfoItems);
     }
     public List<string> GetExistingcollectionNames() => indexProvider.Get().Select(x => x.TypesenseCollectionItemcollectionName).ToList();
     public List<int> GetCollectionIds() => indexProvider.Get().Select(x => x.TypesenseCollectionItemId).ToList();

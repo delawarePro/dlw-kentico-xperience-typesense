@@ -15,18 +15,14 @@ namespace Kentico.Xperience.Typesense.Admin;
 /// Data container class for <see cref="IndexQueueItemInfo"/>.
 /// </summary>
 [Serializable]
-public partial class IndexQueueItemInfo : AbstractInfo<IndexQueueItemInfo, IIndexQueueItemInfoProvider>
+public partial class IndexQueueItemInfo : AbstractInfo<IndexQueueItemInfo, IInfoProvider<IndexQueueItemInfo>>, IInfoWithId, IInfoWithGuid
 {
-    /// <summary>
-    /// Object type.
-    /// </summary>
     public const string OBJECT_TYPE = "kenticotypesense.typesenseindexqueueitem";
-
 
     /// <summary>
     /// Type information.
     /// </summary>
-    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(IndexQueueItemProvider), OBJECT_TYPE, "KenticoTypesense.TypesenseIndexQueueItem", nameof(IndexQueueItemID), null, nameof(IndexQueueItemGuid), null, null, null, null, null)
+    public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(IInfoProvider<IndexQueueItemInfo>), OBJECT_TYPE, "KenticoTypesense.TypesenseIndexQueueItem", nameof(IndexQueueItemID), null, nameof(IndexQueueItemID), null, null, null, null, null)
     {
         TouchCacheDependencies = true,
         DependsOn = new List<ObjectDependency>()
@@ -37,7 +33,6 @@ public partial class IndexQueueItemInfo : AbstractInfo<IndexQueueItemInfo, IInde
             Enabled = true
         }
     };
-
 
     /// <summary>
     /// Collectioned language id.
@@ -109,17 +104,6 @@ public partial class IndexQueueItemInfo : AbstractInfo<IndexQueueItemInfo, IInde
     protected override void SetObject()
     {
         Provider.Set(this);
-    }
-
-
-    /// <summary>
-    /// Constructor for de-serialization.
-    /// </summary>
-    /// <param name="info">Serialization info.</param>
-    /// <param name="context">Streaming context.</param>
-    protected IndexQueueItemInfo(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
     }
 
 

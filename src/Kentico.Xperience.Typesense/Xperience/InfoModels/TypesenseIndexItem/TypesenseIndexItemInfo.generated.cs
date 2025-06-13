@@ -16,7 +16,7 @@ namespace Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexItem;
 /// Data container class for <see cref="TypesenseIndexItemInfo"/>.
 /// </summary>
 [Serializable]
-public partial class TypesenseIndexItemInfo : AbstractInfo<TypesenseIndexItemInfo, ITypesenseCollectionItemInfoProvider>
+public partial class TypesenseIndexItemInfo : AbstractInfo<TypesenseIndexItemInfo, IInfoProvider<TypesenseIndexItemInfo>>, IInfoWithId, IInfoWithGuid
 {
     /// <summary>
     /// Object type.
@@ -26,7 +26,7 @@ public partial class TypesenseIndexItemInfo : AbstractInfo<TypesenseIndexItemInf
     /// <summary>
     /// Type information.
     /// </summary>
-    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(TypesenseCollectionItemInfoProvider), OBJECT_TYPE, "KenticoTypesense.TypesenseIndexItem", nameof(TypesenseCollectionItemId), null, nameof(TypesenseCollectionItemGuid), nameof(TypesenseCollectionItemcollectionName), null, null, null, null)
+    public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(IInfoProvider<TypesenseIndexItemInfo>), OBJECT_TYPE, "KenticoTypesense.TypesenseIndexItem", nameof(TypesenseCollectionItemId), null, nameof(TypesenseCollectionItemId), null, null, null, null, null)    
     {
         TouchCacheDependencies = true,
         ContinuousIntegrationSettings =
@@ -111,26 +111,18 @@ public partial class TypesenseIndexItemInfo : AbstractInfo<TypesenseIndexItemInf
         Provider.Set(this);
     }
 
-    /// <summary>
-    /// Constructor for de-serialization.
-    /// </summary>
-    /// <param name="info">Serialization info.</param>
-    /// <param name="context">Streaming context.</param>
-    protected TypesenseIndexItemInfo(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
 
     /// <summary>
-    /// Creates an empty instance of the <see cref="TypesenseIndexItemInfo"/> class.
+    /// Creates an empty instance of the <see cref="ChannelGeneralSettingsInfo"/> class.
     /// </summary>
     public TypesenseIndexItemInfo()
         : base(TYPEINFO)
     {
     }
 
+
     /// <summary>
-    /// Creates a new instances of the <see cref="TypesenseIndexItemInfo"/> class from the given <see cref="DataRow"/>.
+    /// Creates a new instances of the <see cref="ChannelGeneralSettingsInfo"/> class from the given <see cref="DataRow"/>.
     /// </summary>
     /// <param name="dr">DataRow with the object data.</param>
     public TypesenseIndexItemInfo(DataRow dr)

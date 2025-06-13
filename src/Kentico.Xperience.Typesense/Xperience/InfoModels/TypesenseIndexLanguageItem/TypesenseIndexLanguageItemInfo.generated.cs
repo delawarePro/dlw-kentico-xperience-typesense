@@ -17,7 +17,7 @@ namespace Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexLanguag
 /// Data container class for <see cref="TypesenseIndexLanguageItemInfo"/>.
 /// </summary>
 [Serializable]
-public partial class TypesenseIndexLanguageItemInfo : AbstractInfo<TypesenseIndexLanguageItemInfo, ITypesenseCollectionLanguageItemInfoProvider>
+public partial class TypesenseIndexLanguageItemInfo : AbstractInfo<TypesenseIndexLanguageItemInfo, IInfoProvider<TypesenseIndexLanguageItemInfo>>, IInfoWithId, IInfoWithGuid
 {
     /// <summary>
     /// Object type.
@@ -28,7 +28,7 @@ public partial class TypesenseIndexLanguageItemInfo : AbstractInfo<TypesenseInde
     /// <summary>
     /// Type information.
     /// </summary>
-    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(TypesenseCollectionedLanguageInfoProvider), OBJECT_TYPE, "KenticoTypesense.TypesenseIndexLanguageItem", nameof(TypesenseCollectionLanguageItemID), null, nameof(TypesenseCollectionLanguageItemGuid), null, null, null, null, null)
+    public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(IInfoProvider<TypesenseIndexLanguageItemInfo>), OBJECT_TYPE, "KenticoTypesense.TypesenseIndexLanguageItem", nameof(TypesenseCollectionLanguageItemID), null, nameof(TypesenseCollectionLanguageItemID), null, null, null, null, null)    
     {
         TouchCacheDependencies = true,
         DependsOn = new List<ObjectDependency>()
@@ -102,18 +102,6 @@ public partial class TypesenseIndexLanguageItemInfo : AbstractInfo<TypesenseInde
     {
         Provider.Set(this);
     }
-
-
-    /// <summary>
-    /// Constructor for de-serialization.
-    /// </summary>
-    /// <param name="info">Serialization info.</param>
-    /// <param name="context">Streaming context.</param>
-    protected TypesenseIndexLanguageItemInfo(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
-
 
     /// <summary>
     /// Creates an empty instance of the <see cref="TypesenseIndexLanguageItemInfo"/> class.

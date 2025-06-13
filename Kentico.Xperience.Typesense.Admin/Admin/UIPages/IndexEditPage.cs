@@ -7,6 +7,7 @@ using Kentico.Xperience.Admin.Base.Forms;
 using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Collection;
 using Kentico.Xperience.Typesense.Xperience;
+using Kentico.Xperience.Typesense.Admin.UIPages;
 
 [assembly: UIPage(
    parentType: typeof(CollectionListingPage),

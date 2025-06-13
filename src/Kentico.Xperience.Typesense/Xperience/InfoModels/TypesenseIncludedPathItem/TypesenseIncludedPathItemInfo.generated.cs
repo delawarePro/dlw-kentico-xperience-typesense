@@ -18,7 +18,7 @@ namespace Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIncludedPath
 /// Data container class for <see cref="TypesenseIncludedPathItemInfo"/>.
 /// </summary>
 [Serializable]
-public partial class TypesenseIncludedPathItemInfo : AbstractInfo<TypesenseIncludedPathItemInfo, ITypesenseIncludedPathItemInfoProvider>
+public partial class TypesenseIncludedPathItemInfo : AbstractInfo<TypesenseIncludedPathItemInfo, IInfoProvider<TypesenseIncludedPathItemInfo>>, IInfoWithId, IInfoWithGuid
 {
     /// <summary>
     /// Object type.
@@ -29,7 +29,7 @@ public partial class TypesenseIncludedPathItemInfo : AbstractInfo<TypesenseInclu
     /// <summary>
     /// Type information.
     /// </summary>
-    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(TypesenseIncludedPathItemInfoProvider), OBJECT_TYPE, "KenticoTypesense.TypesenseIncludedPathItem", nameof(TypesenseIncludedPathItemId), null, nameof(TypesenseIncludedPathItemGuid), null, null, null, null, null)
+    public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(IInfoProvider<TypesenseIncludedPathItemInfo>), OBJECT_TYPE, "KenticoTypesense.TypesenseIncludedPathItem", nameof(TypesenseIncludedPathItemId), null, nameof(TypesenseIncludedPathItemId), null, null, null, null, null)
     {
         TouchCacheDependencies = true,
         DependsOn = new List<ObjectDependency>()
@@ -105,18 +105,7 @@ public partial class TypesenseIncludedPathItemInfo : AbstractInfo<TypesenseInclu
 
 
     /// <summary>
-    /// Constructor for de-serialization.
-    /// </summary>
-    /// <param name="info">Serialization info.</param>
-    /// <param name="context">Streaming context.</param>
-    protected TypesenseIncludedPathItemInfo(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
-
-
-    /// <summary>
-    /// Creates an empty instance of the <see cref="TypesenseIncludedPathItemInfo"/> class.
+    /// Creates an empty instance of the <see cref="ChannelGeneralSettingsInfo"/> class.
     /// </summary>
     public TypesenseIncludedPathItemInfo()
         : base(TYPEINFO)
@@ -125,7 +114,7 @@ public partial class TypesenseIncludedPathItemInfo : AbstractInfo<TypesenseInclu
 
 
     /// <summary>
-    /// Creates a new instances of the <see cref="TypesenseIncludedPathItemInfo"/> class from the given <see cref="DataRow"/>.
+    /// Creates a new instances of the <see cref="ChannelGeneralSettingsInfo"/> class from the given <see cref="DataRow"/>.
     /// </summary>
     /// <param name="dr">DataRow with the object data.</param>
     public TypesenseIncludedPathItemInfo(DataRow dr)

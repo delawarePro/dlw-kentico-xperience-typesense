@@ -18,7 +18,7 @@ namespace Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseContentTypeI
 /// Data container class for <see cref="TypesenseContentTypeItemInfo"/>.
 /// </summary>
 [Serializable]
-public partial class TypesenseContentTypeItemInfo : AbstractInfo<TypesenseContentTypeItemInfo, ITypesenseContentTypeItemInfoProvider>
+public partial class TypesenseContentTypeItemInfo : AbstractInfo<TypesenseContentTypeItemInfo, IInfoProvider<TypesenseContentTypeItemInfo>>, IInfoWithId, IInfoWithGuid
 {
     /// <summary>
     /// Object type.
@@ -28,7 +28,7 @@ public partial class TypesenseContentTypeItemInfo : AbstractInfo<TypesenseConten
     /// <summary>
     /// Type information.
     /// </summary>
-    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(TypesenseContentTypeItemInfoProvider), OBJECT_TYPE, "KenticoTypesense.TypesenseContentTypeItem", nameof(TypesenseContentTypeItemId), null, nameof(TypesenseContentTypeItemGuid), null, null, null, null, null)
+    public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(IInfoProvider<TypesenseContentTypeItemInfo>), OBJECT_TYPE, "KenticoTypesense.TypesenseContentTypeItem", nameof(TypesenseContentTypeItemId), null, nameof(TypesenseContentTypeItemId), null, null, null, null, null)
     {
         TouchCacheDependencies = true,
         DependsOn = new List<ObjectDependency>()
@@ -109,25 +109,16 @@ public partial class TypesenseContentTypeItemInfo : AbstractInfo<TypesenseConten
     }
 
     /// <summary>
-    /// Constructor for de-serialization.
-    /// </summary>
-    /// <param name="info">Serialization info.</param>
-    /// <param name="context">Streaming context.</param>
-    protected TypesenseContentTypeItemInfo(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
-
-    /// <summary>
-    /// Creates an empty instance of the <see cref="TypesenseContentTypeItemInfo"/> class.
+    /// Creates an empty instance of the <see cref="ChannelGeneralSettingsInfo"/> class.
     /// </summary>
     public TypesenseContentTypeItemInfo()
         : base(TYPEINFO)
     {
     }
 
+
     /// <summary>
-    /// Creates a new instances of the <see cref="TypesenseContentTypeItemInfo"/> class from the given <see cref="DataRow"/>.
+    /// Creates a new instances of the <see cref="ChannelGeneralSettingsInfo"/> class from the given <see cref="DataRow"/>.
     /// </summary>
     /// <param name="dr">DataRow with the object data.</param>
     public TypesenseContentTypeItemInfo(DataRow dr)

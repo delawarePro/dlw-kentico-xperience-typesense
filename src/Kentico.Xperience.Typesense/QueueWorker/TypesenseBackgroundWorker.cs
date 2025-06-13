@@ -1,6 +1,5 @@
 ﻿using CMS.Core;
 
-using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Collection;
 
 using Microsoft.Extensions.Hosting;
