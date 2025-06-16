@@ -28,7 +28,7 @@ public partial class TypesenseContentTypeItemInfo : AbstractInfo<TypesenseConten
     /// <summary>
     /// Type information.
     /// </summary>
-    public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(IInfoProvider<TypesenseContentTypeItemInfo>), OBJECT_TYPE, "KenticoTypesense.TypesenseContentTypeItem", nameof(TypesenseContentTypeItemId), null, nameof(TypesenseContentTypeItemId), null, null, null, null, null)
+    public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(IInfoProvider<TypesenseContentTypeItemInfo>), OBJECT_TYPE, "KenticoTypesense.TypesenseContentTypeItem", nameof(TypesenseContentTypeItemId), null, nameof(TypesenseContentTypeItemGuid), null, null, null, null, null)
     {
         TouchCacheDependencies = true,
         DependsOn = new List<ObjectDependency>()

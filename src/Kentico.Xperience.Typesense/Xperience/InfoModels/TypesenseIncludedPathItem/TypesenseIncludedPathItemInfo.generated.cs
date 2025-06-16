@@ -29,7 +29,7 @@ public partial class TypesenseIncludedPathItemInfo : AbstractInfo<TypesenseInclu
     /// <summary>
     /// Type information.
     /// </summary>
-    public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(IInfoProvider<TypesenseIncludedPathItemInfo>), OBJECT_TYPE, "KenticoTypesense.TypesenseIncludedPathItem", nameof(TypesenseIncludedPathItemId), null, nameof(TypesenseIncludedPathItemId), null, null, null, null, null)
+    public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(IInfoProvider<TypesenseIncludedPathItemInfo>), OBJECT_TYPE, "KenticoTypesense.TypesenseIncludedPathItem", nameof(TypesenseIncludedPathItemId), null, nameof(TypesenseIncludedPathItemGuid), null, null, null, null, null)
     {
         TouchCacheDependencies = true,
         DependsOn = new List<ObjectDependency>()

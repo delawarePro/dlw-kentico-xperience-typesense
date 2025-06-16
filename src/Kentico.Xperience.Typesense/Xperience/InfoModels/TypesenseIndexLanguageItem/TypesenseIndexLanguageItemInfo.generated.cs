@@ -28,7 +28,7 @@ public partial class TypesenseIndexLanguageItemInfo : AbstractInfo<TypesenseInde
     /// <summary>
     /// Type information.
     /// </summary>
-    public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(IInfoProvider<TypesenseIndexLanguageItemInfo>), OBJECT_TYPE, "KenticoTypesense.TypesenseIndexLanguageItem", nameof(TypesenseCollectionLanguageItemID), null, nameof(TypesenseCollectionLanguageItemID), null, null, null, null, null)    
+    public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(IInfoProvider<TypesenseIndexLanguageItemInfo>), OBJECT_TYPE, "KenticoTypesense.TypesenseIndexLanguageItem", nameof(TypesenseCollectionLanguageItemID), null, nameof(TypesenseCollectionLanguageItemGuid), null, null, null, null, null)    
     {
         TouchCacheDependencies = true,
         DependsOn = new List<ObjectDependency>()

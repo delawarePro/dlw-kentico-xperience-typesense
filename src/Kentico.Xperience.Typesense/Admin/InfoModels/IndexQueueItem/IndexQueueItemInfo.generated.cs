@@ -22,7 +22,7 @@ public partial class IndexQueueItemInfo : AbstractInfo<IndexQueueItemInfo, IInfo
     /// <summary>
     /// Type information.
     /// </summary>
-    public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(IInfoProvider<IndexQueueItemInfo>), OBJECT_TYPE, "KenticoTypesense.TypesenseIndexQueueItem", nameof(IndexQueueItemID), null, nameof(IndexQueueItemID), null, null, null, null, null)
+    public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(IInfoProvider<IndexQueueItemInfo>), OBJECT_TYPE, "KenticoTypesense.TypesenseIndexQueueItem", nameof(IndexQueueItemID), null, nameof(IndexQueueItemGuid), null, null, null, null, null)
     {
         TouchCacheDependencies = true,
         DependsOn = new List<ObjectDependency>()
