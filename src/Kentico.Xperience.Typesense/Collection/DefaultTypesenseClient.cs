@@ -1,5 +1,3 @@
-using System.Collections;
-
 using CMS.ContentEngine;
 using CMS.Core;
 using CMS.DataEngine;
@@ -260,7 +258,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         return item;
     }
 
-    private async Task<int> UpsertRecordsInternal(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, ImportType importType = ImportType.Create,  CancellationToken cancellationToken = default)
+    private async Task<int> UpsertRecordsInternal(IEnumerable<TypesenseSearchResultModel> dataObjects, string collectionName, ImportType importType = ImportType.Create, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -326,7 +324,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
                                       $"Registered index with name '{collectionName}' doesn't exist.");
 
         var typesenseStrategy = serviceProvider.GetRequiredStrategy(typesenseCollection);
-        var indexSettings = await typesenseStrategy.GetTypesenseCollectionSettings();
+        var indexSettings = await typesenseStrategy.GetTypesenseCollectionSettings(typesenseCollection);
 
         await searchClient.CreateCollection(indexSettings.ToSchema($"{collectionName}-primary"));
 
@@ -346,7 +344,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         var typesenseCollection = TypesenseCollectionStore.Instance.GetCollection(configuration.CollectionName) ?? throw new InvalidOperationException($"Registered index with name '{configuration.CollectionName}' doesn't exist.");
 
         var typesenseStrategy = serviceProvider.GetRequiredStrategy(typesenseCollection);
-        var indexSettings = await typesenseStrategy.GetTypesenseCollectionSettings();
+        var indexSettings = await typesenseStrategy.GetTypesenseCollectionSettings(typesenseCollection);
 
         var currentCollection = await searchClient.RetrieveCollection(configuration.CollectionName); //Search by alias the current collection
 
@@ -372,7 +370,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
     public async Task<bool> EnsureNewCollection(string newCollection, TypesenseCollection typesenseCollection)
     {
         var typesenseStrategy = serviceProvider.GetRequiredStrategy(typesenseCollection);
-        var indexSettings = await typesenseStrategy.GetTypesenseCollectionSettings();
+        var indexSettings = await typesenseStrategy.GetTypesenseCollectionSettings(typesenseCollection);
 
         var allCollections = await searchClient.RetrieveCollections();
 

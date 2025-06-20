@@ -1,11 +1,16 @@
-﻿using CMS.ContentEngine;
+﻿using System.Text.Json.Serialization;
+
+using CMS.ContentEngine;
 using CMS.Websites;
+
 using DancingGoat.Models;
+
 using Kentico.Xperience.Typesense.Collection;
-using Microsoft.IdentityModel.Tokens;
 using Kentico.Xperience.Typesense.Search;
+
+using Microsoft.IdentityModel.Tokens;
+
 using Typesense;
-using System.Text.Json.Serialization;
 
 namespace DancingGoat.Search;
 
@@ -24,10 +29,18 @@ public class SimpleSearchCollectionStrategy : DefaultTypesenseCollectionStrategy
     private readonly IWebPageQueryResultMapper webPageMapper;
     private readonly IContentQueryExecutor queryExecutor;
 
-    public override async Task<ITypesenseCollectionSettings> GetTypesenseCollectionSettings(bool enableNestedFields = false)
+    public override async Task<ITypesenseCollectionSettings> GetTypesenseCollectionSettings(TypesenseCollection collection, bool enableNestedFields = false)
     {
-        var baseSettings = await base.GetTypesenseCollectionSettings(enableNestedFields);
-        baseSettings.Fields.Add(new Field(nameof(SimpleSearchResultModel.Title), FieldType.String, false));
+        var languageNames = collection.LanguageNames ?? [];
+        string? locale = null;
+        if (languageNames.Count == 1)
+        {
+            locale = languageNames[0];
+        }
+
+
+        var baseSettings = await base.GetTypesenseCollectionSettings(collection, enableNestedFields);
+        baseSettings.Fields.Add(new Field(nameof(SimpleSearchResultModel.Title), FieldType.String, false, locale: locale));
         return baseSettings;
     }
 

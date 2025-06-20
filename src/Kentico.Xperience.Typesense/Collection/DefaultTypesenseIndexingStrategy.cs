@@ -30,17 +30,26 @@ public class DefaultTypesenseCollectionStrategy : ITypesenseCollectionStrategy
         return Task.FromResult<IEnumerable<TypesenseSearchResultModel>?>(result);
     }
 
-    public virtual Task<ITypesenseCollectionSettings> GetTypesenseCollectionSettings(bool enableNestedFields = false) =>
-        Task.FromResult<ITypesenseCollectionSettings>(new TypesenseCollectionSettings()
+    public virtual Task<ITypesenseCollectionSettings> GetTypesenseCollectionSettings(TypesenseCollection collection, bool enableNestedFields = false)
+    {
+        var languageNames = collection.LanguageNames ?? [];
+        string? locale = null;
+        if (languageNames.Count == 1)
+        {
+            locale = languageNames[0];
+        }
+
+        return Task.FromResult<ITypesenseCollectionSettings>(new TypesenseCollectionSettings()
         {
             EnableNestedFields = enableNestedFields,
             Fields = {
-                new Field(BaseObjectProperties.ITEM_GUID, FieldType.String),
-                new Field(BaseObjectProperties.CONTENT_TYPE_NAME, FieldType.String),
-                new Field(BaseObjectProperties.LANGUAGE_NAME, FieldType.String),
-                new Field(BaseObjectProperties.URL, FieldType.String),
+                new Field(BaseObjectProperties.ITEM_GUID, FieldType.String, locale: locale),
+                new Field(BaseObjectProperties.CONTENT_TYPE_NAME, FieldType.String, locale: locale),
+                new Field(BaseObjectProperties.LANGUAGE_NAME, FieldType.String, locale: locale),
+                new Field(BaseObjectProperties.URL, FieldType.String, locale: locale),
             }
         });
+    }
 
     public virtual async Task<IEnumerable<ICollectionEventItemModel>> FindItemsToReindex(CollectionEventWebPageItemModel changedItem) => await Task.FromResult(new List<CollectionEventWebPageItemModel>() { changedItem });
 
