@@ -12,10 +12,10 @@ namespace Kentico.Xperience.Typesense;
 /// </summary>
 public static class TypesenseAdminStartupExtensions
 {    /// <summary>
-    /// Adds Typesense services and custom module to application.
-    /// </summary>
-    /// <param name="serviceCollection"></param>
-    /// <returns></returns>
+     /// Adds Typesense services and custom module to application.
+     /// </summary>
+     /// <param name="serviceCollection"></param>
+     /// <returns></returns>
     public static IServiceCollection AddKenticoAdminTypesense(this IServiceCollection serviceCollection) =>
         serviceCollection
             .AddSingleton<TypesenseModuleInstaller>()

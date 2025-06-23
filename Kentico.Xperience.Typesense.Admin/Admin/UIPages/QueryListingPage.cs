@@ -4,6 +4,7 @@ using CMS.Membership;
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Admin.UIPages;
+using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseQueryItem;
 
 [assembly: UIPage(
    parentType: typeof(TypesenseApplicationPage),
@@ -69,7 +70,7 @@ internal class QueryListingPage : ListingPage
     public async Task<INavigateResponse> DeleteQuery(int id)
     {
         var response = NavigateTo(pageLinkGenerator.GetPath<QueryListingPage>());
-        
+
         try
         {
             bool res = await queryStorageService.TryDeleteQuery(id);

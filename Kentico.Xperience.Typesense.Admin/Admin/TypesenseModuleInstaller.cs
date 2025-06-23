@@ -2,21 +2,20 @@
 using CMS.FormEngine;
 using CMS.Modules;
 
-using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseContentTypeItem;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIncludedPathItem;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexItem;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexLanguageItem;
+using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseQueryFieldWeightItem;
+using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseQueryItem;
 
-namespace Kentico.Xperience.Typesense.Xperience;
+namespace Kentico.Xperience.Typesense.Admin;
 
 public class TypesenseModuleInstaller
 {
     private readonly IInfoProvider<ResourceInfo> resourceProvider;
 
-    public TypesenseModuleInstaller(IInfoProvider<ResourceInfo> resourceProvider) => this.resourceProvider = resourceProvider;
-    
-    public void Install()
+    public TypesenseModuleInstaller(IInfoProvider<ResourceInfo> resourceProvider) => this.resourceProvider = resourceProvider; public void Install()
     {
         var resource = resourceProvider.Get("CMS.Integration.Typesense")
             ?? new ResourceInfo();
@@ -27,6 +26,7 @@ public class TypesenseModuleInstaller
         InstallTypesenseCollectionPathItemInfo(resource);
         InstallTypesenseContentTypeItemInfo(resource);
         InstallTypesenseQueryItemInfo(resource);
+        InstallTypesenseQueryFieldWeightItemInfo(resource);
         InstallIndexQueueItemInfo(resource);
     }
 
@@ -336,7 +336,8 @@ public class TypesenseModuleInstaller
                 //TODO : Investigate the issue here
             }
         }
-    }    public void InstallTypesenseQueryItemInfo(ResourceInfo resource)
+    }
+    public void InstallTypesenseQueryItemInfo(ResourceInfo resource)
     {
         var info = DataClassInfoProvider.GetDataClassInfo(TypesenseQueryItemInfo.OBJECT_TYPE) ?? DataClassInfo.New(TypesenseQueryItemInfo.OBJECT_TYPE);
 
@@ -368,6 +369,80 @@ public class TypesenseModuleInstaller
             Size = 100,
             DataType = FieldDataType.Text,
             Enabled = true
+        };
+        formInfo.AddFormItem(formItem);
+
+        SetFormDefinition(info, formInfo);
+
+        if (info.HasChanged)
+        {
+            try
+            {
+                DataClassInfoProvider.SetDataClassInfo(info);
+            }
+            catch (Exception ex)
+            {
+                //TODO : Investigate the issue here
+            }
+        }
+    }
+
+    public void InstallTypesenseQueryFieldWeightItemInfo(ResourceInfo resource)
+    {
+        var info = DataClassInfoProvider.GetDataClassInfo(TypesenseQueryFieldWeightItemInfo.OBJECT_TYPE) ?? DataClassInfo.New(TypesenseQueryFieldWeightItemInfo.OBJECT_TYPE);
+
+        info.ClassName = TypesenseQueryFieldWeightItemInfo.TYPEINFO.ObjectClassName;
+        info.ClassTableName = TypesenseQueryFieldWeightItemInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
+        info.ClassDisplayName = "Typesense Query Field Weight Item";
+        info.ClassType = ClassType.OTHER;
+        info.ClassResourceID = resource.ResourceID;
+
+        var formInfo = FormHelper.GetBasicFormDefinition(nameof(TypesenseQueryFieldWeightItemInfo.TypesenseQueryFieldWeightItemId));
+
+        var formItem = new FormFieldInfo
+        {
+            Name = nameof(TypesenseQueryFieldWeightItemInfo.TypesenseQueryFieldWeightItemGuid),
+            AllowEmpty = false,
+            Visible = true,
+            Precision = 0,
+            DataType = FieldDataType.Guid,
+            Enabled = true,
+        };
+        formInfo.AddFormItem(formItem);
+
+        formItem = new FormFieldInfo
+        {
+            Name = nameof(TypesenseQueryFieldWeightItemInfo.TypesenseQueryFieldWeightItemFieldName),
+            AllowEmpty = false,
+            Visible = true,
+            Precision = 0,
+            Size = 100,
+            DataType = FieldDataType.Text,
+            Enabled = true,
+        };
+        formInfo.AddFormItem(formItem);
+
+        formItem = new FormFieldInfo
+        {
+            Name = nameof(TypesenseQueryFieldWeightItemInfo.TypesenseQueryFieldWeightItemWeight),
+            AllowEmpty = false,
+            Visible = true,
+            Precision = 0,
+            DataType = FieldDataType.Integer,
+            Enabled = true,
+        };
+        formInfo.AddFormItem(formItem);
+
+        formItem = new FormFieldInfo
+        {
+            Name = nameof(TypesenseQueryFieldWeightItemInfo.TypesenseQueryFieldWeightItemQueryItemId),
+            AllowEmpty = false,
+            Visible = true,
+            Precision = 0,
+            DataType = FieldDataType.Integer,
+            ReferenceToObjectType = TypesenseQueryItemInfo.OBJECT_TYPE,
+            ReferenceType = ObjectDependencyEnum.Required,
+            Enabled = true,
         };
         formInfo.AddFormItem(formItem);
 

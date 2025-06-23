@@ -1,4 +1,3 @@
-using System;
 using System.Data;
 using System.Runtime.Serialization;
 
@@ -6,15 +5,18 @@ using CMS;
 using CMS.DataEngine;
 using CMS.Helpers;
 
-[assembly: RegisterObjectType(typeof(Kentico.Xperience.Typesense.Admin.TypesenseQueryItemInfo), Kentico.Xperience.Typesense.Admin.TypesenseQueryItemInfo.OBJECT_TYPE)]
+using Kentico.Xperience.Typesense.Admin;
+using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseQueryItem;
 
-namespace Kentico.Xperience.Typesense.Admin;
+[assembly: RegisterObjectType(typeof(TypesenseQueryItemInfo), TypesenseQueryItemInfo.OBJECT_TYPE)]
+
+namespace Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseQueryItem;
 
 /// <summary>
 /// Data container class for <see cref="TypesenseQueryItemInfo"/>.
 /// </summary>
 [Serializable]
-public partial class TypesenseQueryItemInfo : AbstractInfo<TypesenseQueryItemInfo, ITypesenseQueryItemInfoProvider>
+public partial class TypesenseQueryItemInfo : AbstractInfo<TypesenseQueryItemInfo, IInfoProvider<TypesenseQueryItemInfo>>, IInfoWithId, IInfoWithGuid
 {
     /// <summary>
     /// Object type.
@@ -24,7 +26,7 @@ public partial class TypesenseQueryItemInfo : AbstractInfo<TypesenseQueryItemInf
     /// <summary>
     /// Type information.
     /// </summary>
-    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(TypesenseQueryItemInfoProvider), OBJECT_TYPE, "KenticoTypesense.TypesenseQueryItem", nameof(TypesenseQueryItemId), null, nameof(TypesenseQueryItemGuid), nameof(TypesenseQueryItemCollectionAlias), null, null, null, null)
+    public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(IInfoProvider<TypesenseQueryItemInfo>), OBJECT_TYPE, "KenticoTypesense.TypesenseQueryItem", nameof(TypesenseQueryItemId), null, nameof(TypesenseQueryItemGuid), nameof(TypesenseQueryItemCollectionAlias), null, null, null, null)
     {
         TouchCacheDependencies = true,
         ContinuousIntegrationSettings =
@@ -69,21 +71,23 @@ public partial class TypesenseQueryItemInfo : AbstractInfo<TypesenseQueryItemInf
     protected override void DeleteObject()
     {
         Provider.Delete(this);
-    }
-
-    /// <summary>
-    /// Updates the object using appropriate provider.
-    /// </summary>
+    }    /// <summary>
+         /// Updates the object using appropriate provider.
+         /// </summary>
     protected override void SetObject()
     {
         Provider.Set(this);
-    }    /// <summary>
+    }
+
+
+    /// <summary>
     /// Creates an empty instance of the <see cref="TypesenseQueryItemInfo"/> class.
     /// </summary>
     public TypesenseQueryItemInfo()
         : base(TYPEINFO)
     {
     }
+
 
     /// <summary>
     /// Creates a new instances of the <see cref="TypesenseQueryItemInfo"/> class from the given <see cref="DataRow"/>.
