@@ -15,7 +15,7 @@ public class TypesenseModuleInstaller
     private readonly IInfoProvider<ResourceInfo> resourceProvider;
 
     public TypesenseModuleInstaller(IInfoProvider<ResourceInfo> resourceProvider) => this.resourceProvider = resourceProvider;
-
+    
     public void Install()
     {
         var resource = resourceProvider.Get("CMS.Integration.Typesense")
@@ -26,6 +26,7 @@ public class TypesenseModuleInstaller
         InstallTypesenseLanguageInfo(resource);
         InstallTypesenseCollectionPathItemInfo(resource);
         InstallTypesenseContentTypeItemInfo(resource);
+        InstallTypesenseQueryItemInfo(resource);
         InstallIndexQueueItemInfo(resource);
     }
 
@@ -320,6 +321,54 @@ public class TypesenseModuleInstaller
             Enabled = true
         };
 
+        formInfo.AddFormItem(formItem);
+
+        SetFormDefinition(info, formInfo);
+
+        if (info.HasChanged)
+        {
+            try
+            {
+                DataClassInfoProvider.SetDataClassInfo(info);
+            }
+            catch (Exception ex)
+            {
+                //TODO : Investigate the issue here
+            }
+        }
+    }    public void InstallTypesenseQueryItemInfo(ResourceInfo resource)
+    {
+        var info = DataClassInfoProvider.GetDataClassInfo(TypesenseQueryItemInfo.OBJECT_TYPE) ?? DataClassInfo.New(TypesenseQueryItemInfo.OBJECT_TYPE);
+
+        info.ClassName = TypesenseQueryItemInfo.TYPEINFO.ObjectClassName;
+        info.ClassTableName = TypesenseQueryItemInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
+        info.ClassDisplayName = "Typesense Query Item";
+        info.ClassType = ClassType.OTHER;
+        info.ClassResourceID = resource.ResourceID;
+
+        var formInfo = FormHelper.GetBasicFormDefinition(nameof(TypesenseQueryItemInfo.TypesenseQueryItemId));
+
+        var formItem = new FormFieldInfo
+        {
+            Name = nameof(TypesenseQueryItemInfo.TypesenseQueryItemGuid),
+            AllowEmpty = false,
+            Visible = true,
+            Precision = 0,
+            DataType = FieldDataType.Guid,
+            Enabled = true,
+        };
+        formInfo.AddFormItem(formItem);
+
+        formItem = new FormFieldInfo
+        {
+            Name = nameof(TypesenseQueryItemInfo.TypesenseQueryItemCollectionAlias),
+            AllowEmpty = false,
+            Visible = true,
+            Precision = 0,
+            Size = 100,
+            DataType = FieldDataType.Text,
+            Enabled = true
+        };
         formInfo.AddFormItem(formItem);
 
         SetFormDefinition(info, formInfo);

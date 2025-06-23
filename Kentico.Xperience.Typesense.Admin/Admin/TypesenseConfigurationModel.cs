@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 using Kentico.Xperience.Admin.Base.FormAnnotations;
-using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Admin.Providers;
+using Kentico.Xperience.Typesense.Xperience;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseContentTypeItem;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIncludedPathItem;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexItem;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseIndexLanguageItem;
 
-namespace Kentico.Xperience.Typesense.Xperience;
+namespace Kentico.Xperience.Typesense.Admin;
 
 public class TypesenseConfigurationModel : ITypesenseConfigurationModel
 {
@@ -53,7 +53,6 @@ public class TypesenseConfigurationModel : ITypesenseConfigurationModel
         ChannelName = index.TypesenseCollectionItemChannelName;
         RebuildHook = index.TypesenseCollectionItemRebuildHook;
         StrategyName = index.TypesenseCollectionItemStrategyName;
-        
         LanguageNames = indexLanguages
             .Where(l => l.TypesenseCollectionLanguageItemCollectionItemId == index.TypesenseCollectionItemId)
             .Select(l => l.TypesenseCollectionLanguageItemName)

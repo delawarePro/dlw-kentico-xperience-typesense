@@ -80,7 +80,7 @@ We didn't provide support for this project, but you can submit an issue or a pul
 ## Create the new version of the package
 
 1. Edit the version prefix in Directory.Build.props
-2. `git commit -am "V1.0.23-beta-3"`
+2. `git commit -am "v1.0.24-beta-1"`
 3. `git push origin`
-4. `git tag V1.0.23-beta-3`
+4. `git tag v1.0.24-beta-1`
 5. `git push origin --tags`

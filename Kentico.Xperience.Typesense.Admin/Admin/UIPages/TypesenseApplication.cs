@@ -23,6 +23,8 @@ namespace Kentico.Xperience.Typesense.Admin;
 [UIPermission(SystemPermissions.UPDATE)]
 [UIPermission(SystemPermissions.DELETE)]
 [UIPermission(TypesenseCollectionPermissions.REBUILD, "Rebuild")]
+[UIPermission(TypesenseQueryPermissions.VIEW, "View Queries")]
+[UIPermission(TypesenseQueryPermissions.MODIFY, "Modify Queries")]
 internal class TypesenseApplicationPage : ApplicationPage
 {
     public const string IDENTIFIER = "Delaware.Xperience.Integrations.Typesense";

@@ -11,19 +11,17 @@ namespace Kentico.Xperience.Typesense;
 /// Application startup extension methods.
 /// </summary>
 public static class TypesenseAdminStartupExtensions
-{
-    /// <summary>
-    /// Adds Typesense services and custom module to application with customized options provided by the <see cref="ITypesenseBuilder"/>
-    /// in the <paramref name="configure" /> action.
+{    /// <summary>
+    /// Adds Typesense services and custom module to application.
     /// </summary>
     /// <param name="serviceCollection"></param>
-    /// <param name="configure"></param>
-    /// <param name="configuration">The application configuration.</param>
     /// <returns></returns>
     public static IServiceCollection AddKenticoAdminTypesense(this IServiceCollection serviceCollection) =>
         serviceCollection
             .AddSingleton<TypesenseModuleInstaller>()
             .AddSingleton<ITypesenseConfigurationKenticoStorageService, DefaultTypesenseConfigurationKenticoStorageService>()
             .AddSingleton<ITypesenseCollectionService, DefaultTypesenseCollectionService>()
+            .AddSingleton<ITypesenseQueryStorageService, DefaultTypesenseQueryStorageService>()
+            .AddSingleton<ITypesenseQueryService, DefaultTypesenseQueryService>()
             .AddHostedService<TypesenseBackgroundWorker>();
 }
