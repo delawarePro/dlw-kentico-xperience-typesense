@@ -94,7 +94,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         }
     }
 
-    public async Task<ICollection<TypesenseCollectionAliasViewModel>> GetAliases(CancellationToken cancellationToken)
+    public async Task<ICollection<TypesenseCollectionAliasViewModel>> GetAliases(CancellationToken cancellationToken = default)
     {
         try
         {
@@ -456,4 +456,8 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
 
         return (currentCollection.Name, newCollectionName);
     }
+
+    public async Task<CollectionResponse> GetCollectionDetails(string collectionAlias, CancellationToken cancellationToken = default) => await searchClient.RetrieveCollection(collectionAlias, cancellationToken);
+
+    public async Task<CollectionResponse> GetAllCollectionDetails(string collectionAlias, CancellationToken cancellationToken = default) => await searchClient.RetrieveCollection(collectionAlias, cancellationToken);
 }

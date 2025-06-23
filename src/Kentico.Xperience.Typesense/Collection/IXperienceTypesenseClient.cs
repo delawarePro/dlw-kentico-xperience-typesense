@@ -38,7 +38,7 @@ public interface IXperienceTypesenseClient
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<ICollection<TypesenseCollectionAliasViewModel>> GetAliases(CancellationToken cancellationToken);
+    Task<ICollection<TypesenseCollectionAliasViewModel>> GetAliases(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Updates the Typesense index with the dynamic data in each object of the passed <paramref name="dataObjects"/>.
@@ -87,4 +87,6 @@ public interface IXperienceTypesenseClient
 
     Task<(string activeCollectionName, string newCollectionName)> GetCollectionNames(string collectionName);
     Task<int> SwapAliasWhenRebuildIsDone(IEnumerable<TypesenseQueueItem> endOfQueueItem, CancellationToken cancellationToken);
+    Task<CollectionResponse> GetCollectionDetails(string collectionAlias, CancellationToken cancellationToken = default);
+    Task<CollectionResponse> GetAllCollectionDetails(string collectionAlias, CancellationToken cancellationToken = default);
 }
