@@ -1,6 +1,6 @@
-namespace Kentico.Xperience.Typesense.Admin;
+namespace Kentico.Xperience.Typesense.Query;
 
 public interface ITypesenseQueryService
 {
-    Task<bool> CreateOrEditQuery(TypesenseQueryModel query);
+    public Task<bool> CreateOrEditQuery(TypesenseQueryAdminModel query);
 }

@@ -1,10 +1,12 @@
 using CMS.Membership;
-using IFormItemCollectionProvider = Kentico.Xperience.Admin.Base.Forms.Internal.IFormItemCollectionProvider;
 
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.Forms;
-using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Admin.UIPages;
+using Kentico.Xperience.Typesense.Queries;
+using Kentico.Xperience.Typesense.Query;
+
+using IFormItemCollectionProvider = Kentico.Xperience.Admin.Base.Forms.Internal.IFormItemCollectionProvider;
 
 [assembly: UIPage(
    parentType: typeof(QueryListingPage),
@@ -14,12 +16,12 @@ using Kentico.Xperience.Typesense.Admin.UIPages;
    templateName: TemplateNames.EDIT,
    order: UIPageOrder.NoOrder)]
 
-namespace Kentico.Xperience.Typesense.Admin;
+namespace Kentico.Xperience.Typesense.Admin.UIPages;
 
 [UIEvaluatePermission(SystemPermissions.UPDATE)]
 internal class QueryEditPage : BaseQueryEditPage
 {
-    private TypesenseQueryModel? model = null;
+    private TypesenseQueryAdminModel? model = null;
 
     [PageParameter(typeof(IntPageModelBinder))]
     public int QueryIdentifier { get; set; }
@@ -30,16 +32,16 @@ internal class QueryEditPage : BaseQueryEditPage
                  ITypesenseQueryService queryService)
         : base(formItemCollectionProvider, formDataBinder, storageService, queryService) { }
 
-    protected override TypesenseQueryModel Model
+    protected override TypesenseQueryAdminModel Model
     {
         get
         {
-            model ??= StorageService.GetQueryDataOrNull(QueryIdentifier) ?? new();
+            model ??= new TypesenseQueryAdminModel(StorageService.GetQueryDataOrNull(QueryIdentifier) ?? new());
             return model;
         }
     }
 
-    protected override async Task<ICommandResponse> ProcessFormData(TypesenseQueryModel model, ICollection<IFormItem> formItems)
+    protected override async Task<ICommandResponse> ProcessFormData(TypesenseQueryAdminModel model, ICollection<IFormItem> formItems)
     {
         var result = await ValidateAndProcess(model);
 

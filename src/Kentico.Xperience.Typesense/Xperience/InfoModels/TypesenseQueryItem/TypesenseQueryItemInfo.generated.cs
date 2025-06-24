@@ -21,12 +21,12 @@ public partial class TypesenseQueryItemInfo : AbstractInfo<TypesenseQueryItemInf
     /// <summary>
     /// Object type.
     /// </summary>
-    public const string OBJECT_TYPE = "kenticotypesense.typesenseueryitem";
+    public const string OBJECT_TYPE = "kenticotypesense.typesensequeryitem";
 
     /// <summary>
     /// Type information.
     /// </summary>
-    public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(IInfoProvider<TypesenseQueryItemInfo>), OBJECT_TYPE, "KenticoTypesense.TypesenseQueryItem", nameof(TypesenseQueryItemId), null, nameof(TypesenseQueryItemGuid), nameof(TypesenseQueryItemCollectionAlias), null, null, null, null)
+    public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(IInfoProvider<TypesenseQueryItemInfo>), OBJECT_TYPE, "KenticoTypesense.TypesenseQueryItem", nameof(TypesenseQueryItemId), null, nameof(TypesenseQueryItemGuid), nameof(TypesenseQueryItemQueryName), null, null, null, null)
     {
         TouchCacheDependencies = true,
         ContinuousIntegrationSettings =
@@ -53,6 +53,16 @@ public partial class TypesenseQueryItemInfo : AbstractInfo<TypesenseQueryItemInf
     {
         get => ValidationHelper.GetGuid(GetValue(nameof(TypesenseQueryItemGuid)), default);
         set => SetValue(nameof(TypesenseQueryItemGuid), value);
+    }
+
+    /// <summary>
+    /// Query name.
+    /// </summary>
+    [DatabaseField]
+    public virtual string TypesenseQueryItemQueryName
+    {
+        get => ValidationHelper.GetString(GetValue(nameof(TypesenseQueryItemQueryName)), String.Empty);
+        set => SetValue(nameof(TypesenseQueryItemQueryName), value);
     }
 
     /// <summary>

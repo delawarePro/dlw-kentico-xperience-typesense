@@ -15,7 +15,7 @@ public class TypesenseQueryFieldWeightsComponentAttribute : FormComponentAttribu
 {
 }
 
-public class TypesenseQueryFieldWeightsComponentClientProperties : FormComponentClientProperties<IEnumerable<TypesenseQueryFieldWeight>>
+public class TypesenseQueryFieldWeightsComponentClientProperties : FormComponentClientProperties<IEnumerable<Queries.TypesenseQueryFieldWeight>>
 {
 }
 
@@ -30,17 +30,17 @@ public class TypesenseQueryFieldWeightsComponentProperties : FormComponentProper
 /// Form component for configuring Typesense query field weights.
 /// </summary>
 [ComponentAttribute(typeof(TypesenseQueryFieldWeightsComponentAttribute))]
-public class TypesenseQueryFieldWeightsComponent : FormComponent<TypesenseQueryFieldWeightsComponentProperties, TypesenseQueryFieldWeightsComponentClientProperties, IEnumerable<TypesenseQueryFieldWeight>>
+public class TypesenseQueryFieldWeightsComponent : FormComponent<TypesenseQueryFieldWeightsComponentProperties, TypesenseQueryFieldWeightsComponentClientProperties, IEnumerable<Queries.TypesenseQueryFieldWeight>>
 {
     public const string IDENTIFIER = "delaware.xperience-integrations-typesense.typesense-query-field-weights";
 
-    internal List<TypesenseQueryFieldWeight>? Value { get; set; }
+    internal List<Queries.TypesenseQueryFieldWeight>? Value { get; set; }
 
     public override string ClientComponentName => "@delaware/xperience-integrations-typesense/TypesenseQueryFieldWeights";
 
-    public override IEnumerable<TypesenseQueryFieldWeight> GetValue() => Value ?? [];
+    public override IEnumerable<Queries.TypesenseQueryFieldWeight> GetValue() => Value ?? [];
 
-    public override void SetValue(IEnumerable<TypesenseQueryFieldWeight> value) => Value = value.ToList();
+    public override void SetValue(IEnumerable<Queries.TypesenseQueryFieldWeight> value) => Value = value.ToList();
 
     protected override async Task ConfigureClientProperties(TypesenseQueryFieldWeightsComponentClientProperties properties)
     {

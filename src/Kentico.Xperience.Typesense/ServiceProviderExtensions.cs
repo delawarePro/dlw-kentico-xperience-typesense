@@ -1,6 +1,8 @@
 using Kentico.Xperience.Typesense.Collection;
 
-namespace Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Kentico.Xperience.Typesense;
 
 internal static class ServiceProviderExtensions
 {

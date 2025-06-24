@@ -3,8 +3,6 @@ using CMS.Websites;
 
 using Kentico.Xperience.Typesense.Search;
 
-using Microsoft.Extensions.DependencyInjection;
-
 using Typesense;
 
 namespace Kentico.Xperience.Typesense.Collection;

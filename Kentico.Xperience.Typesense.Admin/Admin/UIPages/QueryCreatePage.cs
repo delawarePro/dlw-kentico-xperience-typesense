@@ -3,6 +3,8 @@ using CMS.Membership;
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.Forms;
 using Kentico.Xperience.Typesense.Admin.UIPages;
+using Kentico.Xperience.Typesense.Queries;
+using Kentico.Xperience.Typesense.Query;
 
 using IFormItemCollectionProvider = Kentico.Xperience.Admin.Base.Forms.Internal.IFormItemCollectionProvider;
 
@@ -20,7 +22,7 @@ namespace Kentico.Xperience.Typesense.Admin.UIPages;
 internal class QueryCreatePage : BaseQueryEditPage
 {
     private readonly IPageLinkGenerator pageLinkGenerator;
-    private TypesenseQueryModel? model;
+    private TypesenseQueryAdminModel? model;
 
     public QueryCreatePage(
         IFormItemCollectionProvider formItemCollectionProvider,
@@ -31,7 +33,7 @@ internal class QueryCreatePage : BaseQueryEditPage
         : base(formItemCollectionProvider, formDataBinder, storageService, queryService) =>
         this.pageLinkGenerator = pageLinkGenerator;
 
-    protected override TypesenseQueryModel Model
+    protected override TypesenseQueryAdminModel Model
     {
         get
         {
@@ -40,7 +42,7 @@ internal class QueryCreatePage : BaseQueryEditPage
         }
     }
 
-    protected override async Task<ICommandResponse> ProcessFormData(TypesenseQueryModel model, ICollection<IFormItem> formItems)
+    protected override async Task<ICommandResponse> ProcessFormData(TypesenseQueryAdminModel model, ICollection<IFormItem> formItems)
     {
         var result = await ValidateAndProcess(model);
 

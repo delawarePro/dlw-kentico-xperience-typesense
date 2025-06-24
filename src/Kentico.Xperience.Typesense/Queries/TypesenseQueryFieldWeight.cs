@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseQueryFieldWeightItem;
 
-namespace Kentico.Xperience.Typesense.Admin;
+namespace Kentico.Xperience.Typesense.Queries;
 
 /// <summary>
 /// Represents a field weight configuration for Typesense query searches.

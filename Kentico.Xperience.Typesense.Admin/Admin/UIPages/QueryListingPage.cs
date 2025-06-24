@@ -4,6 +4,7 @@ using CMS.Membership;
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Admin.UIPages;
+using Kentico.Xperience.Typesense.Queries;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseQueryItem;
 
 [assembly: UIPage(
@@ -51,12 +52,12 @@ internal class QueryListingPage : ListingPage
                     ContentAsHtml = true,
                     Type = CalloutType.FriendlyWarning,
                     Placement = CalloutPlacement.OnDesk
-                }
-            ];
+                }            ];
         }
 
         PageConfiguration.ColumnConfigurations
             .AddColumn(nameof(TypesenseQueryItemInfo.TypesenseQueryItemId), "ID", defaultSortDirection: SortTypeEnum.Asc, sortable: true)
+            .AddColumn(nameof(TypesenseQueryItemInfo.TypesenseQueryItemQueryName), "Query Name", sortable: true, searchable: true)
             .AddColumn(nameof(TypesenseQueryItemInfo.TypesenseQueryItemCollectionAlias), "Collection Alias", sortable: true, searchable: true);
 
         PageConfiguration.AddEditRowAction<QueryEditPage>();

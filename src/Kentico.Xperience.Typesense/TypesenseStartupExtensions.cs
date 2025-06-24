@@ -2,6 +2,7 @@
 
 using Kentico.Xperience.Typesense.Collection;
 using Kentico.Xperience.Typesense.JsonResolvers;
+using Kentico.Xperience.Typesense.Queries;
 using Kentico.Xperience.Typesense.QueueWorker;
 
 using Microsoft.Extensions.Configuration;
@@ -80,6 +81,7 @@ public static class TypesenseStartupExtensions
 
                 return new SearchClient(configuration);
             })*/
+           .AddSingleton<ITypesenseQueryStorageService, DefaultTypesenseQueryStorageService>()
            .AddSingleton<IXperienceTypesenseClient, DefaultTypesenseClient>()
            .AddSingleton<ITypesenseTaskLogger, DefaultTypesenseTaskLogger>()
            .AddSingleton<ITypesenseTaskProcessor, DefaultTypesenseTaskProcessor>();

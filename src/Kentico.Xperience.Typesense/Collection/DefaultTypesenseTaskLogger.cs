@@ -3,8 +3,6 @@ using CMS.Websites;
 
 using Kentico.Xperience.Typesense.QueueWorker;
 
-using Microsoft.Extensions.DependencyInjection;
-
 namespace Kentico.Xperience.Typesense.Collection;
 
 /// <summary>

@@ -5,7 +5,7 @@ using CMS.DataEngine;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseQueryFieldWeightItem;
 using Kentico.Xperience.Typesense.Xperience.InfoModels.TypesenseQueryItem;
 
-namespace Kentico.Xperience.Typesense.Admin;
+namespace Kentico.Xperience.Typesense.Queries;
 
 internal class DefaultTypesenseQueryStorageService : ITypesenseQueryStorageService
 {
@@ -37,7 +37,7 @@ internal class DefaultTypesenseQueryStorageService : ITypesenseQueryStorageServi
     public Task<bool> TryCreateQuery(TypesenseQueryModel query)
     {
         var existingQuery = queryProvider.Get()
-            .WhereEquals(nameof(TypesenseQueryItemInfo.TypesenseQueryItemCollectionAlias), query.CollectionAlias)
+            .WhereEquals(nameof(TypesenseQueryItemInfo.TypesenseQueryItemQueryName), query.QueryName)
             .TopN(1)
             .FirstOrDefault();
 
@@ -48,6 +48,7 @@ internal class DefaultTypesenseQueryStorageService : ITypesenseQueryStorageServi
 
         var newInfo = new TypesenseQueryItemInfo()
         {
+            TypesenseQueryItemQueryName = query.QueryName ?? "",
             TypesenseQueryItemCollectionAlias = query.CollectionAlias ?? ""
         };
 
@@ -73,6 +74,7 @@ internal class DefaultTypesenseQueryStorageService : ITypesenseQueryStorageServi
         return new TypesenseQueryModel
         {
             Id = queryInfo.TypesenseQueryItemId,
+            QueryName = queryInfo.TypesenseQueryItemQueryName,
             CollectionAlias = queryInfo.TypesenseQueryItemCollectionAlias,
             FieldWeights = fieldWeights
         };
@@ -81,6 +83,8 @@ internal class DefaultTypesenseQueryStorageService : ITypesenseQueryStorageServi
     public List<string> GetExistingCollectionAliases() => queryProvider.Get().Select(x => x.TypesenseQueryItemCollectionAlias).ToList();
 
     public List<int> GetQueryIds() => queryProvider.Get().Select(x => x.TypesenseQueryItemId).ToList();
+
+    public IEnumerable<TypesenseQueryItemInfo> GetAllQueryBasicInfo() => queryProvider.Get().GetEnumerableTypedResult().ToList();
 
     public IEnumerable<TypesenseQueryModel> GetAllQueryData()
     {
@@ -96,11 +100,33 @@ internal class DefaultTypesenseQueryStorageService : ITypesenseQueryStorageServi
             return new TypesenseQueryModel
             {
                 Id = query.TypesenseQueryItemId,
+                QueryName = query.TypesenseQueryItemQueryName,
                 CollectionAlias = query.TypesenseQueryItemCollectionAlias,
                 FieldWeights = fieldWeights
             };
         });
     }
+
+    public TypesenseQueryModel? GetQueryDataByName(string queryName)
+    {
+        var query = queryProvider.Get()
+                            .WhereEquals(nameof(TypesenseQueryItemInfo.TypesenseQueryItemQueryName), queryName)
+                            .FirstOrDefault();
+        if (query == null)
+        {
+            return null;
+        }
+
+        var fieldWeights = LoadFieldWeights(query.TypesenseQueryItemId);
+        return new TypesenseQueryModel
+        {
+            Id = query.TypesenseQueryItemId,
+            QueryName = query.TypesenseQueryItemQueryName,
+            CollectionAlias = query.TypesenseQueryItemCollectionAlias,
+            FieldWeights = fieldWeights
+        };
+    }
+
 
     public Task<bool> TryEditQuery(TypesenseQueryModel query)
     {
@@ -116,6 +142,7 @@ internal class DefaultTypesenseQueryStorageService : ITypesenseQueryStorageServi
             return Task.FromResult(false);
         }
 
+        queryInfo.TypesenseQueryItemQueryName = query.QueryName ?? "";
         queryInfo.TypesenseQueryItemCollectionAlias = query.CollectionAlias ?? "";
         queryProvider.Set(queryInfo);
 

@@ -348,7 +348,6 @@ public class TypesenseModuleInstaller
         info.ClassResourceID = resource.ResourceID;
 
         var formInfo = FormHelper.GetBasicFormDefinition(nameof(TypesenseQueryItemInfo.TypesenseQueryItemId));
-
         var formItem = new FormFieldInfo
         {
             Name = nameof(TypesenseQueryItemInfo.TypesenseQueryItemGuid),
@@ -357,6 +356,18 @@ public class TypesenseModuleInstaller
             Precision = 0,
             DataType = FieldDataType.Guid,
             Enabled = true,
+        };
+        formInfo.AddFormItem(formItem);
+
+        formItem = new FormFieldInfo
+        {
+            Name = nameof(TypesenseQueryItemInfo.TypesenseQueryItemQueryName),
+            AllowEmpty = false,
+            Visible = true,
+            Precision = 0,
+            Size = 100,
+            DataType = FieldDataType.Text,
+            Enabled = true
         };
         formInfo.AddFormItem(formItem);
 

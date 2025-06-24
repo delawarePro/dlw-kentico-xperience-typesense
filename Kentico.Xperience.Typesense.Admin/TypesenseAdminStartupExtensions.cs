@@ -1,5 +1,6 @@
 ﻿using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Collection;
+using Kentico.Xperience.Typesense.Query;
 using Kentico.Xperience.Typesense.QueueWorker;
 using Kentico.Xperience.Typesense.Xperience;
 
@@ -21,7 +22,6 @@ public static class TypesenseAdminStartupExtensions
             .AddSingleton<TypesenseModuleInstaller>()
             .AddSingleton<ITypesenseConfigurationKenticoStorageService, DefaultTypesenseConfigurationKenticoStorageService>()
             .AddSingleton<ITypesenseCollectionService, DefaultTypesenseCollectionService>()
-            .AddSingleton<ITypesenseQueryStorageService, DefaultTypesenseQueryStorageService>()
             .AddSingleton<ITypesenseQueryService, DefaultTypesenseQueryService>()
             .AddHostedService<TypesenseBackgroundWorker>();
 }

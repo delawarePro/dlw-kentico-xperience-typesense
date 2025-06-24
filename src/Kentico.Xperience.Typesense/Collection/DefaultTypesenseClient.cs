@@ -8,8 +8,6 @@ using Kentico.Xperience.Typesense.QueueWorker;
 using Kentico.Xperience.Typesense.Search;
 using Kentico.Xperience.Typesense.Xperience;
 
-using Microsoft.Extensions.DependencyInjection;
-
 using Typesense;
 
 namespace Kentico.Xperience.Typesense.Collection;

@@ -2,7 +2,6 @@
 
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.Forms;
-using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Admin.UIPages;
 using Kentico.Xperience.Typesense.Collection;
 using Kentico.Xperience.Typesense.Xperience;
@@ -17,7 +16,7 @@ using IFormItemCollectionProvider = Kentico.Xperience.Admin.Base.Forms.Internal.
    templateName: TemplateNames.EDIT,
    order: UIPageOrder.NoOrder)]
 
-namespace Kentico.Xperience.Typesense.Admin;
+namespace Kentico.Xperience.Typesense.Admin.UIPages;
 
 [UIEvaluatePermission(SystemPermissions.CREATE)]
 internal class CollectionCreatePage : BaseCollectionEditPage
@@ -32,9 +31,7 @@ internal class CollectionCreatePage : BaseCollectionEditPage
         IPageUrlGenerator pageUrlGenerator,
         ITypesenseCollectionService collectionService)
         : base(formItemCollectionProvider, formDataBinder, storageService, collectionService)
-    {
-        this.pageUrlGenerator = pageUrlGenerator;
-    }
+        => this.pageUrlGenerator = pageUrlGenerator;
 
     protected override TypesenseConfigurationModel Model
     {
