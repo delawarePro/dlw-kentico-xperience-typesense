@@ -1,8 +1,10 @@
 ﻿using DancingGoat.Models;
+
+using Kentico.Xperience.Typesense.Admin;
 using Kentico.Xperience.Typesense.Collection;
 using Kentico.Xperience.Typesense.Xperience;
 
-namespace Kentico.Xperience.Typesense.Tests.Base;
+namespace Kentico.Xperience.Typesense.Tests.Data;
 internal static class MockDataProvider
 {
     public static CollectionEventWebPageItemModel WebModel(CollectionEventWebPageItemModel item)
