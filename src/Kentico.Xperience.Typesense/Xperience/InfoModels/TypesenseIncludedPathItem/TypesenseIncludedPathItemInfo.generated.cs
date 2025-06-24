@@ -105,7 +105,7 @@ public partial class TypesenseIncludedPathItemInfo : AbstractInfo<TypesenseInclu
 
 
     /// <summary>
-    /// Creates an empty instance of the <see cref="ChannelGeneralSettingsInfo"/> class.
+    /// Creates an empty instance of the <see cref="TypesenseIncludedPathItemInfo"/> class.
     /// </summary>
     public TypesenseIncludedPathItemInfo()
         : base(TYPEINFO)
@@ -114,7 +114,7 @@ public partial class TypesenseIncludedPathItemInfo : AbstractInfo<TypesenseInclu
 
 
     /// <summary>
-    /// Creates a new instances of the <see cref="ChannelGeneralSettingsInfo"/> class from the given <see cref="DataRow"/>.
+    /// Creates a new instances of the <see cref="TypesenseIncludedPathItemInfo"/> class from the given <see cref="DataRow"/>.
     /// </summary>
     /// <param name="dr">DataRow with the object data.</param>
     public TypesenseIncludedPathItemInfo(DataRow dr)

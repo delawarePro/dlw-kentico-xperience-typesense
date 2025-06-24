@@ -113,7 +113,7 @@ public partial class TypesenseIndexItemInfo : AbstractInfo<TypesenseIndexItemInf
 
 
     /// <summary>
-    /// Creates an empty instance of the <see cref="ChannelGeneralSettingsInfo"/> class.
+    /// Creates an empty instance of the <see cref="TypesenseIndexItemInfo"/> class.
     /// </summary>
     public TypesenseIndexItemInfo()
         : base(TYPEINFO)
@@ -122,7 +122,7 @@ public partial class TypesenseIndexItemInfo : AbstractInfo<TypesenseIndexItemInf
 
 
     /// <summary>
-    /// Creates a new instances of the <see cref="ChannelGeneralSettingsInfo"/> class from the given <see cref="DataRow"/>.
+    /// Creates a new instances of the <see cref="TypesenseIndexItemInfo"/> class from the given <see cref="DataRow"/>.
     /// </summary>
     /// <param name="dr">DataRow with the object data.</param>
     public TypesenseIndexItemInfo(DataRow dr)
