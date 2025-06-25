@@ -45,8 +45,8 @@
     "webpack-dev-server": "4.15.1"
   },
   "overrides": {
-    "react": "$react",
-    "react-dom": "$react"
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   },
   "browserslist": [
     "> .2% and last 3 versions",
