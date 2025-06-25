@@ -30,22 +30,32 @@ public class DefaultTypesenseCollectionStrategy : ITypesenseCollectionStrategy
         return Task.FromResult<IEnumerable<TypesenseSearchResultModel>?>(result);
     }
 
-    public virtual Task<ITypesenseCollectionSettings> GetTypesenseCollectionSettings(TypesenseCollection collection, bool enableNestedFields = false)
+    public virtual string? GetCollectionLanguage(TypesenseCollection collection)
     {
         var languageNames = collection.LanguageNames ?? [];
         string? locale = null;
         if (languageNames.Count == 1)
         {
-            locale = languageNames[0];
+            locale = languageNames[0]?.ToLowerInvariant();
+            if (!string.IsNullOrEmpty(locale) && locale.Length > 2)
+            {
+                locale = locale[..2];
+            }
         }
+        return locale;
+    }
+
+    public virtual Task<ITypesenseCollectionSettings> GetTypesenseCollectionSettings(TypesenseCollection collection, bool enableNestedFields = false)
+    {
+        string? locale = GetCollectionLanguage(collection);
 
         return Task.FromResult<ITypesenseCollectionSettings>(new TypesenseCollectionSettings()
         {
             EnableNestedFields = enableNestedFields,
             Fields = {
-                new Field(BaseObjectProperties.ITEM_GUID, FieldType.String, locale: locale),
-                new Field(BaseObjectProperties.CONTENT_TYPE_NAME, FieldType.String, locale: locale),
-                new Field(BaseObjectProperties.LANGUAGE_NAME, FieldType.String, locale: locale),
+                new Field(BaseObjectProperties.ITEM_GUID, FieldType.String),
+                new Field(BaseObjectProperties.CONTENT_TYPE_NAME, FieldType.String),
+                new Field(BaseObjectProperties.LANGUAGE_NAME, FieldType.String),
                 new Field(BaseObjectProperties.URL, FieldType.String, locale: locale),
             }
         });
