@@ -1,21 +1,23 @@
 import { type FormComponentProps } from '@kentico/xperience-admin-base';
 import {
-  type ActionCell,
   Button,
   ButtonType,
   CellType,
   ColumnContentType,
   Input,
   Stack,
-  type StringCell,
   Table,
-  type TableAction,
-  type TableCell,
-  type TableColumn,
-  type TableRow,
+} from '@kentico/xperience-admin-components';
+import type {
+  ActionCell,
+  StringCell,
+  TableAction,
+  TableCell,
+  TableColumn,
+  TableRow,
 } from '@kentico/xperience-admin-components';
 import React, { useEffect, useState } from 'react';
-import { JSX } from 'react/jsx-runtime';
+import type { JSX } from 'react/jsx-runtime';
 
 export interface TypesenseQueryFieldWeight {
   fieldName: string;
@@ -167,9 +169,9 @@ export const TypesenseQueryFieldWeightsFormComponent = (
       }
     }
     const row = rows[rowIndex];
-
     setFieldName((row.cells[0] as StringCell).value);
-    setFieldWeight(parseInt((row.cells[1] as StringCell).value) || 1);
+    const parsedWeight = parseInt((row.cells[1] as StringCell).value, 10);
+    setFieldWeight(Number.isNaN(parsedWeight) ? 1 : parsedWeight);
 
     if (!showFieldEdit) {
       setEditedIdentifier((row.cells[0] as StringCell).value);
@@ -190,7 +192,7 @@ export const TypesenseQueryFieldWeightsFormComponent = (
     event: React.ChangeEvent<HTMLInputElement>,
   ): void => {
     const value = parseInt(event.target.value, 10);
-    if (!isNaN(value) && value >= 1 && value <= 100) {
+    if (!Number.isNaN(value) && value >= 1 && value <= 100) {
       setFieldWeight(value);
     }
   };
@@ -207,7 +209,7 @@ export const TypesenseQueryFieldWeightsFormComponent = (
           alert('Field name cannot be empty');
         } else {
           const newFieldWeight: TypesenseQueryFieldWeight = {
-            fieldName: fieldName,
+            fieldName,
             weight: fieldWeight,
             identifier: null,
           };
@@ -229,10 +231,9 @@ export const TypesenseQueryFieldWeightsFormComponent = (
         const propFieldIndex = props.value.findIndex(
           (p) => p.fieldName === editedIdentifier,
         );
-
         if (propFieldIndex !== -1) {
           const updatedFieldWeight: TypesenseQueryFieldWeight = {
-            fieldName: fieldName,
+            fieldName,
             weight: fieldWeight,
             identifier: props.value[propFieldIndex].identifier,
           };
