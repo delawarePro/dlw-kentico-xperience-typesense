@@ -2013,6 +2013,7 @@
       "Delaware.Kentico.Xperience.Typesense.Admin": {
         "type": "Project",
         "dependencies": {
+          "Delaware.Kentico.Xperience.Typesense": "[1.0.25-beta-1, )",
           "Kentico.Xperience.Admin": "[30.6.0, )",
           "Kentico.Xperience.AzureStorage": "[30.6.0, )"
         }

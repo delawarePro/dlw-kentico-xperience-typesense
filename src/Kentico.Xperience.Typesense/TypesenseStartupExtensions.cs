@@ -152,7 +152,7 @@ public interface ITypesenseBuilder
     ///     Thrown if an strategy has already been registered with the given <paramref name="strategyName"/>
     /// </exception>
     /// <returns></returns>
-    ITypesenseBuilder RegisterStrategy<TStrategy>(string strategyName) where TStrategy : class, ITypesenseCollectionStrategy;
+    public ITypesenseBuilder RegisterStrategy<TStrategy>(string strategyName) where TStrategy : class, ITypesenseCollectionStrategy;
 }
 
 internal class TypesenseBuilder : ITypesenseBuilder
