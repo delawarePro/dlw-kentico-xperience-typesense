@@ -58,8 +58,4 @@
 		<None Remove="Client\node_modules\**" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\src\Kentico.Xperience.Typesense\Kentico.Xperience.Typesense.csproj" />
-	</ItemGroup>
-
 </Project>
