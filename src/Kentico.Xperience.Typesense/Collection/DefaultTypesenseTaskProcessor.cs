@@ -83,8 +83,8 @@ internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
                 deleteIds = deleteIds.Distinct().ToList();
 
                 successfulOperations += await typesenseClient.DeleteRecords(deleteIds, group.Key, cancellationToken);
-                successfulOperations += await typesenseClient.UpsertRecords(upsertData, group.Key, ImportType.Create, cancellationToken);
-                successfulOperations += await typesenseClient.UpsertRecords(updateData, group.Key, ImportType.Update, cancellationToken);
+                successfulOperations += await typesenseClient.UpsertRecords(upsertData, group.Key, ImportType.Upsert, cancellationToken);
+                successfulOperations += await typesenseClient.UpsertRecords(updateData, group.Key, ImportType.Upsert, cancellationToken);
             }
             catch (Exception ex)
             {

@@ -76,7 +76,7 @@ function Get-CurrentVersion {
 }
 
 # Function to parse version components
-function Parse-Version {
+function Search-VersionComponents {
     param([string]$version)
     
     # Match pattern like "1.0.25-beta-2" or "1.0.25"
@@ -239,13 +239,13 @@ try {
     
     # Get current version
     $currentVersion = Get-CurrentVersion
-    $versionInfo = Parse-Version $currentVersion
+    $versionInfo = Search-VersionComponents $currentVersion
     
     Write-Host "📋 Current version: $currentVersion" -ForegroundColor Yellow
     
     # Handle custom version
     if ($CustomVersion) {
-        $parsedCustom = Parse-Version $CustomVersion
+        Search-VersionComponents $CustomVersion
         Update-Version $CustomVersion
         exit 0
     }
@@ -306,7 +306,11 @@ try {
     $nextRelease = Get-NextReleaseVersion $versionInfo
     $nextMinor = Get-NextMajorMinorVersion $versionInfo 'minor'
     $nextMajor = Get-NextMajorMinorVersion $versionInfo 'major'
-    
+        
+    Write-Host "  [0] 📦 Créer un package local NuGet" -ForegroundColor DarkCyan
+    Write-Host "      📝 Utilisation : Build le package NuGet localement dans D:\\LocalNuget" -ForegroundColor Gray
+    Write-Host ""
+
     Write-Host "  [1] 🚧 Nouvelle version BETA" -ForegroundColor Yellow
     Write-Host "      Version actuelle : $currentVersion" -ForegroundColor Gray
     Write-Host "      Nouvelle version : $nextBeta" -ForegroundColor Green
@@ -332,7 +336,7 @@ try {
     Write-Host ""
     
     Write-Host "  [5] ✏️  Version PERSONNALISÉE" -ForegroundColor DarkYellow
-    Write-Host "      📝 Utilisation : Spécifier manuellement une version" -ForegroundColor Gray
+    Write-Host "      📝 Utilisation : Spécifier manuellement une version" -ForegroundColor Gray    
     Write-Host ""
     
     Write-Host "  [6] ❌ ANNULER et quitter" -ForegroundColor Red
@@ -342,9 +346,27 @@ try {
     
     do {
         Write-Host "`n💡 " -NoNewline -ForegroundColor Yellow
-        $choice = Read-Host "Entrez votre choix (1-6)"
+        $choice = Read-Host "Entrez votre choix (0-6)"
         
         switch ($choice) {
+            "0" {
+                Write-Host "✅ Vous avez choisi : Créer un package local NuGet" -ForegroundColor Green
+                Write-Host "🔄 Création du package NuGet local..." -ForegroundColor Yellow
+
+                # Commande pour créer le package NuGet local
+                try {
+                    dotnet pack --output "D:\\LocalNuget"
+                    if ($LASTEXITCODE -eq 0) {
+                        Write-Host "✅ Package NuGet créé avec succès dans D:\\LocalNuget" -ForegroundColor Green
+                    } else {
+                        Write-Host "❌ Erreur lors de la création du package NuGet" -ForegroundColor Red
+                    }
+                } catch {
+                    Write-Host "❌ Erreur : $($_.Exception.Message)" -ForegroundColor Red
+                }
+
+                exit 0
+            }
             "1" {
                 $newVersion = Get-NextBetaVersion $versionInfo
                 Write-Host "✅ Vous avez choisi : Nouvelle version BETA ($newVersion)" -ForegroundColor Green
@@ -381,7 +403,7 @@ try {
                     continue
                 }
                 break
-            }
+            }            
             "6" {
                 Write-Host "`n👋 Opération annulée par l'utilisateur" -ForegroundColor Yellow
                 Write-Host "   Aucune modification n'a été apportée." -ForegroundColor Gray
@@ -389,7 +411,7 @@ try {
             }
             default {
                 Write-Host "`n❌ Choix invalide : '$choice'" -ForegroundColor Red
-                Write-Host "   Veuillez entrer un nombre entre 1 et 6." -ForegroundColor Gray
+                Write-Host "   Veuillez entrer un nombre entre 0 et 6." -ForegroundColor Gray
                 continue
             }
         }
