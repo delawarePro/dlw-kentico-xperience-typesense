@@ -172,7 +172,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         Parallel.ForEach(objectIds.Chunk(20), async page =>
         {
             string idsToDelete = string.Join(",", page);
-            var batchCollectioningResponse = await searchClient.DeleteDocuments(collectionName, $"{BaseObjectProperties.ID}:[{idsToDelete}]");
+            var batchCollectioningResponse = await searchClient.DeleteDocuments(collectionName, $"{BaseObjectProperties.ITEM_GUID}:[{idsToDelete}]");
             Interlocked.Add(ref deletedCount, batchCollectioningResponse.NumberOfDeleted);
         });
 

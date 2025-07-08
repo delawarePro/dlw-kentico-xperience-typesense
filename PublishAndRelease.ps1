@@ -5,6 +5,7 @@ param(
     [string]$CustomVersion,
     [switch]$AutoGit,
     [switch]$SkipConfirmation,
+    [switch]$LocalNuget,
     [switch]$Help
 )
 
@@ -28,6 +29,8 @@ if ($Help) {
     Write-Host "          Exécuter automatiquement les commandes Git" -ForegroundColor Gray
     Write-Host "   -SkipConfirmation" -ForegroundColor Yellow -NoNewline
     Write-Host "   Ignorer les demandes de confirmation" -ForegroundColor Gray
+    Write-Host "   -LocalNuget" -ForegroundColor Yellow -NoNewline
+    Write-Host "        Créer le package NuGet localement dans d:\LocalNugets\" -ForegroundColor Gray
     Write-Host "   -Help" -ForegroundColor Yellow -NoNewline
     Write-Host "             Afficher cette aide" -ForegroundColor Gray
     Write-Host ""
@@ -45,12 +48,16 @@ if ($Help) {
     Write-Host "   Version personnalisée complètement automatique :" -ForegroundColor Cyan
     Write-Host "   .\PublishAndRelease.ps1 -CustomVersion '2.0.0' -AutoGit -SkipConfirmation" -ForegroundColor Gray
     Write-Host ""
+    Write-Host "   Version beta avec NuGet local :" -ForegroundColor Cyan
+    Write-Host "   .\PublishAndRelease.ps1 -AutoBeta -LocalNuget" -ForegroundColor Gray
+    Write-Host ""
     Write-Host "📦 WORKFLOW COMPLET :" -ForegroundColor White
     Write-Host "   1. Mise à jour de Directory.Build.props" -ForegroundColor Gray
-    Write-Host "   2. git add . && git commit -m 'vX.X.X'" -ForegroundColor Gray
+    Write-Host "   2. git add . puis git commit -m 'vX.X.X'" -ForegroundColor Gray
     Write-Host "   3. git push origin" -ForegroundColor Gray
     Write-Host "   4. git tag vX.X.X" -ForegroundColor Gray
     Write-Host "   5. git push origin --tags" -ForegroundColor Gray
+    Write-Host "   6. dotnet pack vers d:\LocalNugets\ (si -LocalNuget)" -ForegroundColor Gray
     Write-Host ""
     exit 0
 }
@@ -232,6 +239,87 @@ function Invoke-GitCommands {
     }
 }
 
+# Function to create local NuGet packages
+function Invoke-LocalNugetPack {
+    param([string]$version)
+    
+    Write-Host "`n📦 Création des packages NuGet locaux..." -ForegroundColor Yellow
+    
+    $localNugetPath = "d:\LocalNugets"
+    
+    try {
+        # Create directory if it doesn't exist
+        if (-not (Test-Path $localNugetPath)) {
+            Write-Host "📁 Création du dossier $localNugetPath..." -ForegroundColor Cyan
+            New-Item -ItemType Directory -Path $localNugetPath -Force | Out-Null
+            Write-Host "✅ Dossier créé avec succès" -ForegroundColor Green
+        }
+        
+        # Find all .csproj files in the solution
+        $projectFiles = Get-ChildItem -Path $PSScriptRoot -Recurse -Name "*.csproj" | Where-Object {
+            $_ -notlike "*Test*" -and $_ -notlike "*Example*" -and $_ -notlike "*DancingGoat*"
+        }
+        
+        if ($projectFiles.Count -eq 0) {
+            Write-Host "⚠️  Aucun fichier .csproj trouvé pour la création des packages" -ForegroundColor Yellow
+            return
+        }
+        
+        Write-Host "📋 Projets trouvés pour la création des packages :" -ForegroundColor Cyan
+        $projectFiles | ForEach-Object {
+            Write-Host "   • $_" -ForegroundColor Gray
+        }
+        
+        # Pack each project
+        $successCount = 0
+        $failureCount = 0
+        
+        foreach ($projectFile in $projectFiles) {
+            $projectPath = Join-Path $PSScriptRoot $projectFile
+            $projectName = [System.IO.Path]::GetFileNameWithoutExtension($projectFile)
+            
+            Write-Host "`n🔨 Création du package pour $projectName..." -ForegroundColor Cyan
+            
+            # Run dotnet pack
+            $packResult = dotnet pack $projectPath --configuration Release --output $localNugetPath --no-restore
+            
+            if ($LASTEXITCODE -eq 0) {
+                Write-Host "✅ Package créé avec succès pour $projectName" -ForegroundColor Green
+                $successCount++
+                
+                # Find the created package
+                $packagePattern = "$projectName.$version*.nupkg"
+                $createdPackages = Get-ChildItem -Path $localNugetPath -Name $packagePattern
+                
+                if ($createdPackages) {
+                    $createdPackages | ForEach-Object {
+                        Write-Host "   📦 Package créé : $_" -ForegroundColor Gray
+                    }
+                }
+            } else {
+                Write-Host "❌ Erreur lors de la création du package pour $projectName" -ForegroundColor Red
+                $failureCount++
+                Write-Host "   Détails de l'erreur :" -ForegroundColor Red
+                Write-Host "   $packResult" -ForegroundColor Red
+            }
+        }
+        
+        Write-Host "`n📊 RÉSUMÉ DE LA CRÉATION DES PACKAGES :" -ForegroundColor White -BackgroundColor DarkBlue
+        Write-Host "   ✅ Succès : $successCount" -ForegroundColor Green
+        Write-Host "   ❌ Échecs : $failureCount" -ForegroundColor Red
+        Write-Host "   📁 Dossier : $localNugetPath" -ForegroundColor Gray
+        
+        if ($successCount -gt 0) {
+            Write-Host "`n🎉 PACKAGES NUGET CRÉÉS AVEC SUCCÈS !" -ForegroundColor Green -BackgroundColor DarkGreen
+            Write-Host "   Vous pouvez maintenant utiliser ces packages depuis $localNugetPath" -ForegroundColor Gray
+        }
+        
+    } catch {
+        Write-Host "`n❌ Erreur lors de la création des packages NuGet : $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "Vous devrez créer les packages manuellement." -ForegroundColor Gray
+    }
+}
+
 # Main script logic
 try {
     Write-Host "🚀 Kentico.Xperience.Typesense Version Manager" -ForegroundColor Cyan
@@ -247,6 +335,11 @@ try {
     if ($CustomVersion) {
         $parsedCustom = Parse-Version $CustomVersion
         Update-Version $CustomVersion
+        
+        if ($LocalNuget) {
+            Invoke-LocalNugetPack $CustomVersion
+        }
+        
         exit 0
     }
     
@@ -269,6 +362,10 @@ try {
             Invoke-GitCommands $newVersion
         }
         
+        if ($LocalNuget) {
+            Invoke-LocalNugetPack $newVersion
+        }
+        
         exit 0
     }
     
@@ -288,6 +385,10 @@ try {
         
         if ($AutoGit) {
             Invoke-GitCommands $newVersion
+        }
+        
+        if ($LocalNuget) {
+            Invoke-LocalNugetPack $newVersion
         }
         
         exit 0
@@ -443,16 +544,32 @@ try {
             Write-Host "`n📋 Commandes à exécuter manuellement :" -ForegroundColor Cyan
         }
         
+        # Ask if user wants to create local NuGet packages
+        Write-Host "`n📦 Voulez-vous créer les packages NuGet localement ?" -ForegroundColor Cyan
+        Write-Host "   Cela va :" -ForegroundColor Gray
+        Write-Host "   • Créer les packages .nupkg dans d:\LocalNugets\" -ForegroundColor Gray
+        Write-Host "   • Permettre l'utilisation locale des packages" -ForegroundColor Gray
+        Write-Host ""
+        Write-Host "   [O] Oui, créer les packages localement" -ForegroundColor Green
+        Write-Host "   [N] Non, je ferai manuellement (par défaut)" -ForegroundColor Yellow
+        Write-Host ""
+        
+        $createNuget = Read-Host "💡 Créer les packages NuGet localement (O/n)"
+        
+        if ($createNuget -eq "o" -or $createNuget -eq "O" -or $createNuget -eq "oui" -or $createNuget -eq "OUI") {
+            Invoke-LocalNugetPack $newVersion
+        }
+        
         # Show manual steps (always shown for reference)
         Write-Host "`n📋 Commandes Git de référence :" -ForegroundColor Cyan
-        Write-Host "   1️⃣  git add . && git commit -m `"v$newVersion`"" -ForegroundColor Yellow
+        Write-Host "   1️⃣  git add . puis git commit -m `"v$newVersion`"" -ForegroundColor Yellow
         Write-Host "   2️⃣  git push origin" -ForegroundColor Yellow
         Write-Host "   3️⃣  git tag v$newVersion" -ForegroundColor Yellow
         Write-Host "   4️⃣  git push origin --tags" -ForegroundColor Yellow
         Write-Host ""
         Write-Host "📦 Prochaines étapes (compilation et publication) :" -ForegroundColor Cyan
-        Write-Host "   5️⃣  dotnet pack" -ForegroundColor Yellow
-        Write-Host "   6️⃣  dotnet nuget push" -ForegroundColor Yellow
+        Write-Host "   5️⃣  dotnet pack --output d:\LocalNugets\" -ForegroundColor Yellow
+        Write-Host "   6️⃣  dotnet nuget push (vers NuGet.org)" -ForegroundColor Yellow
         Write-Host ""
         Write-Host "✨ Version $newVersion prête pour le déploiement !" -ForegroundColor Green
         
