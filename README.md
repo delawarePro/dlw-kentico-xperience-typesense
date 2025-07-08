@@ -79,6 +79,32 @@ We didn't provide support for this project, but you can submit an issue or a pul
 
 ## Create the new version of the package
 
+Utilisez le script PowerShell `PublushAndRelease.ps1` pour automatiser la gestion des versions :
+
+### Mode interactif (recommandé)
+
+```powershell
+.\PublushAndRelease.ps1
+```
+
+### Modes automatiques
+
+```powershell
+# Nouvelle version beta automatique
+.\PublushAndRelease.ps1 -AutoBeta
+
+# Version release automatique
+.\PublushAndRelease.ps1 -AutoRelease
+
+# Version personnalisée
+.\PublushAndRelease.ps1 -CustomVersion "2.0.0-beta-1"
+
+# Workflow complet automatique (version + Git)
+.\PublushAndRelease.ps1 -AutoBeta -AutoGit -SkipConfirmation
+```
+
+### Processus manuel (si nécessaire)
+
 1. Edit the version prefix in Directory.Build.props
 2. `git commit -am "v1.0.25-beta-1"`
 3. `git push origin`
