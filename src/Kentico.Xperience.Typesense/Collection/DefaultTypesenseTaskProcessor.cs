@@ -53,13 +53,20 @@ internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
                     {
                         foreach (var document in documents)
                         {
-                            if (queueItem.TaskType is TypesenseTaskType.UPDATE)
+                            if (document is not null)
                             {
-                                updateData.Add(document);
-                            }
-                            else
-                            {
-                                upsertData.Add(document);
+                                if (document.RemoveFromIndex)
+                                {
+                                    deleteIds.Add(document.ItemGuid.ToString());
+                                }
+                                else if (queueItem.TaskType is TypesenseTaskType.UPDATE)
+                                {
+                                    updateData.Add(document);
+                                }
+                                else
+                                {
+                                    upsertData.Add(document);
+                                }
                             }
                         }
                     }
@@ -73,9 +80,11 @@ internal class DefaultTypesenseTaskProcessor : ITypesenseTaskProcessor
                         .Where(x => x is not null)
                         .Select(x => x ?? ""));
 
+                deleteIds = deleteIds.Distinct().ToList();
+
                 successfulOperations += await typesenseClient.DeleteRecords(deleteIds, group.Key, cancellationToken);
-                successfulOperations += await typesenseClient.UpsertRecords(upsertData, group.Key, ImportType.Create, cancellationToken);
-                successfulOperations += await typesenseClient.UpsertRecords(updateData, group.Key, ImportType.Update, cancellationToken);
+                successfulOperations += await typesenseClient.UpsertRecords(upsertData, group.Key, ImportType.Upsert, cancellationToken);
+                successfulOperations += await typesenseClient.UpsertRecords(updateData, group.Key, ImportType.Upsert, cancellationToken);
             }
             catch (Exception ex)
             {

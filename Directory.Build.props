@@ -1,26 +1,22 @@
 <Project>
-
   <PropertyGroup>
     <Company>delaware Consulting</Company>
     <Authors>$(Company)</Authors>
     <Copyright>Copyright © $(Company) $([System.DateTime]::Now.Year)</Copyright>
     <Trademark>$(Company)™</Trademark>
-    <VersionPrefix>1.0.25-beta-9</VersionPrefix>
+    <VersionPrefix>1.0.25-beta-10</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-
     <PackageProjectUrl>https://github.com/VGBenjamin/Kentico.Xperience.Typesense</PackageProjectUrl>
     <PackageReleaseNotes>https://github.com/VGBenjamin/Kentico.Xperience.Typesense/releases</PackageReleaseNotes>
     <PackageIcon>logo.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>kentico;xperience;mvc;typesense;search</PackageTags>
   </PropertyGroup>
-
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)\images\logo.png" Pack="true" Visible="false" PackagePath="" />
-    <None Include="$(MSBuildThisFileDirectory)\README.md" Pack="true" Visible="false" PackagePath=""/>
+    <None Include="$(MSBuildThisFileDirectory)\README.md" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
-
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -31,13 +27,11 @@
     <CopyDebugSymbolFilesFromPackages>true</CopyDebugSymbolFilesFromPackages>
     <NoWarn>$(NoWarn);1591;S3267</NoWarn>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
-    <TimestampServerUrl>http://timestamp.digicert.com</TimestampServerUrl>
+    <TimestampServerUrl>http://timestamp.comodoca.com/rfc3161</TimestampServerUrl>
   </PropertyGroup>
-
   <PropertyGroup Condition=" $(Configuration) == 'Release' ">
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
-
 </Project>

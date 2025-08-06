@@ -22,6 +22,11 @@ public class TypesenseSearchResultModel
     [JsonPropertyName("Url")]
     public string Url { get; set; } = string.Empty;
 
+    /// <summary>
+    /// If you set it to true this document will be deleted from Typesense index
+    /// </summary>
+    public bool RemoveFromIndex { get; set; } = false;
+
     public TypesenseSearchResultModel(string id) => ID = id;
 
 }
