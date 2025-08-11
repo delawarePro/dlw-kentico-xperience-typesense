@@ -1,5 +1,4 @@
-﻿
-using Kentico.Xperience.Typesense.Xperience;
+﻿using Kentico.Xperience.Typesense.Xperience;
 
 namespace Kentico.Xperience.Typesense.Collection;
 
@@ -29,6 +28,11 @@ public sealed class TypesenseCollection
     public List<string> LanguageNames { get; }
 
     /// <summary>
+    /// The content types that are allowed to be indexed in this collection.
+    /// </summary>
+    public List<string> ContentTypeNames { get; }
+
+    /// <summary>
     /// The type of the class which extends <see cref="ITypesenseCollectionStrategy"/>.
     /// </summary>
     public Type TypesenseCollectioningStrategyType { get; }
@@ -41,6 +45,7 @@ public sealed class TypesenseCollection
         CollectionName = indexConfiguration.CollectionName;
         WebSiteChannelName = indexConfiguration.ChannelName;
         LanguageNames = indexConfiguration.LanguageNames.ToList();
+        ContentTypeNames = indexConfiguration.ContentTypeNames.ToList();
         IncludedPaths = indexConfiguration.Paths;
 
         var strategy = typeof(DefaultTypesenseCollectionStrategy);

@@ -56,6 +56,16 @@ public partial class TypesenseIndexItemInfo : AbstractInfo<TypesenseIndexItemInf
     }
 
     /// <summary>
+    /// Content type name.
+    /// </summary>
+    [DatabaseField]
+    public virtual string TypesenseCollectionItemContentTypeName
+    {
+        get => ValidationHelper.GetString(GetValue(nameof(TypesenseCollectionItemContentTypeName)), string.Empty);
+        set => SetValue(nameof(TypesenseCollectionItemContentTypeName), value, string.Empty);
+    }
+
+    /// <summary>
     /// Collection name.
     /// </summary>
     [DatabaseField]

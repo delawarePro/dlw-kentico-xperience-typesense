@@ -118,6 +118,18 @@ public class TypesenseModuleInstaller
         };
         formInfo.AddFormItem(formItem);
 
+        formItem = new FormFieldInfo
+        {
+            Name = nameof(TypesenseIndexItemInfo.TypesenseCollectionItemContentTypeName),
+            AllowEmpty = true,
+            Visible = true,
+            Precision = 0,
+            Size = 100,
+            DataType = FieldDataType.Text,
+            Enabled = true
+        };
+        formInfo.AddFormItem(formItem);
+
         SetFormDefinition(info, formInfo);
 
         if (info.HasChanged)

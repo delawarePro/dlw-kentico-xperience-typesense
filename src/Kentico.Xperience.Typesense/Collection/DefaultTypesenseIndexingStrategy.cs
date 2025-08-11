@@ -63,5 +63,5 @@ public class DefaultTypesenseCollectionStrategy : ITypesenseCollectionStrategy
 
     public virtual async Task<IEnumerable<ICollectionEventItemModel>> FindItemsToReindex(CollectionEventWebPageItemModel changedItem) => await Task.FromResult(new List<CollectionEventWebPageItemModel>() { changedItem });
 
-    public virtual async Task<IEnumerable<ICollectionEventItemModel>> FindItemsToReindex(CollectionEventReusableItemModel changedItem) => await Task.FromResult(new List<CollectionEventWebPageItemModel>());
+    public virtual async Task<IEnumerable<ICollectionEventItemModel>> FindItemsToReindex(CollectionEventReusableItemModel changedItem) => await Task.FromResult(new List<CollectionEventReusableItemModel>() { changedItem });
 }

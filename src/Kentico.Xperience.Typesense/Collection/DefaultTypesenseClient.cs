@@ -181,7 +181,7 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
 
     private async Task RebuildInternal(TypesenseCollection typesenseCollection, CancellationToken cancellationToken)
     {
-        var indexedItems = new List<CollectionEventWebPageItemModel>();
+        var indexedItems = new List<ICollectionEventItemModel>();
         foreach (var includedPathAttribute in typesenseCollection.IncludedPaths)
         {
             foreach (string language in typesenseCollection.LanguageNames)
@@ -207,6 +207,29 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
             }
         }
 
+        foreach (string language in typesenseCollection.LanguageNames)
+        {
+            var queryBuilder = new ContentItemQueryBuilder();
+
+            if (typesenseCollection.ContentTypeNames.Any())
+            {
+                foreach (string contentType in typesenseCollection.ContentTypeNames)
+                {
+                    queryBuilder.ForContentType(contentType);
+                }
+            }
+            queryBuilder.InLanguage(language);
+
+            var contents = await executor.GetResult(queryBuilder, container => container, cancellationToken: cancellationToken);
+
+            foreach (var content in contents)
+            {
+                var item = await MapToEventItem(content);
+                indexedItems.Add(item);
+            }
+        }
+
+
         try
         {
             await searchClient.RetrieveCollection(typesenseCollection.CollectionName, cancellationToken);
@@ -225,6 +248,26 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         indexedItems.ForEach(async node => await queue.EnqueueTypesenseQueueItem(new TypesenseQueueItem(node, TypesenseTaskType.PUBLISH_INDEX, newCollectionName)));
 
         queue.EnqueueTypesenseQueueItem(new TypesenseQueueItem(new EndOfRebuildItemModel(activeCollectionName, newCollectionName, typesenseCollection.CollectionName), TypesenseTaskType.END_OF_REBUILD, typesenseCollection.CollectionName));
+    }
+
+    private async Task<ICollectionEventItemModel> MapToEventItem(IContentQueryDataContainer content)
+    {
+        var languages = await GetAllLanguages();
+
+        string languageName = languages.FirstOrDefault(l => l.ContentLanguageID == content.ContentItemCommonDataContentLanguageID)?.ContentLanguageName ?? "";
+
+        var item = new CollectionEventReusableItemModel(
+            content.ContentItemID,
+            content.ContentItemGUID,
+            languageName,
+            content.ContentTypeName,
+            content.ContentItemName,
+            content.ContentItemIsSecured,
+            content.ContentItemContentTypeID,
+            content.ContentItemCommonDataContentLanguageID
+        );
+
+        return item;
     }
 
     private async Task<CollectionEventWebPageItemModel> MapToEventItem(IWebPageContentQueryDataContainer content)
