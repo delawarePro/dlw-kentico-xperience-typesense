@@ -43,7 +43,10 @@ internal class TypesenseAdminModule : AdminModule
 
         installer = services.GetRequiredService<TypesenseModuleInstaller>();
         storageService = services.GetRequiredService<ITypesenseConfigurationKenticoStorageService>();
-        installer.Install();
+        if (SystemContext.IsWebSite)
+        {
+            installer.Install();
+        }
         ApplicationEvents.PostStart.Execute += InitializeModule;
     }
 
