@@ -40,6 +40,13 @@ internal static class CollectionedItemModelExtensions
             return false;
         }
 
+        // Check if content type is allowed at the collection level
+        if (typesenseCollection.ContentTypeNames.Any() &&
+            !typesenseCollection.ContentTypeNames.Contains(indexedItemModel.ContentTypeName))
+        {
+            return false;
+        }
+
         return typesenseCollection.IncludedPaths.Any(path =>
         {
             bool matchesContentType = path.ContentTypes.Exists(x => string.Equals(x.ContentTypeName, indexedItemModel.ContentTypeName));
@@ -94,11 +101,17 @@ internal static class CollectionedItemModelExtensions
             return false;
         }
 
-        if (typesenseCollection.LanguageNames.Exists(x => x == indexedItemModel.LanguageName))
+        if (!typesenseCollection.LanguageNames.Exists(x => x == indexedItemModel.LanguageName))
         {
-            return true;
+            return false;
         }
 
-        return false;
+        // Check if content type is allowed at the collection level
+        if (!typesenseCollection.ContentTypeNames.Contains(indexedItemModel.ContentTypeName))
+        {
+            return false;
+        }
+
+        return true;
     }
 }

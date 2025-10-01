@@ -14,6 +14,12 @@ public class TypesenseConfigurationModel : ITypesenseConfigurationModel
 {
     public int Id { get; set; }
 
+    [GeneralSelectorComponent(dataProviderType: typeof(ContentTypeOptionsProvider),
+        Label = "Content Types",
+        Order = 0,
+        ExplanationText = "Select the content types that will be indexed in this collection")]
+    public IEnumerable<string> ContentTypeNames { get; set; } = Enumerable.Empty<string>();
+
     [TextInputComponent(
        Label = "Collection Name",
        ExplanationText = "Changing this value on an existing index without changing application code will cause the search experience to stop working.",
@@ -53,6 +59,9 @@ public class TypesenseConfigurationModel : ITypesenseConfigurationModel
         ChannelName = index.TypesenseCollectionItemChannelName;
         RebuildHook = index.TypesenseCollectionItemRebuildHook;
         StrategyName = index.TypesenseCollectionItemStrategyName;
+        ContentTypeNames = string.IsNullOrEmpty(index.TypesenseCollectionItemContentTypeName) 
+            ? Enumerable.Empty<string>() 
+            : index.TypesenseCollectionItemContentTypeName.Split('|', StringSplitOptions.RemoveEmptyEntries);
         LanguageNames = indexLanguages
             .Where(l => l.TypesenseCollectionLanguageItemCollectionItemId == index.TypesenseCollectionItemId)
             .Select(l => l.TypesenseCollectionLanguageItemName)
