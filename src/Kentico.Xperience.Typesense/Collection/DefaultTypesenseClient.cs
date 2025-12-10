@@ -184,48 +184,50 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
         var indexedItems = new List<ICollectionEventItemModel>();
         foreach (var includedPathAttribute in typesenseCollection.IncludedPaths)
         {
-            foreach (string language in typesenseCollection.LanguageNames)
+            if (includedPathAttribute.ContentTypes != null && includedPathAttribute.ContentTypes.Count > 0)
             {
-                var queryBuilder = new ContentItemQueryBuilder();
-
-                if (includedPathAttribute.ContentTypes != null && includedPathAttribute.ContentTypes.Count > 0)
+                foreach (string language in typesenseCollection.LanguageNames)
                 {
+                    var queryBuilder = new ContentItemQueryBuilder();
+
                     foreach (var contentType in includedPathAttribute.ContentTypes)
                     {
                         queryBuilder.ForContentType(contentType.ContentTypeName, config => config.ForWebsite(typesenseCollection.WebSiteChannelName, includeUrlPath: true));
                     }
-                }
-                queryBuilder.InLanguage(language);
 
-                var webpages = await executor.GetWebPageResult(queryBuilder, container => container, cancellationToken: cancellationToken);
+                    queryBuilder.InLanguage(language);
 
-                foreach (var page in webpages)
-                {
-                    var item = await MapToEventItem(page);
-                    indexedItems.Add(item);
+                    var webpages = await executor.GetWebPageResult(queryBuilder, container => container, cancellationToken: cancellationToken);
+
+                    foreach (var page in webpages)
+                    {
+                        var item = await MapToEventItem(page);
+                        indexedItems.Add(item);
+                    }
                 }
             }
         }
 
-        foreach (string language in typesenseCollection.LanguageNames)
+        if (typesenseCollection.ContentTypeNames.Any())
         {
-            var queryBuilder = new ContentItemQueryBuilder();
-
-            if (typesenseCollection.ContentTypeNames.Any())
+            foreach (string language in typesenseCollection.LanguageNames)
             {
+                var queryBuilder = new ContentItemQueryBuilder();
+
                 foreach (string contentType in typesenseCollection.ContentTypeNames)
                 {
                     queryBuilder.ForContentType(contentType);
                 }
-            }
-            queryBuilder.InLanguage(language);
 
-            var contents = await executor.GetResult(queryBuilder, container => container, cancellationToken: cancellationToken);
+                queryBuilder.InLanguage(language);
 
-            foreach (var content in contents)
-            {
-                var item = await MapToEventItem(content);
-                indexedItems.Add(item);
+                var contents = await executor.GetResult(queryBuilder, container => container, cancellationToken: cancellationToken);
+
+                foreach (var content in contents)
+                {
+                    var item = await MapToEventItem(content);
+                    indexedItems.Add(item);
+                }
             }
         }
 
