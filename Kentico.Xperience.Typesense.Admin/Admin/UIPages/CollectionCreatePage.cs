@@ -47,7 +47,7 @@ internal class CollectionCreatePage(
         {
             var index = TypesenseCollectionStore.Instance.GetRequiredCollection(model.CollectionName);
 
-            var successResponse = NavigateTo(pageLinkGenerator.GetPath<CollectionCreatePage>(new PageParameterValues() { { typeof(CollectionEditPage), index.Identifier } }))
+            var successResponse = NavigateTo(pageLinkGenerator.GetPath<CollectionListingPage>(new PageParameterValues { { typeof(CollectionEditPage), index.Identifier } }))
                 .AddSuccessMessage("Collection created.");
 
             return await Task.FromResult<ICommandResponse>(successResponse);
