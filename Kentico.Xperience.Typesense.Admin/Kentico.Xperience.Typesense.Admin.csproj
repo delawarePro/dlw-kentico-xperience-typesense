@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<!-- TargetFrameworks (net8.0;net10.0) is inherited from Directory.Build.props -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
@@ -19,7 +19,6 @@
 		<IsPackable>true</IsPackable>
 		<!-- Required to prevent type conflicts with existing types -->
 		<HotChocolateImplicitUsings>disable</HotChocolateImplicitUsings>
-		<TargetFramework>net8.0</TargetFramework>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -38,10 +37,17 @@
 		<!-- Requires that npm run build or npm run build:dev was executed _before_ the .NET build -->
 	</ItemGroup>
 
-	<Target Name="NpmInstall" BeforeTargets="NpmBuildClient" Condition=" '$(Configuration)|$(Platform)' != 'Debug|AnyCPU' ">
+	<!--
+		Build the admin client (npm) exactly once. Because this project is multi-targeted
+		(net8.0;net10.0), the inner builds run in parallel; hooking npm to BeforeBuild would
+		launch 'npm ci' concurrently on the same Admin\Client folder and race (EPERM).
+		Hooking to the cross-targeting outer build ('$(TargetFramework)' == '') runs it a
+		single time, before either inner build starts, so dist\ is ready for both.
+	-->
+	<Target Name="NpmInstall" BeforeTargets="NpmBuildClient" Condition=" '$(Configuration)|$(Platform)' != 'Debug|AnyCPU' And '$(TargetFramework)' == '' ">
 		<Exec Command="npm ci --no-audit --no-fund" WorkingDirectory="$(MSBuildProjectDirectory)\Admin\Client" />
 	</Target>
-	<Target Name="NpmBuildClient" BeforeTargets="BeforeBuild" Condition=" '$(Configuration)|$(Platform)' != 'Debug|AnyCPU' ">
+	<Target Name="NpmBuildClient" BeforeTargets="DispatchToInnerBuilds" Condition=" '$(Configuration)|$(Platform)' != 'Debug|AnyCPU' And '$(TargetFramework)' == '' ">
 		<Exec Command="npm run build" WorkingDirectory="$(MSBuildProjectDirectory)\Admin\Client" />
 	</Target>
 
