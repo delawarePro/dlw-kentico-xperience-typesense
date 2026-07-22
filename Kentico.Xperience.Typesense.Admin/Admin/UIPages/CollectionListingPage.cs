@@ -25,7 +25,7 @@ namespace Kentico.Xperience.Typesense.Admin.UIPages;
 internal class CollectionListingPage : ListingPage
 {
     private readonly IXperienceTypesenseClient xperienceTypesenseClient;
-    private readonly IPageUrlGenerator pageUrlGenerator;
+    private readonly IPageLinkGenerator pageLinkGenerator;
     private readonly ITypesenseConfigurationKenticoStorageService configurationStorageService;
     private readonly IConversionService conversionService;
     protected override string ObjectType => TypesenseIndexItemInfo.OBJECT_TYPE;
@@ -35,16 +35,15 @@ internal class CollectionListingPage : ListingPage
     /// </summary>
     public CollectionListingPage(
         IXperienceTypesenseClient xperienceTypesenseClient,
-        IPageUrlGenerator pageUrlGenerator,
+        IPageLinkGenerator pageLinkGenerator,
         ITypesenseConfigurationKenticoStorageService configurationStorageService,
         IConversionService conversionService)
     {
         this.xperienceTypesenseClient = xperienceTypesenseClient;
-        this.pageUrlGenerator = pageUrlGenerator;
+        this.pageLinkGenerator = pageLinkGenerator;
         this.configurationStorageService = configurationStorageService;
         this.conversionService = conversionService;
     }
-
 
     /// <inheritdoc/>
     public override async Task ConfigurePage()
@@ -83,7 +82,7 @@ internal class CollectionListingPage : ListingPage
     [PageCommand(Permission = SystemPermissions.DELETE)]
     public async Task<INavigateResponse> Delete(int id, CancellationToken cancellationToken)
     {
-        var response = NavigateTo(pageUrlGenerator.GenerateUrl<CollectionListingPage>());
+        var response = NavigateTo(pageLinkGenerator.GetPath<CollectionListingPage>());
         var index = TypesenseCollectionStore.Instance.GetCollection(id);
         if (index == null)
         {
@@ -214,7 +213,6 @@ internal class CollectionListingPage : ListingPage
 
         return result;
     }
-
 
     private static void AddMissingStatistics(ref ICollection<TypesenseCollectionStatisticsViewModel> statistics)
     {

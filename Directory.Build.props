@@ -5,8 +5,7 @@
     <Copyright>Copyright © $(Company) $([System.DateTime]::Now.Year)</Copyright>
     <Trademark>$(Company)™</Trademark>
     <VersionPrefix>1.0.31</VersionPrefix>
-    <VersionSuffix>
-    </VersionSuffix>
+    <VersionSuffix></VersionSuffix>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/VGBenjamin/Kentico.Xperience.Typesense</PackageProjectUrl>
     <PackageReleaseNotes>https://github.com/VGBenjamin/Kentico.Xperience.Typesense/releases</PackageReleaseNotes>

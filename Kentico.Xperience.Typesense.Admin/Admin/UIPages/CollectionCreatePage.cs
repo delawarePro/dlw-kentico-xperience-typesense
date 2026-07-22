@@ -19,19 +19,15 @@ using IFormItemCollectionProvider = Kentico.Xperience.Admin.Base.Forms.Internal.
 namespace Kentico.Xperience.Typesense.Admin.UIPages;
 
 [UIEvaluatePermission(SystemPermissions.CREATE)]
-internal class CollectionCreatePage : BaseCollectionEditPage
+internal class CollectionCreatePage(
+    IFormItemCollectionProvider formItemCollectionProvider,
+    IFormDataBinder formDataBinder,
+    ITypesenseConfigurationKenticoStorageService storageService,
+    IPageLinkGenerator pageLinkGenerator,
+    ITypesenseCollectionService collectionService)
+    : BaseCollectionEditPage(formItemCollectionProvider, formDataBinder, storageService, collectionService)
 {
-    private readonly IPageUrlGenerator pageUrlGenerator;
     private TypesenseConfigurationModel? model = null;
-
-    public CollectionCreatePage(
-        IFormItemCollectionProvider formItemCollectionProvider,
-        IFormDataBinder formDataBinder,
-        ITypesenseConfigurationKenticoStorageService storageService,
-        IPageUrlGenerator pageUrlGenerator,
-        ITypesenseCollectionService collectionService)
-        : base(formItemCollectionProvider, formDataBinder, storageService, collectionService)
-        => this.pageUrlGenerator = pageUrlGenerator;
 
     protected override TypesenseConfigurationModel Model
     {
@@ -51,7 +47,7 @@ internal class CollectionCreatePage : BaseCollectionEditPage
         {
             var index = TypesenseCollectionStore.Instance.GetRequiredCollection(model.CollectionName);
 
-            var successResponse = NavigateTo(pageUrlGenerator.GenerateUrl<CollectionEditPage>(index.Identifier.ToString()))
+            var successResponse = NavigateTo(pageLinkGenerator.GetPath<CollectionListingPage>())
                 .AddSuccessMessage("Collection created.");
 
             return await Task.FromResult<ICommandResponse>(successResponse);

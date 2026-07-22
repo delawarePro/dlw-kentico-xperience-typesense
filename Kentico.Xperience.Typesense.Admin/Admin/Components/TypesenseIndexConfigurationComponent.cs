@@ -85,7 +85,7 @@ public class TypesenseCollectionConfigurationComponent : FormComponent<Typesense
     {
         var allWebsiteContentTypes = DataClassInfoProvider.ProviderObject
            .Get()
-           .WhereEquals(nameof(DataClassInfo.ClassContentTypeType), "Website")
+           .WhereEquals(nameof(DataClassInfo.ClassContentTypeType), ClassContentTypeType.WEBSITE)
            .GetEnumerableTypedResult()
            .Select(x => new TypesenseCollectionContentType(x.ClassName, x.ClassDisplayName));
 

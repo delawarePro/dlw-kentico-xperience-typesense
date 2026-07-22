@@ -26,7 +26,7 @@ public partial class TypesenseIndexItemInfo : AbstractInfo<TypesenseIndexItemInf
     /// <summary>
     /// Type information.
     /// </summary>
-    public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(IInfoProvider<TypesenseIndexItemInfo>), OBJECT_TYPE, "KenticoTypesense.TypesenseIndexItem", nameof(TypesenseCollectionItemId), null, nameof(TypesenseCollectionItemGuid), null, null, null, null, null)    
+    public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(IInfoProvider<TypesenseIndexItemInfo>), OBJECT_TYPE, "KenticoTypesense.TypesenseIndexItem", nameof(TypesenseCollectionItemId), null, nameof(TypesenseCollectionItemGuid), nameof(TypesenseCollectionItemcollectionName), null, null, null, null)    
     {
         TouchCacheDependencies = true,
         ContinuousIntegrationSettings =
@@ -53,6 +53,16 @@ public partial class TypesenseIndexItemInfo : AbstractInfo<TypesenseIndexItemInf
     {
         get => ValidationHelper.GetGuid(GetValue(nameof(TypesenseCollectionItemGuid)), default);
         set => SetValue(nameof(TypesenseCollectionItemGuid), value);
+    }
+
+    /// <summary>
+    /// Content type name.
+    /// </summary>
+    [DatabaseField]
+    public virtual string TypesenseCollectionItemContentTypeName
+    {
+        get => ValidationHelper.GetString(GetValue(nameof(TypesenseCollectionItemContentTypeName)), string.Empty);
+        set => SetValue(nameof(TypesenseCollectionItemContentTypeName), value, string.Empty);
     }
 
     /// <summary>

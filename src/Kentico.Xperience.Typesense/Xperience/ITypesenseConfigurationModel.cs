@@ -12,6 +12,8 @@ public interface ITypesenseConfigurationModel
 
     string StrategyName { get; set; }
 
+    IEnumerable<string> ContentTypeNames { get; set; }
+
     string RebuildHook { get; set; }
 
     IEnumerable<TypesenseCollectionIncludedPath> Paths { get; set; }

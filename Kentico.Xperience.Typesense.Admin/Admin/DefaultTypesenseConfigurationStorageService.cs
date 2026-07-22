@@ -61,7 +61,8 @@ internal class DefaultTypesenseConfigurationKenticoStorageService : ITypesenseCo
             TypesenseCollectionItemcollectionName = configuration.CollectionName ?? "",
             TypesenseCollectionItemChannelName = configuration.ChannelName ?? "",
             TypesenseCollectionItemStrategyName = configuration.StrategyName ?? "",
-            TypesenseCollectionItemRebuildHook = configuration.RebuildHook ?? ""
+            TypesenseCollectionItemRebuildHook = configuration.RebuildHook ?? "",
+            TypesenseCollectionItemContentTypeName = configuration.ContentTypeNames != null ? string.Join("|", configuration.ContentTypeNames) : ""
         };
 
         indexProvider.Set(newInfo);
@@ -137,7 +138,6 @@ internal class DefaultTypesenseConfigurationKenticoStorageService : ITypesenseCo
             ).GetEnumerableTypedResult()
             .Select(x => new TypesenseCollectionContentType(x.ClassName, x.ClassDisplayName));
 
-
         var languages = languageProvider.Get().WhereEquals(nameof(TypesenseIndexLanguageItemInfo.TypesenseCollectionLanguageItemCollectionItemId), indexInfo.TypesenseCollectionItemId).GetEnumerableTypedResult();
 
         return new TypesenseConfigurationModel(indexInfo, languages, paths, contentTypes, contentTypesInfoItems);
@@ -195,6 +195,7 @@ internal class DefaultTypesenseConfigurationKenticoStorageService : ITypesenseCo
         indexInfo.TypesenseCollectionItemStrategyName = configuration.StrategyName ?? "";
         indexInfo.TypesenseCollectionItemChannelName = configuration.ChannelName ?? "";
         indexInfo.TypesenseCollectionItemcollectionName = configuration.CollectionName ?? "";
+        indexInfo.TypesenseCollectionItemContentTypeName = configuration.ContentTypeNames != null ? string.Join("|", configuration.ContentTypeNames) : "";
 
         indexProvider.Set(indexInfo);
 
