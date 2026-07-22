@@ -56,7 +56,10 @@ jobs:
           user: ${{ secrets.NUGET_USER }} # nuget.org account/profile name (NOT the email address)
 
       - name: Publish to NuGet
-        run: dotnet nuget push ./output/*.nupkg --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+        # --skip-duplicate makes the push idempotent: a version already on NuGet
+        # (e.g. pushed by a previous partially-failed run) is skipped instead of
+        # failing the whole release with a 409 Conflict.
+        run: dotnet nuget push ./output/*.nupkg --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
 
       - name: Create GitHub Release
         id: create_release
