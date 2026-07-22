@@ -12,7 +12,7 @@ jobs:
 
     permissions:
       id-token: write # required for Trusted Publishing (OIDC token exchange with nuget.org)
-      contents: read
+      contents: write # required to create the GitHub Release with the built-in GITHUB_TOKEN
 
     defaults:
       run:
@@ -62,12 +62,9 @@ jobs:
         run: dotnet nuget push ./output/*.nupkg --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
 
       - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
+        # Uses the built-in GITHUB_TOKEN (needs contents: write) via the gh CLI,
+        # replacing the deprecated actions/create-release@v1 + RELEASE_TOKEN secret.
+        # --skip-existing keeps the step idempotent across re-tags/re-runs.
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${{ github.ref_name }}" --title "Release ${{ github.ref_name }}" --generate-notes --verify-tag || gh release edit "${{ github.ref_name }}" --title "Release ${{ github.ref_name }}"
