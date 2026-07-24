@@ -4,7 +4,7 @@
     <Authors>$(Company)</Authors>
     <Copyright>Copyright © $(Company) $([System.DateTime]::Now.Year)</Copyright>
     <Trademark>$(Company)™</Trademark>
-    <VersionPrefix>1.0.30-beta-7</VersionPrefix>
+    <VersionPrefix>1.0.32</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/VGBenjamin/Kentico.Xperience.Typesense</PackageProjectUrl>
@@ -18,7 +18,7 @@
     <None Include="$(MSBuildThisFileDirectory)\README.md" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks>net10.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <WarningsAsErrors>nullable</WarningsAsErrors>

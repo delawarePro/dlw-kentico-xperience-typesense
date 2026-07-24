@@ -8,8 +8,6 @@ using DancingGoat.Models;
 using Kentico.Xperience.Typesense.Collection;
 using Kentico.Xperience.Typesense.Search;
 
-using Microsoft.IdentityModel.Tokens;
-
 using Typesense;
 
 namespace DancingGoat.Search;
@@ -37,7 +35,6 @@ public class SimpleSearchCollectionStrategy : DefaultTypesenseCollectionStrategy
         {
             locale = languageNames[0];
         }
-
 
         var baseSettings = await base.GetTypesenseCollectionSettings(collection, enableNestedFields);
         baseSettings.Fields.Add(new Field(nameof(SimpleSearchResultModel.Title), FieldType.String, false, locale: locale));
@@ -74,7 +71,7 @@ public class SimpleSearchCollectionStrategy : DefaultTypesenseCollectionStrategy
                     return null;
                 }
 
-                if (page.HomePageBanner.IsNullOrEmpty())
+                if (page.HomePageBanner is null || !page.HomePageBanner.Any())
                 {
                     return null;
                 }
@@ -83,7 +80,6 @@ public class SimpleSearchCollectionStrategy : DefaultTypesenseCollectionStrategy
                 {
                     Title = page!.HomePageBanner.First().BannerHeaderText
                 });
-
 
             }
             else if (string.Equals(typesensePageItem.ContentTypeName, ArticlePage.CONTENT_TYPE_NAME, StringComparison.OrdinalIgnoreCase))
@@ -104,7 +100,6 @@ public class SimpleSearchCollectionStrategy : DefaultTypesenseCollectionStrategy
                     Title = page!.ArticleTitle
                 };
                 result.Add(item);
-
 
                 /*result.Add(new SimpleSearchResultModel()
                 {

@@ -72,6 +72,14 @@ stages:
             inputs:
               version: $(PACKAGE_JSON_NODE_VERSION)
 
+          # The container image ships only the .NET 8 SDK. Install the .NET 10 SDK
+          # as well so the multi-targeted (net8.0;net10.0) projects can be built.
+          - task: UseDotNet@2
+            displayName: "Install .NET 10 SDK"
+            inputs:
+              packageType: sdk
+              version: 10.0.x
+
           - task: DotNetCoreCLI@2
             displayName: Restore dotnet tools
             inputs:

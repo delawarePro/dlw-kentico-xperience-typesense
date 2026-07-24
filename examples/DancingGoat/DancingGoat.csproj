@@ -5,7 +5,9 @@
 		<SeparatedAdmin Condition="'$(SeparatedAdmin)' == ''">false</SeparatedAdmin>
 		<Nullable>annotations</Nullable>
 		<RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
-		<TargetFramework>net8.0</TargetFramework>
+		<!-- Sample web app: single-target. Clear the multi-targeting inherited from Directory.Build.props. -->
+		<TargetFrameworks></TargetFrameworks>
+		<TargetFramework>net10.0</TargetFramework>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 	<ItemGroup>
