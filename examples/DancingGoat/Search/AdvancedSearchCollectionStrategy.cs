@@ -2,14 +2,11 @@
 using CMS.Websites;
 
 using DancingGoat.Models;
-
-using DancingGoat.Search.Services;
 using DancingGoat.Search.Models;
+using DancingGoat.Search.Services;
 
 using Kentico.Xperience.Typesense.Collection;
 using Kentico.Xperience.Typesense.Search;
-
-using Microsoft.IdentityModel.Tokens;
 
 namespace DancingGoat.Search;
 
@@ -79,13 +76,15 @@ public class AdvancedSearchCollectionStrategy : DefaultTypesenseCollectionStrate
                     return null;
                 }
 
-                if (page.HomePageBanner.IsNullOrEmpty())
+                if (page.HomePageBanner is null || !page.HomePageBanner.Any())
                 {
                     return null;
                 }
-                var resultProperties = new DancingGoatSearchResultModel(indexedPage.ItemGuid.ToString("D"));
+                var resultProperties = new DancingGoatSearchResultModel(indexedPage.ItemGuid.ToString("D"))
+                {
+                    Title = page!.HomePageBanner.First().BannerHeaderText
+                };
 
-                resultProperties.Title = page!.HomePageBanner.First().BannerHeaderText;
                 res.Add(resultProperties);
             }
             else

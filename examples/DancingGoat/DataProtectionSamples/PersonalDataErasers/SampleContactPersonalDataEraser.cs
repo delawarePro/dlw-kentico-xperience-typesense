@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using CMS.Activities;
+﻿using CMS.Activities;
 using CMS.ContactManagement;
 using CMS.DataEngine;
 using CMS.DataProtection;
@@ -40,7 +36,6 @@ namespace Samples.DancingGoat
         private readonly IInfoProvider<AccountContactInfo> accountContactInfoProvider;
         private readonly IInfoProvider<ContactInfo> contactInfoProvider;
 
-
         /// <summary>
         /// Initializes a new instance of the <see cref="SampleContactPersonalDataEraser"/> class.
         /// </summary>
@@ -59,7 +54,6 @@ namespace Samples.DancingGoat
             this.accountContactInfoProvider = accountContactInfoProvider;
             this.contactInfoProvider = contactInfoProvider;
         }
-
 
         /// <summary>
         /// Erases personal data based on given <paramref name="identities"/> and <paramref name="configuration"/>.
@@ -109,7 +103,6 @@ namespace Samples.DancingGoat
             DeleteDancingGoatSubmittedFormsData(contactEmails, contactIds, configuration);
         }
 
-
         /// <summary>
         /// Deletes contact's submitted forms activities based on <paramref name="configuration"/>'s <c>DeleteSubmittedFormsActivities</c> flag.
         /// </summary>
@@ -119,11 +112,10 @@ namespace Samples.DancingGoat
             if (configuration.TryGetValue("DeleteSubmittedFormsActivities", out object deleteSubmittedFormsActivities)
                 && ValidationHelper.GetBoolean(deleteSubmittedFormsActivities, false))
             {
-                ActivityInfoProvider.ProviderObject.BulkDelete(new WhereCondition().WhereEquals("ActivityType", PredefinedActivityType.BIZFORM_SUBMIT)
+                ActivityInfo.Provider.BulkDelete(new WhereCondition().WhereEquals("ActivityType", PredefinedActivityType.BIZFORM_SUBMIT)
                                                                                    .WhereIn("ActivityContactID", contactIds));
             }
         }
-
 
         /// <summary>
         /// Deletes all DancingGoat submitted forms data for <paramref name="emails"/> and <paramref name="contactIDs"/>, based on <paramref name="configuration"/>'s <c>DeleteSubmittedFormsData</c> flag.
@@ -163,7 +155,6 @@ namespace Samples.DancingGoat
             }
         }
 
-
         /// <summary>
         /// Deletes contact's activities based on <paramref name="configuration"/>'s <c>DeleteActivities</c> flag.
         /// </summary>
@@ -173,10 +164,9 @@ namespace Samples.DancingGoat
             if (configuration.TryGetValue("deleteActivities", out object deleteActivities)
                 && ValidationHelper.GetBoolean(deleteActivities, false))
             {
-                ActivityInfoProvider.ProviderObject.BulkDelete(new WhereCondition().WhereIn("ActivityContactID", contactIds));
+                ActivityInfo.Provider.BulkDelete(new WhereCondition().WhereIn("ActivityContactID", contactIds));
             }
         }
-
 
         /// <summary>
         /// Deletes contact from accounts based on <paramref name="configuration"/>'s <c>deleteContactFromAccounts</c> flag.
@@ -194,7 +184,6 @@ namespace Samples.DancingGoat
                 }
             }
         }
-
 
         /// <summary>
         /// Deletes <paramref name="contacts"/> based on <paramref name="configuration"/>'s <c>DeleteContacts</c> flag.
