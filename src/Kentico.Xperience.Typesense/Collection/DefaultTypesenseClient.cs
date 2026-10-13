@@ -231,6 +231,9 @@ internal class DefaultTypesenseClient : IXperienceTypesenseClient
             }
         }
 
+        // The passes above use language fallback, so the same item can come back in a language that isn't the one it exists in.
+        // Drop those fallback copies when the item was found in one of the collection's own languages.
+        indexedItems = RebuildItemSelector.KeepBestLanguagePerItem(indexedItems, typesenseCollection.LanguageNames);
 
         try
         {
